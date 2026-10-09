@@ -281,8 +281,17 @@ body.tv{background:radial-gradient(50% 40% at 50% 0%,rgba(255,220,180,.08),trans
 .tv-res-in .mic-pulse span{width:4vw;height:4vw}
 .tv-res-in .placar .lado b{font-size:6vw}
 .tv-res-in .placar{width:60%;font-size:2vw}
-#tv-ativar{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:var(--bg);text-align:center;padding:4vw}
-#tv-ativar button{font-size:2.6vw;padding:2.4vh 5vw;width:auto;margin-top:3vh}
+#tv-ativar{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2vw;padding:0 4vw 0 6vw;overflow:hidden;
+  background:radial-gradient(50% 45% at 50% 0%,rgba(255,220,180,.08),transparent 70%),linear-gradient(180deg,rgba(19,8,9,.2) 0,var(--bg) 46vh),repeating-linear-gradient(90deg,#3a0a11 0,#5e111b 3vw,#3a0a11 6vw) 0 0/100% 46vh no-repeat;background-color:var(--bg)}
+.tv-ativar-txt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:2vh}
+.tv-ativar-sub{margin:0;font-size:2vw;line-height:1.35;color:var(--muted)}
+.tv-ativar-sub b{color:var(--spot)}
+#tv-ativar .btn{font-size:2.2vw;padding:2.2vh 4vw;width:auto;margin-top:2vh}
+.tv-show-slot{position:relative;height:96vh;width:76.8vh}
+.tv-show-slot .show{position:absolute;top:0;left:0;width:400px;height:500px;margin:0;aspect-ratio:auto;max-width:none;transform-origin:0 0;transform:scale(var(--k,1))}
+.tv-show-slot .show-barra{display:none}
+.tv-show-slot .show{background:none}
+.tv-show-slot .show-som{top:5%;right:6%}
 #tv-go{position:fixed;top:0;right:0;bottom:0;left:0;z-index:25;display:grid;place-items:center;background:rgba(19,8,9,.9)}
 #tv-go .go-n{font-size:22vw}
 #tv-go .go-t{font-size:3vw}
@@ -798,12 +807,13 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   </div>
   <div id="tv-go" hidden><div style="text-align:center"><div class="go-t" id="tv-go-nome"></div><div class="go-n" id="tv-go-n">3</div></div></div>
   <div id="tv-ativar">
-    <div>
+    <div class="tv-ativar-txt">
+      <p class="capa-pre" style="font-size:1.2vw">Karaokê da família</p>
       <div class="logo tv-logo-grande"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></div>
-      <p style="font-size:2vw;color:var(--muted);margin:2vh 0 0">Palco do karaokê da família, na TV ou no notebook</p>
+      <p class="tv-ativar-sub">Na TV, no notebook ou só no celular.<br><b>A família vira plateia.</b></p>
       <button class="btn" id="tv-ok" autofocus>Aperte OK ou clique pra começar</button>
-      <p style="margin:3vh 0 0"><button type="button" class="tv-trocar" id="tv-ver-show" style="font-size:1.4vw;padding:1.2vh 2vw">Ver a apresentação do app</button></p>
     </div>
+    <div class="tv-show-slot" id="tv-show-slot" aria-hidden="true"></div>
   </div>
 </section>
 <canvas id="confete" hidden></canvas>
@@ -1874,7 +1884,12 @@ function iniciarTV(){
     if(m.t==='stop'){ try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){} }
     if(m.t==='result'){ tvResultado(m); }
   }, () => salaEnviar({t:'tv'}));
-  const ativar = () => { $('tv-ativar').hidden = true; try{ ac().resume(); tom(660,0,.12,'sine',.05); }catch(e){} };
+  const ativar = () => { $('tv-ativar').hidden = true; document.body.classList.remove('show-na-tv'); showParar(); try{ ac().resume(); tom(660,0,.12,'sine',.05); }catch(e){} };
+  // o show de abertura passa ao lado do logo enquanto ninguém aperta OK
+  const slot = $('tv-show-slot'); slot.appendChild($('show'));
+  const ajustar = () => { $('show').style.setProperty('--k', (slot.clientHeight/500).toFixed(3)); };
+  ajustar(); window.addEventListener('resize', ajustar);
+  document.body.classList.add('show-na-tv'); showIniciarAuto();
   $('tv-ok').onclick = ativar;
   document.addEventListener('keydown', e => { if(!$('tv-ativar').hidden && (e.key==='Enter' || e.keyCode===13)) ativar(); });
   const anterior = window.onYouTubeIframeAPIReady;
@@ -1921,7 +1936,7 @@ function showQuadro(){
   if(cena===6) $('show-nota').textContent = Math.round(87*Math.min(1, bi/8));
   if(cena===6 && bi>=9 && !showSt.confeteFeito){ showSt.confeteFeito = true; if(showSt.som) confete(); }
   $('show-prog').style.width = (t/TOTAL_SHOW*100) + '%';
-  if(tela==='boas') showSt.raf = requestAnimationFrame(showQuadro);
+  if(tela==='boas' || document.body.classList.contains('show-na-tv')) showSt.raf = requestAnimationFrame(showQuadro);
 }
 function showIniciarAuto(){
   const el = $('show');
@@ -1986,7 +2001,6 @@ $('tv-cheia').onclick = () => {
   }catch(e){}
 };
 document.addEventListener('fullscreenchange', () => { $('tv-cheia').textContent = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia'; });
-$('tv-ver-show').onclick = () => { salvarModo(null); location.href = '/'; };
 $('ver-show').onclick = (e) => { e.preventDefault(); salvarModo(null); telas('boas'); showPreparar(); };
 $('tv-trocar').onclick = () => { salvarModo('celular'); location.href = '/'; };
 // rotear lembrando como o aparelho entrou da última vez
