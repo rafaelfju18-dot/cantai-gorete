@@ -73,12 +73,26 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .go-t{font:800 22px var(--display);color:var(--fg)}
 .go-s{color:var(--muted);font-size:14px;text-align:center}
 @keyframes pop{from{transform:scale(1.5);opacity:0}25%{opacity:1}to{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.suspense{display:flex;flex-direction:column;align-items:center;gap:14px;padding-block:28px;text-align:center}
+.suspense p{margin:0;font:800 20px var(--display)}
+.mic-pulse{width:72px;height:72px;border-radius:50%;background:rgba(255,181,71,.18);display:grid;place-items:center;animation:pulsa .6s ease-in-out infinite alternate}
+.mic-pulse span{width:28px;height:28px;border-radius:50%;background:var(--spot)}
+@keyframes pulsa{from{transform:scale(.85)}to{transform:scale(1.1)}}
+.selo{align-self:center;font:800 15px var(--display);letter-spacing:.02em;color:var(--bg);background:var(--spot);padding:6px 14px;border-radius:999px;transform:rotate(-3deg);animation:carimbo .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes carimbo{from{transform:scale(2.2) rotate(-12deg);opacity:0}to{transform:scale(1) rotate(-3deg);opacity:1}}
+.score.revela{animation:salta .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes salta{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.dica{text-align:center;color:var(--muted);font-size:14px;margin:-6px 0 0}
+.recorde{text-align:center;margin:0;font:800 16px var(--display);color:var(--good);animation:carimbo .45s both}
+.fill{width:0;transition:width .8s cubic-bezier(.3,1,.4,1)}
+.som{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 10px;font:600 12px var(--body);cursor:pointer}
+#confete{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header><div class="logo">Cant<span>aí</span> Gorete</div><div class="tag">teste da nota</div></header>
+  <header><div class="logo">Cant<span>aí</span> Gorete</div><button type="button" class="som" id="som" aria-pressed="true">Som: ligado</button></header>
   <div id="player-box" hidden><div id="player"></div></div>
 
   <!-- PREPARAR -->
@@ -117,12 +131,18 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
   <!-- RESULTADO -->
   <section id="s-res" class="card" hidden>
     <div class="tag" id="res-nome" style="text-align:center"></div>
+    <div class="suspense" id="res-espera"><div class="mic-pulse"><span></span></div><p id="res-espera-t">Os jurados estão decidindo…</p></div>
+    <div id="res-conteudo" style="display:contents">
     <div class="score" id="res-nota">0<small>/100</small></div>
+    <div class="selo" id="res-selo" hidden></div>
+    <p class="recorde" id="res-rec" hidden>Novo recorde da noite!</p>
     <p class="comment" id="res-coment"></p>
+    <p class="dica" id="res-dica"></p>
     <div class="bars">
       <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="b-af"></div></div><b id="v-af">0</b></div>
       <div class="bar-row"><span>Estabilidade</span><div class="track"><div class="fill" id="b-es"></div></div><b id="v-es">0</b></div>
       <div class="bar-row"><span>Energia</span><div class="track"><div class="fill" id="b-en"></div></div><b id="v-en">0</b></div>
+    </div>
     </div>
     <button class="btn" id="denovo">Próximo cantor</button>
   </section>
@@ -133,6 +153,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
     <button class="btn ghost" id="zerar">Zerar ranking</button>
   </section>
 </div>
+<canvas id="confete" hidden></canvas>
 
 <div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s">Prepare a voz!</div></div>
 
@@ -341,33 +362,133 @@ function calcular(){
   return {nota, af:Math.round(af*100), es:Math.round(es*100), en:Math.round(en*100)};
 }
 
-function comentario(r){
-  if(r.nota>=85) return 'Show de estrela! A família vai pedir bis.';
-  if(r.nota>=70) return 'Mandou bem! Afinado e com presença.';
-  if(r.nota>=55) return r.af<r.es ? 'Boa voz firme. A afinação ainda dá pra caprichar.' : 'Afinação no caminho certo. Segura mais as notas!';
-  if(r.nota>=40) return 'A emoção estava lá. A afinação foi passear um pouco.';
-  return 'Coragem nota 10! O resto a gente treina.';
+/* ---------- frases e títulos ---------- */
+const sorteia = a => a[Math.floor(Math.random()*a.length)];
+let ultimaFrase = '';
+function sem(a){ const b=a.filter(x=>x!==ultimaFrase); const f=sorteia(b.length?b:a); ultimaFrase=f; return f; }
+const FRASES = {
+  lenda:['Pode parar tudo: temos uma lenda na sala!','Isso foi show de estádio. A família está de pé!','Arrepiou até o sofá. Que voz!','Alguém liga pro programa de calouros, urgente!'],
+  estrela:['Mandou muito bem! A família vai pedir bis.','Afinado, firme e com presença. Que apresentação!','Essa voz merece microfone de ouro.','Brilhou! Só faltou o holofote.'],
+  bom:['Mandou bem! Dá pra sentir o ensaio do chuveiro.','Boa! Mais um pouquinho e vira estrela da casa.','Bonito de ver. A plateia aprovou!','Sólido! Ninguém saiu da sala.'],
+  medio:['Teve altos e baixos, mas a energia estava lá.','Nem todo herói acerta todas as notas.','A música sobreviveu, e isso é o que importa!','Foi uma jornada. Com emoção, mas uma jornada.'],
+  baixo:['A emoção estava lá. A afinação foi passear um pouco.','Coragem nota 10! O resto a gente treina.','Os vizinhos certamente ouviram. Isso conta!','Isso não foi desafinar, foi criar um novo estilo.','A música pediu um tempinho pra se recuperar.']
+};
+const DICAS = {
+  af:['Dica: escute o tom da música antes de entrar cantando.','Dica: a afinação deu uma volta no quarteirão. Tenta acompanhar a melodia de perto.','Dica: cantar um pouco mais baixo ajuda a acertar as notas.'],
+  es:['Dica: tenta segurar as notas sem tremer.','Dica: respira fundo antes das notas longas.','Dica: a voz balançou mais que rede na varanda. Firmeza!'],
+  en:['Dica: solta a voz, ninguém aqui morde!','Dica: mais presença! Canta como se fosse o show da sua vida.','Dica: segure o celular mais perto da boca e capriche no volume.'],
+  top:['Destaque: a afinação foi o ponto forte.','Destaque: que firmeza nas notas longas!','Destaque: energia de sobra, a sala inteira sentiu.']
+};
+const SELOS = {
+  lenda:['Lenda da sala','Rouxinol da família','Voz de ouro'],
+  estrela:['Estrela da noite','Estrela do sofá','Show de bola'],
+  bom:['Cantor de churrasco','Voz de respeito','Afinado na medida'],
+  medio:['Cantor de chuveiro','Promessa da família','Quase lá'],
+  baixo:['Desafinado com estilo','Coragem de leão','Rei do improviso']
+};
+function faixa(n){ return n>=90?'lenda':n>=80?'estrela':n>=65?'bom':n>=50?'medio':'baixo'; }
+function dica(r){
+  const k = [['af',r.af],['es',r.es],['en',r.en]].sort((a,b)=>a[1]-b[1]);
+  if(k[0][1] >= 70){ const top = k[2][0]; return DICAS.top[['af','es','en'].indexOf(top)]; }
+  if(r.en>=80 && r.af<50) return 'A animação compensou a afinação. A plateia agradece!';
+  return sorteia(DICAS[k[0][0]]);
 }
 
+/* ---------- som ---------- */
+let somLigado = true;
+try{ somLigado = localStorage.getItem('cantai-som') !== '0'; }catch(e){}
+function atualizaSom(){ $('som').textContent = 'Som: ' + (somLigado?'ligado':'desligado'); $('som').setAttribute('aria-pressed', somLigado); }
+$('som').onclick = () => { somLigado = !somLigado; try{ localStorage.setItem('cantai-som', somLigado?'1':'0'); }catch(e){} atualizaSom(); };
+atualizaSom();
+let actx;
+function ac(){ if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+function tom(f, ini, dur, tipo='triangle', vol=.18){
+  const a=ac(), o=a.createOscillator(), g=a.createGain();
+  o.type=tipo; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+  const t=a.currentTime+ini; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.start(t); o.stop(t+dur+.05); return o;
+}
+function rufar(seg){
+  if(!somLigado) return;
+  const a=ac(); a.resume();
+  const buf=a.createBuffer(1, a.sampleRate*0.05, a.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length/4));
+  const n=Math.floor(seg/0.06);
+  for(let i=0;i<n;i++){ const s=a.createBufferSource(), g=a.createGain(), f=a.createBiquadFilter(); f.type='bandpass'; f.frequency.value=900; s.buffer=buf; s.connect(f); f.connect(g); g.connect(a.destination); g.gain.value=.15+.5*(i/n); s.start(a.currentTime+i*0.06); }
+}
+function fanfarra(fx){
+  if(!somLigado) return;
+  ac().resume();
+  if(fx==='lenda'||fx==='estrela'){ [523,659,784,1047].forEach((f,i)=>tom(f,i*.12,.35)); tom(1047,.5,.8,'triangle',.2); tom(1319,.5,.8,'sine',.1); }
+  else if(fx==='bom'||fx==='medio'){ tom(523,0,.25); tom(784,.18,.5); }
+  else { const o=tom(392,0,.35,'sawtooth',.08); tom(370,.35,.35,'sawtooth',.08); const o3=tom(349,.7,.9,'sawtooth',.08); try{ o3.frequency.setValueAtTime(349,ac().currentTime+.9); o3.frequency.linearRampToValueAtTime(300,ac().currentTime+1.6); }catch(e){} }
+}
+
+/* ---------- confete ---------- */
+function confete(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=$('confete'), c=cv.getContext('2d'); cv.hidden=false;
+  const W=cv.width=innerWidth*devicePixelRatio, H=cv.height=innerHeight*devicePixelRatio;
+  const cores=['#ffb547','#5fd39b','#ff7a6b','#b79cff','#f4effc'];
+  const ps=Array.from({length:140},()=>({x:Math.random()*W,y:-Math.random()*H*.5,vx:(Math.random()-.5)*3*devicePixelRatio,vy:(2+Math.random()*4)*devicePixelRatio,r:Math.random()*6.28,vr:(Math.random()-.5)*.3,s:(5+Math.random()*6)*devicePixelRatio,c:sorteia(cores)}));
+  const fim=performance.now()+3200;
+  (function loop(){
+    c.clearRect(0,0,W,H);
+    ps.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=.04*devicePixelRatio; p.r+=p.vr; c.save(); c.translate(p.x,p.y); c.rotate(p.r); c.fillStyle=p.c; c.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); c.restore(); });
+    if(performance.now()<fim) requestAnimationFrame(loop); else { c.clearRect(0,0,W,H); cv.hidden=true; }
+  })();
+}
+
+/* ---------- revelação ---------- */
+let revelaId = 0;
 function resultado(r){
+  const id = ++revelaId;
   telas('res');
   const nome = $('nome').value.trim() || 'Cantor sem nome';
   $('res-nome').textContent = nome;
+  ['af','es','en'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
+  $('res-selo').hidden = true; $('res-rec').hidden = true; $('res-coment').textContent=''; $('res-dica').textContent='';
   if(!r){
-    $('res-nota').innerHTML = '–';
+    $('res-espera').hidden = true; $('res-nota').style.visibility='visible'; $('res-nota').innerHTML = '–';
     $('res-coment').textContent = 'Não deu pra ouvir a voz o suficiente. Segure o celular mais perto da boca e tente de novo.';
-    ['af','es','en'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
     return;
   }
-  $('res-nota').innerHTML = r.nota + '<small>/100</small>';
-  $('res-coment').textContent = comentario(r);
-  ['af','es','en'].forEach(k=>{ $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent=r[k]; });
+  const melhorAntes = Math.max(-1, ...lerRank().map(x=>x.nota));
   const d = new Date();
   const rank = lerRank(); rank.push({nome, nota:r.nota, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
-  salvarRank(rank); mostrarRank();
+  salvarRank(rank);
+  const fx = faixa(r.nota), recorde = melhorAntes >= 0 && r.nota > melhorAntes;
+  const rapido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('res-espera-t').textContent = sorteia(['Os jurados estão decidindo…','Somando os aplausos…','Conferindo cada nota…','Consultando a vó…']);
+  $('res-espera').hidden = false; $('res-nota').style.visibility='hidden';
+  rufar(rapido ? 0 : 1.8);
+  setTimeout(() => {
+    if(id!==revelaId) return;
+    $('res-espera').hidden = true;
+    const el = $('res-nota'); el.style.visibility='visible';
+    el.classList.remove('revela'); void el.offsetWidth; el.classList.add('revela');
+    const t0 = performance.now(), dur = rapido ? 1 : 1200;
+    (function conta(){
+      if(id!==revelaId) return;
+      const k = Math.min(1,(performance.now()-t0)/dur), v = Math.round(r.nota*(1-Math.pow(1-k,3)));
+      el.innerHTML = v + '<small>/100</small>';
+      if(k<1) requestAnimationFrame(conta); else final();
+    })();
+    function final(){
+      fanfarra(fx);
+      $('res-selo').textContent = sorteia(SELOS[fx]); $('res-selo').hidden = false;
+      $('res-rec').hidden = !recorde;
+      $('res-coment').textContent = sem(FRASES[fx]);
+      $('res-dica').textContent = dica(r);
+      ['af','es','en'].forEach((k,i)=>setTimeout(()=>{ if(id!==revelaId) return; $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent=r[k]; }, rapido?0:250*i));
+      if(fx==='lenda'||fx==='estrela'||recorde) confete();
+      mostrarRank(); $('s-rank').hidden = false;
+    }
+  }, rapido ? 0 : 1900);
 }
 
 $('denovo').onclick = () => {
+  revelaId++;
   $('nome').value = '';
   telas('prep');
 };
