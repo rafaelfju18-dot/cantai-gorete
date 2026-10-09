@@ -300,7 +300,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <!-- BOAS-VINDAS -->
   <section id="s-boas" class="tela" hidden>
     <h1 class="boas-t">Karaokê da família, <span>com nota</span> e disputa.</h1>
-    <p class="boas-s">A TV vira o palco e o celular vira o microfone. Veja como funciona:</p>
+    <p class="boas-s">A TV ou o notebook vira o palco, e o celular vira o microfone. Veja como funciona:</p>
     <div class="anim" id="anim" data-p="1" role="img" aria-label="Animação: a TV mostra um QR Code, o celular escaneia, a pessoa canta e a nota aparece na TV">
       <div class="a-tv"><div class="a-tela">
         <div class="a-qr"><svg viewBox='0 0 7 7' aria-hidden='true'><path fill='#17122b' d='M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM1 1v1h1V1zM5 1v1h1V1zM1 5v1h1V5zM4 4h1v1H4zM5 5h1v1H5zM6 4h1v1H6zM4 6h1v1H4zM6 6h1v1H6z'/><path fill='#fff' d='M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z'/></svg></div>
@@ -314,7 +314,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <div class="pontos" id="anim-pontos"><button type="button" aria-label="Passo 1"></button><button type="button" aria-label="Passo 2"></button><button type="button" aria-label="Passo 3"></button><button type="button" aria-label="Passo 4"></button></div>
     <div class="escolha">
       <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante, salve músicas e conecte a uma TV quando quiser</small></button>
-      <button class="grande alt" id="entrar-tv"><b>Esta tela é a TV</b><small>Mostra o QR Code, toca as músicas e revela as notas</small></button>
+      <button class="grande alt" id="entrar-tv"><b>Esta tela é o palco</b><small>TV, notebook ou computador: mostra o QR Code, toca as músicas e revela as notas</small></button>
     </div>
     <p class="boas-rodape">Suas músicas, ranking e preferências ficam salvos neste navegador.</p>
   </section>
@@ -329,8 +329,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <button class="grande" id="ir-solo"><b>Cantar solo</b><small>Uma pessoa canta e o app dá a nota</small></button>
     <button class="grande alt" id="ir-duelo"><b>Duelo</b><small>Dois cantam a mesma música. Quem vence?</small></button>
     <div class="conexao" id="conexao">
-      <div class="linha"><b id="cx-titulo">Conectar à TV</b><span class="hint" id="cx-status"></span></div>
-      <p class="hint" id="cx-texto">No navegador da TV, digite <strong>cantai-gorete.netlify.app/tv</strong>. Depois escaneie o QR Code da TV, ou digite o código aqui.</p>
+      <div class="linha"><b id="cx-titulo">Conectar à TV ou notebook</b><span class="hint" id="cx-status"></span></div>
+      <p class="hint" id="cx-texto">No navegador da TV ou do notebook, digite <strong>cantai-gorete.netlify.app/tv</strong>. Depois escaneie o QR Code, ou digite o código aqui.</p>
       <div class="pl-ctrl" style="grid-template-columns:1fr auto" id="cx-form">
         <input id="cx-codigo" class="cod-in" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" aria-label="Código da TV">
         <button type="button" class="mini" id="cx-entrar">Conectar</button>
@@ -532,15 +532,16 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <section class="card tela" id="s-ajuda" hidden>
     <h2>Como usar</h2>
     <details class="ajuda" open>
-      <summary>Conectar o celular à TV (recomendado)</summary>
+      <summary>Conectar o celular à TV ou ao notebook (recomendado)</summary>
       <div class="corpo">
         <ol>
-          <li>No navegador da TV, digite <strong>cantai-gorete.netlify.app</strong> e escolha “Este aparelho é a TV”. Ou digite direto <strong>cantai-gorete.netlify.app/tv</strong>.</li>
-          <li>Aperte OK no controle pra ativar o som.</li>
+          <li>No navegador da TV ou do notebook, digite <strong>cantai-gorete.netlify.app</strong> e escolha “Esta tela é o palco”. Ou digite direto <strong>cantai-gorete.netlify.app/tv</strong>.</li>
+          <li>Aperte OK no controle (ou clique no botão) pra ativar o som.</li>
+          <li>No notebook, use o botão “Tela cheia”. Se ele estiver ligado na TV pelo cabo HDMI, a TV mostra tudo em tamanho grande.</li>
           <li>No celular, escaneie o QR Code da TV, ou toque em “Conectar à TV” no início e digite o código.</li>
           <li>Escolha a música no celular. Ela toca na TV, o celular vira o microfone e a nota aparece na TV.</li>
         </ol>
-        <p class="hint">Vários celulares podem entrar na mesma TV. O ranking da noite aparece na tela da TV.</p>
+        <p class="hint">Vários celulares podem entrar na mesma tela. O ranking da noite aparece no palco.</p>
       </div>
     </details>
     <details class="ajuda">
@@ -590,7 +591,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 <section id="tv" hidden>
   <div class="tv-topo">
     <div class="logo">Cant<span>aí</span> Gorete</div>
-    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b><button type="button" class="tv-trocar" id="tv-trocar">Usar como celular</button></div>
+    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b><button type="button" class="tv-trocar" id="tv-cheia">Tela cheia</button><button type="button" class="tv-trocar" id="tv-trocar">Usar como celular</button></div>
   </div>
   <div class="tv-corpo">
     <div class="tv-card">
@@ -636,8 +637,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <div id="tv-ativar">
     <div>
       <div class="logo" style="font-size:5vw">Cant<span>aí</span> Gorete</div>
-      <p style="font-size:2vw;color:var(--muted);margin:2vh 0 0">Tela da TV pro karaokê da família</p>
-      <button class="btn" id="tv-ok" autofocus>Aperte OK pra começar</button>
+      <p style="font-size:2vw;color:var(--muted);margin:2vh 0 0">Palco do karaokê da família, na TV ou no notebook</p>
+      <button class="btn" id="tv-ok" autofocus>Aperte OK ou clique pra começar</button>
     </div>
   </div>
 </section>
@@ -1478,8 +1479,8 @@ const novoCodigo = () => Array.from({length:6},()=>ALFA[Math.floor(Math.random()
 function mostrarConexao(){
   const on = !!sala.code;
   $('conexao').classList.toggle('ok', on && sala.tvViva);
-  $('cx-titulo').textContent = on ? 'TV ' + sala.code : 'Conectar à TV';
-  $('cx-status').textContent = on ? (sala.tvViva ? 'conectado' : 'procurando a TV…') : '';
+  $('cx-titulo').textContent = on ? 'Palco ' + sala.code : 'Conectar à TV ou notebook';
+  $('cx-status').textContent = on ? (sala.tvViva ? 'conectado' : 'procurando a tela…') : '';
   $('cx-status').className = 'hint ' + (sala.tvViva ? 'st-ok' : 'st-esp');
   $('cx-texto').hidden = on; $('cx-form').hidden = on; $('cx-sair').hidden = !on;
   $('m-sala').hidden = !on;
@@ -1659,7 +1660,7 @@ function iniciarTV(){
 
 /* ======================= BOAS-VINDAS E MODO DO APARELHO ======================= */
 const PASSOS_ANIM = [
-  ['Abra o app na TV', 'No navegador da TV, ela mostra um QR Code com o código da sala.'],
+  ['Abra o app na TV ou no notebook', 'No navegador, a tela mostra um QR Code com o código da sala.'],
   ['Escaneie com o celular', 'Cada pessoa aponta a câmera pro QR Code e entra na sala.'],
   ['Escolha a música e cante', 'O vídeo toca na TV e o celular vira o microfone.'],
   ['A nota aparece na TV', 'Com suspense, título, confete e ranking da noite.']
@@ -1696,6 +1697,15 @@ function entrarTV(){ salvarModo('tv'); if(location.pathname!=='/tv') history.rep
 $('entrar-cel').onclick = entrarCelular;
 $('entrar-tv').onclick = entrarTV;
 $('rever-boas').onclick = () => { salvarModo(null); telas('boas'); animIniciar(); };
+$('tv-cheia').onclick = () => {
+  const d = document, el = d.documentElement;
+  const ativo = d.fullscreenElement || d.webkitFullscreenElement;
+  try{
+    if(ativo){ (d.exitFullscreen || d.webkitExitFullscreen).call(d); }
+    else { const f = el.requestFullscreen || el.webkitRequestFullscreen; if(f){ const r = f.call(el); if(r && r.catch) r.catch(()=>{}); } }
+  }catch(e){}
+};
+document.addEventListener('fullscreenchange', () => { $('tv-cheia').textContent = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia'; });
 $('tv-trocar').onclick = () => { salvarModo('celular'); location.href = '/'; };
 // rotear lembrando como o aparelho entrou da última vez
 (function(){
