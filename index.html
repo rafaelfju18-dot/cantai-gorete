@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cantaí Gorete</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: uma coluna estreita de palco; o placar e a nota ao vivo são o centro de cada tela. Visual noturno de sala com luz de palco. */
+:root{
+  --bg:#17122b; --panel:#221a3d; --line:#3a2f63; --fg:#f4effc; --muted:#b3a8d1;
+  --spot:#ffb547; --good:#5fd39b; --warn:#ff7a6b;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(120% 60% at 50% -10%,#2c2152 0%,var(--bg) 60%);background-color:var(--bg);color:var(--fg);font:16px/1.5 var(--body);min-height:100vh;padding:env(safe-area-inset-top,0) 16px calc(24px + env(safe-area-inset-bottom,0))}
+.wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-block:20px}
+header{display:flex;align-items:baseline;justify-content:space-between}
+.logo{font:800 30px/1 var(--display);letter-spacing:-.02em}
+.logo span{color:var(--spot)}
+.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
+h2{font:800 22px/1.15 var(--display);margin:0;text-wrap:balance}
+label{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.field{display:flex;flex-direction:column;gap:6px}
+input[type=text],input[type=url]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--spot);outline-offset:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{background:var(--bg);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:12px 10px;font:600 14px var(--body);text-align:left;cursor:pointer}
+.seg button small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+.seg button[aria-pressed=true]{border-color:var(--spot);background:rgba(255,181,71,.12)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.hint a{color:var(--spot)}
+.btn{appearance:none;border:0;border-radius:999px;padding:16px 22px;font:800 18px var(--display);cursor:pointer;background:var(--spot);color:#2a1a00;width:100%}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font:600 15px var(--body);padding:12px 18px}
+.btn.stop{background:var(--warn);color:#2b0904}
+#player-box{border-radius:14px;overflow:hidden;background:#000;aspect-ratio:16/9;max-width:100%}
+#player-box iframe{width:100%;height:100%;display:block}
+/* ao vivo */
+.live-top{display:flex;justify-content:space-between;align-items:center;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--line);margin-right:8px;vertical-align:middle;transition:background .1s}
+.dot.on{background:var(--good);box-shadow:0 0 12px var(--good)}
+.note{font:800 64px/1 var(--display);text-align:center;letter-spacing:-.03em;min-height:64px}
+.note sub{font-size:24px;color:var(--muted);vertical-align:baseline}
+.meter{position:relative;height:44px;border-radius:12px;background:linear-gradient(90deg,rgba(255,122,107,.25),rgba(95,211,155,.35) 40%,rgba(95,211,155,.35) 60%,rgba(255,122,107,.25));border:1px solid var(--line)}
+.meter::after{content:"";position:absolute;left:50%;top:4px;bottom:4px;width:2px;background:var(--fg);opacity:.5}
+.needle{position:absolute;top:-4px;bottom:-4px;width:6px;margin-left:-3px;border-radius:3px;background:var(--spot);left:50%;transition:left .08s linear,opacity .2s}
+.meter-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:.04em}
+.countdown{background:rgba(255,122,107,.14);border:1px solid var(--warn);border-radius:12px;padding:10px 14px;text-align:center;font-weight:600}
+/* resultado */
+.score{font:800 96px/0.9 var(--display);text-align:center;color:var(--spot);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.score small{font-size:28px;color:var(--muted)}
+.comment{text-align:center;font-size:17px;margin:0}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar-row{display:grid;grid-template-columns:96px 1fr 40px;align-items:center;gap:10px;font-size:14px}
+.bar-row b{text-align:right;font-variant-numeric:tabular-nums}
+.track{height:10px;border-radius:5px;background:var(--bg);overflow:hidden}
+.fill{height:100%;background:var(--spot);border-radius:5px}
+.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rank li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--bg);font-variant-numeric:tabular-nums}
+.rank li .pos{color:var(--muted);font-weight:600}
+.rank li .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank li .who small{color:var(--muted);margin-left:6px}
+.rank li b{color:var(--spot)}
+.err{color:var(--warn);font-size:14px;margin:0}
+[hidden]{display:none!important}
+.go{position:fixed;inset:0;z-index:10;background:rgba(23,18,43,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
+.go-n{font:800 168px/1 var(--display);color:var(--spot);letter-spacing:-.05em;animation:pop .9s ease-out}
+.go-t{font:800 22px var(--display);color:var(--fg)}
+.go-s{color:var(--muted);font-size:14px;text-align:center}
+@keyframes pop{from{transform:scale(1.5);opacity:0}25%{opacity:1}to{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo">Cant<span>aí</span> Gorete</div><div class="tag">teste da nota</div></header>
+  <div id="player-box" hidden><div id="player"></div></div>
+
+  <!-- PREPARAR -->
+  <section id="s-prep" class="card">
+    <h2>Quem vai cantar?</h2>
+    <div class="field"><label for="nome">Nome</label><input id="nome" type="text" placeholder="Ex.: Vó Lúcia" autocomplete="off" maxlength="30"></div>
+    <div class="field">
+      <label>Onde toca a música?</label>
+      <div class="seg">
+        <button type="button" id="m-aqui" aria-pressed="true">Neste celular<small>vídeo do YouTube aqui</small></button>
+        <button type="button" id="m-fora" aria-pressed="false">Na TV ou caixa<small>o celular só escuta</small></button>
+      </div>
+    </div>
+    <div class="field" id="yt-field">
+      <label for="link">Link do vídeo de karaokê</label>
+      <input id="link" type="url" inputmode="url" placeholder="Cole aqui o link do YouTube">
+      <p class="hint">Não tem o link? <a id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>, copie o link do vídeo e volte aqui.</p>
+    </div>
+    <p class="err" id="erro" hidden></p>
+    <button class="btn" id="cantar">Cantar</button>
+    <p class="hint">Segure o celular perto da boca. A música termina sozinha depois de 10 segundos sem voz, ou quando você tocar em “Encerrar”.</p>
+  </section>
+
+  <!-- AO VIVO -->
+  <section id="s-live" class="card" hidden>
+    <div class="live-top"><span><span class="dot" id="dot"></span><span id="status">Esperando a voz…</span></span><span id="tempo">0:00</span></div>
+    <div class="note" id="nota" aria-live="off">–</div>
+    <div>
+      <div class="meter" aria-hidden="true"><div class="needle" id="agulha"></div></div>
+      <div class="meter-scale"><span>baixo</span><span>afinado</span><span>alto</span></div>
+    </div>
+    <div class="countdown" id="contagem" hidden>Encerrando em <span id="cont-n">5</span>…</div>
+    <button class="btn stop" id="encerrar">Encerrar</button>
+  </section>
+
+  <!-- RESULTADO -->
+  <section id="s-res" class="card" hidden>
+    <div class="tag" id="res-nome" style="text-align:center"></div>
+    <div class="score" id="res-nota">0<small>/100</small></div>
+    <p class="comment" id="res-coment"></p>
+    <div class="bars">
+      <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="b-af"></div></div><b id="v-af">0</b></div>
+      <div class="bar-row"><span>Estabilidade</span><div class="track"><div class="fill" id="b-es"></div></div><b id="v-es">0</b></div>
+      <div class="bar-row"><span>Energia</span><div class="track"><div class="fill" id="b-en"></div></div><b id="v-en">0</b></div>
+    </div>
+    <button class="btn" id="denovo">Próximo cantor</button>
+  </section>
+
+  <section class="card" id="s-rank" hidden>
+    <h2>Ranking da noite</h2>
+    <ol class="rank" id="rank"></ol>
+    <button class="btn ghost" id="zerar">Zerar ranking</button>
+  </section>
+</div>
+
+<div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s">Prepare a voz!</div></div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const NOTAS = ['Dó','Dó#','Ré','Ré#','Mi','Fá','Fá#','Sol','Sol#','Lá','Lá#','Si'];
+let modo = 'aqui', ytPlayer = null, ytReady = false, ytQueued = null;
+
+/* ---------- telas ---------- */
+function telas(t){
+  $('s-prep').hidden = t!=='prep';
+  $('s-live').hidden = t!=='live';
+  $('s-res').hidden = t!=='res';
+  $('s-rank').hidden = t==='live' || !lerRank().length;
+  $('player-box').hidden = !(modo==='aqui' && ytPlayer && t!=='res');
+  window.scrollTo(0,0);
+}
+const espera = ms => new Promise(r=>setTimeout(r,ms));
+async function contagem321(){
+  $('go-nome').textContent = $('nome').value.trim() || 'Sua vez';
+  $('go').hidden = false;
+  for(const n of ['3','2','1']){
+    const el = $('go-n'); el.textContent = n;
+    el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+    await espera(1000);
+  }
+  $('go').hidden = true;
+}
+
+/* ---------- modo de música ---------- */
+function setModo(m){
+  modo = m;
+  $('m-aqui').setAttribute('aria-pressed', m==='aqui');
+  $('m-fora').setAttribute('aria-pressed', m==='fora');
+  $('yt-field').hidden = m!=='aqui';
+  $('player-box').hidden = m!=='aqui' || !ytPlayer;
+}
+$('m-aqui').onclick = () => setModo('aqui');
+$('m-fora').onclick = () => setModo('fora');
+
+/* ---------- YouTube ---------- */
+function videoId(u){
+  if(!u) return null;
+  u = u.trim();
+  if(/^[\w-]{11}$/.test(u)) return u;
+  const m = u.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+window.onYouTubeIframeAPIReady = () => { ytReady = true; if(ytQueued) carregar(ytQueued); };
+(function(){ const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); })();
+function carregar(id){
+  if(!ytReady){ ytQueued = id; return; }
+  $('player-box').hidden = false;
+  if(ytPlayer){ ytPlayer.cueVideoById(id); return; }
+  ytPlayer = new YT.Player('player',{videoId:id,playerVars:{playsinline:1,rel:0}});
+}
+$('link').addEventListener('input', () => { const id = videoId($('link').value); if(id) carregar(id); });
+
+/* ---------- ranking local ---------- */
+function lerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-rank')||'[]'); }catch(e){ return []; } }
+function salvarRank(r){ try{ localStorage.setItem('cantai-rank', JSON.stringify(r)); }catch(e){} }
+function mostrarRank(){
+  const r = lerRank().sort((a,b)=>b.nota-a.nota);
+  $('s-rank').hidden = !r.length;
+  const ol = $('rank'); ol.textContent='';
+  r.slice(0,10).forEach((x,i)=>{
+    const li=document.createElement('li');
+    const p=document.createElement('span'); p.className='pos'; p.textContent=(i+1)+'º';
+    const w=document.createElement('span'); w.className='who'; w.textContent=x.nome;
+    const h=document.createElement('small'); h.textContent=x.hora; w.appendChild(h);
+    const b=document.createElement('b'); b.textContent=x.nota;
+    li.append(p,w,b); ol.appendChild(li);
+  });
+}
+$('zerar').onclick = () => { salvarRank([]); mostrarRank(); };
+mostrarRank();
+
+/* ---------- detecção de tom (YIN simplificado) ---------- */
+function yin(buf, sr){
+  const W = Math.floor(buf.length/2), tMin = Math.floor(sr/1100), tMax = Math.min(W-1, Math.floor(sr/70));
+  const d = new Float32Array(tMax+2);
+  for(let t=1; t<=tMax+1; t++){ let s=0; for(let i=0;i<W;i++){ const x=buf[i]-buf[i+t]; s+=x*x; } d[t]=s; }
+  const c = new Float32Array(tMax+2); c[0]=1; let run=0;
+  for(let t=1; t<=tMax+1; t++){ run+=d[t]; c[t] = run ? d[t]*t/run : 1; }
+  let best=-1;
+  for(let t=tMin; t<=tMax; t++){ if(c[t]<0.15){ while(t+1<=tMax && c[t+1]<c[t]) t++; best=t; break; } }
+  if(best<0){ let v=1; for(let t=tMin;t<=tMax;t++) if(c[t]<v){ v=c[t]; best=t; } }
+  if(best<=tMin || best>=tMax) return {f:0,conf:0};
+  const a=c[best-1], b=c[best], e=c[best+1], den=a-2*b+e;
+  const tau = den ? best + (a-e)/(2*den) : best;
+  return {f: sr/tau, conf: 1-b};
+}
+
+/* ---------- sessão de canto ---------- */
+let ctx, stream, analyser, buf, timer, wake;
+let frames, t0, primeiraVoz, ultimaVoz, piso, terminando;
+
+$('cantar').onclick = async () => {
+  $('erro').hidden = true;
+  if(modo==='aqui' && !videoId($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
+  }catch(e){
+    mostrarErro(location.protocol==='https:'||location.hostname==='localhost' ? 'O navegador não liberou o microfone. Permita o acesso ao microfone e tente de novo.' : 'O microfone só funciona quando a página abre por um endereço https.');
+    return;
+  }
+  ctx = new (window.AudioContext||window.webkitAudioContext)();
+  await ctx.resume();
+  const src = ctx.createMediaStreamSource(stream);
+  analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+  src.connect(analyser);
+  buf = new Float32Array(analyser.fftSize);
+  frames = []; primeiraVoz = 0; ultimaVoz = 0; piso = 0.004; terminando = false;
+  $('nota').textContent = '–'; $('status').textContent = 'Esperando a voz…'; $('tempo').textContent = '0:00'; $('contagem').hidden = true;
+  try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){}
+  telas('live');
+  if(modo==='aqui' && ytPlayer){ try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){} }
+  await contagem321();
+  if(terminando) return;
+  t0 = performance.now();
+  timer = setInterval(tick, 50);
+};
+function mostrarErro(t){ $('erro').textContent=t; $('erro').hidden=false; }
+
+function tick(){
+  const agora = performance.now();
+  analyser.getFloatTimeDomainData(buf);
+  let s=0; for(let i=0;i<buf.length;i++) s+=buf[i]*buf[i];
+  const rms = Math.sqrt(s/buf.length);
+  piso = rms < piso ? piso*0.9 + rms*0.1 : piso*1.0015;
+  let voz = false, midi = 0;
+  if(rms > Math.max(0.006, piso*2.5)){
+    const r = yin(buf, ctx.sampleRate);
+    if(r.conf > 0.8 && r.f > 75 && r.f < 1100){ voz = true; midi = 69 + 12*Math.log2(r.f/440); }
+  }
+  if(voz){
+    if(!primeiraVoz) primeiraVoz = agora;
+    ultimaVoz = agora;
+    frames.push({t:agora, midi, rms});
+    const n = Math.round(midi), cents = (midi-n)*100;
+    $('nota').innerHTML = NOTAS[((n%12)+12)%12] + '<sub>' + (Math.floor(n/12)-1) + '</sub>';
+    $('agulha').style.left = (50 + Math.max(-50,Math.min(50,cents))) + '%';
+    $('agulha').style.opacity = 1;
+  } else {
+    $('agulha').style.opacity = .35;
+  }
+  $('dot').classList.toggle('on', voz);
+  $('status').textContent = voz ? 'Ouvindo' : (primeiraVoz ? 'Pausa' : 'Esperando a voz…');
+  const seg = Math.floor((agora-t0)/1000);
+  $('tempo').textContent = Math.floor(seg/60)+':'+String(seg%60).padStart(2,'0');
+  if(primeiraVoz){
+    const silencio = (agora-ultimaVoz)/1000;
+    if(silencio >= 10){
+      const resta = Math.ceil(15 - silencio);
+      $('contagem').hidden = false; $('cont-n').textContent = Math.max(resta,1);
+      if(silencio >= 15) encerrar();
+    } else $('contagem').hidden = true;
+  }
+}
+
+$('encerrar').onclick = () => encerrar();
+function encerrar(){
+  if(terminando) return; terminando = true;
+  clearInterval(timer);
+  stream?.getTracks().forEach(t=>t.stop());
+  ctx?.close();
+  try{ wake?.release(); }catch(e){}
+  try{ ytPlayer?.pauseVideo(); }catch(e){}
+  $('contagem').hidden = true;
+  resultado(calcular());
+}
+
+/* ---------- nota ---------- */
+const clamp = x => Math.max(0, Math.min(1, x));
+function calcular(){
+  if(frames.length < 40) return null; // menos de ~2 s de voz
+  // afinação: proximidade das notas + encaixe numa escala
+  // vídeos de karaokê às vezes estão fora do Lá 440: descobre o "deslocamento" geral e desconta
+  let sx=0, sy=0; frames.forEach(f=>{ const a=2*Math.PI*f.midi; sx+=Math.cos(a); sy+=Math.sin(a); });
+  const off = Math.atan2(sy,sx)/(2*Math.PI);
+  let prox = 0; const hist = new Array(12).fill(0);
+  frames.forEach(f => { const m=f.midi-off, n=Math.round(m), c=Math.abs(m-n)*100; prox += c<=15 ? 1 : Math.max(0,(50-c)/35); hist[((n%12)+12)%12]++; });
+  prox /= frames.length;
+  const maior = [0,2,4,5,7,9,11]; let melhor = 0;
+  for(let k=0;k<12;k++){ let s=0; maior.forEach(i=>s+=hist[(k+i)%12]); melhor=Math.max(melhor,s); }
+  const encaixe = melhor/frames.length;
+  const af = 0.7*clamp((prox-0.6)/0.3) + 0.3*clamp((encaixe-0.6)/0.35);
+  // estabilidade: oscilação dentro das notas sustentadas
+  const desvios = []; let seg = [frames[0]];
+  const fecha = () => { if(seg.length>=4){ const m=seg.reduce((a,f)=>a+f.midi,0)/seg.length; desvios.push(Math.sqrt(seg.reduce((a,f)=>a+(f.midi-m)**2,0)/seg.length)*100); } };
+  for(let i=1;i<frames.length;i++){
+    const f=frames[i], p=frames[i-1];
+    if(Math.round(f.midi)===Math.round(p.midi) && f.t-p.t<120) seg.push(f); else { fecha(); seg=[f]; }
+  }
+  fecha();
+  const dp = desvios.length ? desvios.reduce((a,b)=>a+b,0)/desvios.length : 40;
+  const es = clamp(1-(dp-8)/30);
+  // energia: dinâmica do volume + quanto do tempo teve voz
+  const db = frames.map(f=>20*Math.log10(f.rms)).sort((a,b)=>a-b);
+  const faixa = db[Math.floor(db.length*0.9)] - db[Math.floor(db.length*0.1)];
+  const duracao = Math.max(1, (ultimaVoz-primeiraVoz)/1000);
+  const presenca = (frames.length*0.05)/duracao;
+  const en = 0.5*clamp(faixa/18) + 0.5*clamp(presenca/0.5);
+  const nota = Math.round(100*(0.58*af + 0.25*es + 0.17*en));
+  return {nota, af:Math.round(af*100), es:Math.round(es*100), en:Math.round(en*100)};
+}
+
+function comentario(r){
+  if(r.nota>=85) return 'Show de estrela! A família vai pedir bis.';
+  if(r.nota>=70) return 'Mandou bem! Afinado e com presença.';
+  if(r.nota>=55) return r.af<r.es ? 'Boa voz firme. A afinação ainda dá pra caprichar.' : 'Afinação no caminho certo. Segura mais as notas!';
+  if(r.nota>=40) return 'A emoção estava lá. A afinação foi passear um pouco.';
+  return 'Coragem nota 10! O resto a gente treina.';
+}
+
+function resultado(r){
+  telas('res');
+  const nome = $('nome').value.trim() || 'Cantor sem nome';
+  $('res-nome').textContent = nome;
+  if(!r){
+    $('res-nota').innerHTML = '–';
+    $('res-coment').textContent = 'Não deu pra ouvir a voz o suficiente. Segure o celular mais perto da boca e tente de novo.';
+    ['af','es','en'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
+    return;
+  }
+  $('res-nota').innerHTML = r.nota + '<small>/100</small>';
+  $('res-coment').textContent = comentario(r);
+  ['af','es','en'].forEach(k=>{ $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent=r[k]; });
+  const d = new Date();
+  const rank = lerRank(); rank.push({nome, nota:r.nota, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
+  salvarRank(rank); mostrarRank();
+}
+
+$('denovo').onclick = () => {
+  $('nome').value = '';
+  telas('prep');
+};
+})();
+</script>
+</body>
+</html>
