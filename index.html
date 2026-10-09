@@ -67,6 +67,8 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li b{color:var(--spot)}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.proxima{border-color:var(--spot)}
+.proxima strong{font:800 17px var(--display);color:var(--spot)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:8px 14px;font:600 14px var(--body);cursor:pointer}
 .chip[aria-pressed=true]{border-color:var(--spot);background:rgba(255,181,71,.14);color:var(--spot)}
@@ -221,6 +223,15 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
       </div>
       <p class="sorteio" id="sorteio2" aria-live="polite"></p>
+      <div class="box" id="fila-box">
+        <strong>Fila de músicas</strong>
+        <p class="hint" id="fila-vazia">Quer cantar várias em sequência? Adicione as próximas aqui. Quando uma acabar, a seguinte começa sozinha.</p>
+        <ul class="lista" id="fila-lista"></ul>
+        <div class="pl-ctrl" style="grid-template-columns:1fr auto">
+          <input id="fila-link" type="url" inputmode="url" placeholder="Link da próxima música" aria-label="Link da próxima música">
+          <button type="button" class="mini" id="fila-add">Adicionar</button>
+        </div>
+      </div>
       <div class="field" id="rec-passo" hidden><label>Usadas recentemente</label><ul class="sug" id="rec-lista2"></ul></div>
     </div>
     <div class="box" id="fora-ajuda" hidden>
@@ -286,6 +297,20 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="bar-row"><span>Tempo</span><div class="track"><div class="fill" id="b-tp"></div></div><b id="v-tp">0</b></div>
     </div>
     </div>
+    <div class="box proxima" id="prox-box" hidden>
+      <strong id="prox-t">Próxima música em 10 s</strong>
+      <span class="hint" id="prox-nome"></span>
+      <div class="duo">
+        <button type="button" class="mini" id="prox-ja">Mesmo cantor, já!</button>
+        <button type="button" class="mini" id="prox-trocar">Trocar cantor</button>
+      </div>
+      <div class="field" id="prox-troca" hidden>
+        <label for="prox-quem">Quem canta agora?</label>
+        <input id="prox-quem" type="text" maxlength="30" autocomplete="off" placeholder="Nome">
+        <button type="button" class="btn" id="prox-cantar">Cantar</button>
+      </div>
+      <button type="button" class="mini" id="prox-parar">Parar a sequência</button>
+    </div>
     <button class="btn" id="denovo">Próximo cantor</button>
     <div class="duo">
       <button class="btn ghost" id="res-rank">Ver ranking</button>
@@ -298,6 +323,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <h2>Músicas da família</h2>
     <p class="sorteio" id="sorteio" aria-live="polite"></p>
     <button class="btn" id="sortear">Sortear e cantar</button>
+    <button class="btn ghost" id="lista-toda">Cantar a lista toda em sequência</button>
     <ul class="lista" id="musicas"></ul>
     <div class="box" id="rec-box" hidden>
       <strong>Usadas recentemente</strong>
@@ -441,7 +467,7 @@ function setModo(m){
 
 /* ---------- fluxo da rodada ---------- */
 function novaRodada(t){
-  tipo = t; duelo = null;
+  tipo = t; duelo = null; fila = []; if(typeof mostrarFila==='function') mostrarFila();
   $('nome').value=''; $('nome1').value=''; $('nome2').value='';
   $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
   $('quem-erro').hidden = true; $('musica-erro').hidden = true; $('erro').hidden = true;
@@ -579,6 +605,7 @@ let liveIndex = -1, jaAvancou = false;
 function estadoPlayer(e){
   if(pausarAoTrocar && e.data===1){ pausarAoTrocar=false; try{ ytPlayer.pauseVideo(); }catch(x){} }
   if(tela==='live' && !terminando){
+    if(e.data===1 && emPlaylist && liveIndex<0){ try{ liveIndex = ytPlayer.getPlaylistIndex(); }catch(x){} }
     if(e.data===0){ encerrar(); return; }
     if(emPlaylist && liveIndex>=0){ let i=-1; try{ i=ytPlayer.getPlaylistIndex(); }catch(x){} if(i>=0 && i!==liveIndex){ jaAvancou=true; try{ ytPlayer.pauseVideo(); }catch(x){} encerrar(); return; } }
   }
@@ -596,6 +623,72 @@ function trocarPl(dir){
 $('pl-ant').onclick = () => trocarPl(-1);
 $('pl-prox').onclick = () => trocarPl(1);
 $('link').addEventListener('input', () => { if(linkOk($('link').value)) carregar($('link').value); });
+
+/* ---------- fila de músicas ---------- */
+let fila = [];
+function nomeDoLink(link){ const m = lerMusicas().find(x=>x.link===link) || lerRecentes().find(x=>x.link===link); return m ? (m.nome || m.titulo) : 'Música da fila'; }
+function mostrarFila(){
+  const ul=$('fila-lista'); ul.textContent=''; $('fila-vazia').hidden = fila.length>0;
+  fila.forEach((link,i)=>{
+    const li=document.createElement('li'); const t=document.createElement('span'); t.textContent=(i+1)+'. '+nomeDoLink(link);
+    const b=document.createElement('button'); b.type='button'; b.className='mini'; b.textContent='Tirar'; b.onclick=()=>{ fila.splice(i,1); mostrarFila(); };
+    li.append(t,b); ul.appendChild(li);
+  });
+}
+$('fila-add').onclick = () => {
+  const l=$('fila-link').value.trim(); $('musica-erro').hidden=true;
+  if(!videoId(l)){ $('musica-erro').textContent='Cole o link de um vídeo do YouTube pra adicionar à fila.'; $('musica-erro').hidden=false; return; }
+  if(!linkOk($('link').value)){ usarLink(l); } else fila.push(l);
+  $('fila-link').value=''; mostrarFila();
+};
+$('lista-toda').onclick = () => {
+  const m = lerMusicas(); if(!m.length) return;
+  novaRodada('solo'); usarLink(m[0].link); fila = m.slice(1).map(x=>x.link); mostrarFila();
+};
+function temProxima(){
+  if(duelo || modo!=='aqui') return false;
+  if(fila.length) return true;
+  if(emPlaylist && ytPlayer && ytPlayer.getPlaylist){
+    if(jaAvancou) return true;
+    try{ const l=ytPlayer.getPlaylist(), i=ytPlayer.getPlaylistIndex(); return !!(l && i < l.length-1); }catch(e){ return false; }
+  }
+  return false;
+}
+function descreverProxima(){
+  if(fila.length) return nomeDoLink(fila[0]);
+  try{ const l=ytPlayer.getPlaylist(), i=ytPlayer.getPlaylistIndex() + (jaAvancou?0:1); return 'Música ' + (i+1) + ' de ' + l.length + ' da playlist'; }catch(e){ return 'Próxima da playlist'; }
+}
+// passa pra próxima música; "pausar" deixa parada pra o próximo cantor apertar Cantar
+function avancarMusica(pausar){
+  if(fila.length){ usarLink(fila.shift()); mostrarFila(); return; }
+  if(emPlaylist){ if(!jaAvancou){ pausar ? trocarPl(1) : (pausarAoTrocar=false, ytPlayer.nextVideo()); } jaAvancou=false; }
+}
+let proxTimer = null;
+function pararProxima(){ clearInterval(proxTimer); proxTimer=null; }
+function agendarProxima(id){
+  pararProxima();
+  if(!temProxima()){ $('prox-box').hidden = true; return; }
+  $('prox-box').hidden = false; $('prox-troca').hidden = true;
+  $('prox-nome').textContent = 'A seguir: ' + descreverProxima();
+  let n = 10; $('prox-t').textContent = 'Próxima música em ' + n + ' s';
+  proxTimer = setInterval(() => {
+    if(id!==revelaId || tela!=='res'){ pararProxima(); return; }
+    n--; $('prox-t').textContent = 'Próxima música em ' + n + ' s';
+    if(n<=0){ pararProxima(); continuar(cantorAtual()); }
+  }, 1000);
+}
+function continuar(nome){
+  pararProxima(); revelaId++;
+  $('prox-box').hidden = true;
+  $('nome').value = nome || '';
+  $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
+  avancarMusica(false);
+  setTimeout(() => iniciarRodada(), 700);
+}
+$('prox-ja').onclick = () => continuar(cantorAtual());
+$('prox-trocar').onclick = () => { pararProxima(); $('prox-t').textContent='Próxima: ' + descreverProxima(); $('prox-nome').textContent=''; $('prox-troca').hidden=false; $('prox-quem').value=''; $('prox-quem').focus(); };
+$('prox-cantar').onclick = () => continuar($('prox-quem').value.trim() || 'Cantor sem nome');
+$('prox-parar').onclick = () => { pararProxima(); $('prox-box').hidden = true; };
 
 /* ---------- músicas usadas recentemente ---------- */
 function lerRecentes(){ try{ return JSON.parse(localStorage.getItem('cantai-recentes')||'[]'); }catch(e){ return []; } }
@@ -716,11 +809,15 @@ $('cantar').onclick = async () => {
     duelo = {nomes:[a,b], i:0, notas:[null,null]};
   }
   if(modo==='aqui' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
+  await iniciarRodada();
+};
+async function iniciarRodada(){
   try{
     stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
   }catch(e){
     mostrarErro(location.protocol==='https:'||location.hostname==='localhost' ? 'O navegador não liberou o microfone. Permita o acesso ao microfone e tente de novo.' : 'O microfone só funciona quando a página abre por um endereço https.');
-    return;
+    if(tela!=='extras') telas('extras');
+    return false;
   }
   ctx = new (window.AudioContext||window.webkitAudioContext)();
   await ctx.resume();
@@ -737,15 +834,16 @@ $('cantar').onclick = async () => {
   telas('live');
   jaAvancou = false; liveIndex = -1;
   if(modo==='aqui' && ytPlayer){
+    pausarAoTrocar = false;
     try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
-    try{ if(emPlaylist) liveIndex = ytPlayer.getPlaylistIndex(); }catch(e){}
     salvarRecente($('link').value);
   }
   await contagem321();
-  if(terminando) return;
+  if(terminando) return true;
   t0 = performance.now();
   timer = setInterval(tick, 50);
-};
+  return true;
+}
 function mostrarErro(t){ $('erro').textContent=t; $('erro').hidden=false; }
 
 function tick(){
@@ -922,7 +1020,7 @@ function resultado(r){
   const id = ++revelaId;
   telas('res');
   const nome = cantorAtual();
-  $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-duelo').hidden = true;
+  $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-duelo').hidden = true; $('prox-box').hidden = true; pararProxima();
   $('denovo').textContent = duelo ? (duelo.i===0 ? 'Agora é a vez de ' + duelo.nomes[1] : 'Novo duelo') : 'Próximo cantor';
   $('res-nome').textContent = nome;
   ['af','es','en','tp'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
@@ -932,6 +1030,7 @@ function resultado(r){
     $('res-coment').textContent = 'Não deu pra ouvir a voz o suficiente. Segure o celular mais perto da boca e tente de novo.';
     if(duelo) $('denovo').textContent = 'Tentar de novo';
     if(duelo) duelo.repetir = true;
+    else setTimeout(() => { if(id===revelaId) agendarProxima(id); }, 800);
     return;
   }
   const melhorAntes = Math.max(-1, ...lerRank().map(x=>x.nota));
@@ -991,6 +1090,7 @@ function resultado(r){
         $('res-duelo').hidden=false; venceuDuelo = true;
       }
       if(fx==='lenda'||fx==='estrela'||recorde||venceuDuelo) confete();
+      setTimeout(() => { if(id===revelaId) agendarProxima(id); }, rapido ? 0 : 1500);
 
     }
   }, rapido ? 0 : 1900);
@@ -1003,13 +1103,14 @@ $('denovo').onclick = () => {
   else if(duelo){ novaRodada('duelo'); }
   else {
     $('nome').value=''; $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
-    if(emPlaylist && modo==='aqui'){ if(!jaAvancou) trocarPl(1); jaAvancou=false; } else { $('link').value=''; $('pl-ctrl').hidden=true; }
+    pararProxima();
+    if(modo==='aqui' && (fila.length || emPlaylist)) avancarMusica(true); else { $('link').value=''; $('pl-ctrl').hidden=true; }
     $('sorteio2').textContent='';
     tipo='solo'; prepararQuem(); telas('quem');
   }
 };
-$('res-rank').onclick = () => { revelaId++; if(duelo && duelo.i===1) duelo=null; telas('rank'); };
-$('res-inicio').onclick = () => { revelaId++; if(duelo && duelo.i===1) duelo=null; telas('home'); };
+$('res-rank').onclick = () => { revelaId++; pararProxima(); if(duelo && duelo.i===1) duelo=null; telas('rank'); };
+$('res-inicio').onclick = () => { revelaId++; pararProxima(); if(duelo && duelo.i===1) duelo=null; telas('home'); };
 
 /* ---------- troféus ---------- */
 $('ver-trofeus').onclick = () => abrirTrofeus(true);
