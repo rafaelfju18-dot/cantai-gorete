@@ -73,6 +73,9 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.busca-box{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px;-webkit-appearance:none}
+.sug li a em.tag-src{color:var(--muted);font-weight:500}
 /* ===== show de abertura ===== */
 .show{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line);
   background:radial-gradient(70% 55% at 50% 30%,#3d0c15 0%,#160709 70%);--pulso:0;--amp:0}
@@ -513,16 +516,23 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <button type="button" id="m-fora" aria-pressed="false">Na TV ou caixa<small>o celular só escuta</small></button>
     </div>
     <div class="field" id="yt-field">
+      <div class="busca-box">
+        <label for="busca-mus">Buscar música</label>
+        <input id="busca-mus" type="search" autocomplete="off" placeholder="Nome da música ou do artista">
+        <ul class="sug" id="busca-res"></ul>
+        <p class="hint" id="busca-nada" hidden>Nenhuma música salva com esse nome.</p>
+        <div class="duo">
+          <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
+          <button type="button" class="mini" id="sortear2">Sortear da lista</button>
+        </div>
+      </div>
       <label for="link">Link do vídeo de karaokê</label>
-      <input id="link" type="url" inputmode="url" placeholder="Cole o link de um vídeo ou de uma playlist">
+      <input id="link" type="url" inputmode="url" placeholder="Cole aqui o link do YouTube (vídeo ou playlist)">
+      <button type="button" class="mini" id="salvar-link" hidden>Salvar na lista da família</button>
       <div class="pl-ctrl" id="pl-ctrl" hidden>
         <button type="button" class="mini" id="pl-ant" aria-label="Música anterior da playlist">‹ Anterior</button>
         <span id="pl-info">Playlist carregada</span>
         <button type="button" class="mini" id="pl-prox" aria-label="Próxima música da playlist">Próxima ›</button>
-      </div>
-      <div class="duo">
-        <button type="button" class="mini" id="sortear2">Sortear da lista</button>
-        <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
       </div>
       <p class="sorteio" id="sorteio2" aria-live="polite"></p>
       <div class="box" id="fila-box">
@@ -824,6 +834,7 @@ function telas(t){
   if(t==='rank') mostrarRank();
   if(t==='musicas') mostrarMusicas();
   if(t==='musicas' || t==='musica') mostrarRecentes();
+  if(t==='musica'){ buscar(); atualizaSalvarLink(); }
   window.scrollTo(0,0);
 }
 const espera = ms => new Promise(r=>setTimeout(r,ms));
@@ -1155,6 +1166,51 @@ function mostrarRecentes(){
     li.append(t,box); ul.appendChild(li);
   });
 }
+
+/* ---------- busca no passo da música ---------- */
+const semAcento = t => (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function salvasParaBusca(){
+  const vistos = {}, l = [];
+  lerMusicas().forEach(m => { if(!vistos[m.link]){ vistos[m.link]=1; l.push({nome:m.nome, link:m.link, de:'Lista da família'}); } });
+  lerRecentes().forEach(r => { if(!vistos[r.link]){ vistos[r.link]=1; l.push({nome:r.titulo, link:r.link, de:'Usada recentemente'}); } });
+  return l;
+}
+function buscar(){
+  const termo = $('busca-mus').value.trim(), ul = $('busca-res'); ul.textContent='';
+  $('busca').href = yt((termo || '') + ' karaokê');
+  $('busca').textContent = termo ? 'Buscar “' + (termo.length>18 ? termo.slice(0,18)+'…' : termo) + '” no YouTube' : 'Buscar no YouTube';
+  if(!termo){ $('busca-nada').hidden = true; return; }
+  const palavras = semAcento(termo).split(/\s+/).filter(Boolean);
+  const achou = salvasParaBusca().filter(x => { const n = semAcento(x.nome); return palavras.every(p => n.indexOf(p) !== -1); }).slice(0,6);
+  $('busca-nada').hidden = achou.length>0;
+  achou.forEach(x => {
+    const li=document.createElement('li'), a=document.createElement('a'); a.href='#';
+    const sp=document.createElement('span'); sp.textContent=x.nome; const sm=document.createElement('small'); sm.textContent=x.de; sp.appendChild(sm);
+    const em=document.createElement('em'); em.textContent='Usar';
+    a.append(sp,em);
+    a.onclick = (e) => { e.preventDefault(); usarLink(x.link); $('sorteio2').textContent='🎤 ' + x.nome; $('busca-mus').value=''; buscar(); atualizaSalvarLink(); };
+    li.appendChild(a); ul.appendChild(li);
+  });
+}
+$('busca-mus').addEventListener('input', buscar);
+$('busca-mus').addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); const p = $('busca-res').querySelector('a'); if(p) p.click(); } });
+// depois de colar um link novo, oferece salvar na lista com o nome buscado
+let ultimoTermo = '';
+$('busca-mus').addEventListener('input', () => { if($('busca-mus').value.trim()) ultimoTermo = $('busca-mus').value.trim(); });
+function atualizaSalvarLink(){
+  const l = $('link').value.trim();
+  const ja = lerMusicas().some(m => m.link===l);
+  $('salvar-link').hidden = !linkOk(l) || ja;
+  if(!$('salvar-link').hidden) $('salvar-link').textContent = 'Salvar na lista da família' + (ultimoTermo ? ' como “' + ultimoTermo + '”' : '');
+}
+$('link').addEventListener('input', atualizaSalvarLink);
+$('salvar-link').onclick = () => {
+  const l = $('link').value.trim(); if(!linkOk(l)) return;
+  let nome = ultimoTermo;
+  if(!nome){ try{ nome = ytPlayer && ytPlayer.getVideoData ? ytPlayer.getVideoData().title : ''; }catch(e){} }
+  const m = lerMusicas(); m.push({nome: nome || 'Música do YouTube', link: l}); salvarMusicas(m);
+  $('salvar-link').hidden = true; $('sorteio2').textContent = '✓ Salva na lista da família';
+};
 
 /* ---------- sugestões por estilo ---------- */
 const ESTILOS = {
