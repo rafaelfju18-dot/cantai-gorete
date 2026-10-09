@@ -68,6 +68,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.virar-tv{display:block;text-align:center;text-decoration:none;padding:14px;font-size:15px}
 /* conexão com a TV (celular) */
 .conexao{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;border:1px dashed var(--line);background:var(--panel)}
 .conexao.ok{border-style:solid;border-color:var(--good)}
@@ -80,7 +81,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 /* ===== modo TV ===== */
 body.tv{padding:0;overflow:hidden;height:100vh}
 body.tv .wrap{display:none}
-#tv{position:fixed;inset:0;display:flex;flex-direction:column;padding:3vh 3.5vw;gap:2.5vh;font-size:1.6vw}
+#tv{position:fixed;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;padding:3vh 3.5vw;gap:2.5vh;font-size:1.6vw}
 .tv-topo{display:flex;justify-content:space-between;align-items:center}
 .tv-topo .logo{font-size:3.2vw}
 .tv-codigo{display:flex;align-items:center;gap:1.2vw;font-size:1.3vw;color:var(--muted)}
@@ -99,13 +100,13 @@ body.tv .wrap{display:none}
 .tv-rank li{display:grid;grid-template-columns:3vw 1fr auto;gap:1vw;align-items:center;padding:1.2vh 1.2vw;border-radius:1vw;background:var(--bg);font-size:1.7vw;font-variant-numeric:tabular-nums}
 .tv-rank li b{color:var(--spot);font:800 2vw var(--display)}
 .tv-rank li small{color:var(--muted);margin-left:.6vw;font-size:1.2vw}
-#tv-palco{position:fixed;inset:0;background:#000;display:flex;flex-direction:column}
+#tv-palco{position:fixed;top:0;right:0;bottom:0;left:0;background:#000;display:flex;flex-direction:column}
 #tv-player-box{flex:1;position:relative}
-#tv-player-box iframe{position:absolute;inset:0;width:100%;height:100%}
+#tv-player-box iframe{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%}
 .tv-faixa{display:flex;justify-content:space-between;align-items:center;gap:2vw;padding:1.6vh 2.5vw;background:var(--panel);font-size:1.8vw}
 .tv-faixa b{font:800 2.2vw var(--display);color:var(--spot)}
 .tv-faixa .desafio{border-color:var(--spot);padding:.6vh 1.2vw}
-#tv-res{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(80% 70% at 50% 30%,#2c2152,var(--bg));padding:4vh 4vw}
+#tv-res{position:fixed;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;background:radial-gradient(80% 70% at 50% 30%,#2c2152,var(--bg));padding:4vh 4vw}
 .tv-res-in{width:min(70vw,1100px);display:flex;flex-direction:column;align-items:center;gap:2.2vh;text-align:center}
 .tv-res-in .tag{font-size:1.6vw}
 .tv-res-in .score{font-size:13vw}
@@ -121,9 +122,9 @@ body.tv .wrap{display:none}
 .tv-res-in .mic-pulse span{width:4vw;height:4vw}
 .tv-res-in .placar .lado b{font-size:6vw}
 .tv-res-in .placar{width:60%;font-size:2vw}
-#tv-ativar{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);text-align:center;padding:4vw}
+#tv-ativar{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:var(--bg);text-align:center;padding:4vw}
 #tv-ativar button{font-size:2.6vw;padding:2.4vh 5vw;width:auto;margin-top:3vh}
-#tv-go{position:fixed;inset:0;z-index:25;display:grid;place-items:center;background:rgba(23,18,43,.9)}
+#tv-go{position:fixed;top:0;right:0;bottom:0;left:0;z-index:25;display:grid;place-items:center;background:rgba(23,18,43,.9)}
 #tv-go .go-n{font-size:22vw}
 #tv-go .go-t{font-size:3vw}
 .proxima{border-color:var(--spot)}
@@ -202,7 +203,7 @@ details.ajuda summary{padding:12px 14px;font-weight:600;cursor:pointer}
 details.ajuda .corpo{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px;font-size:14px}
 details.ajuda h3{margin:0;font:800 15px var(--display)}
 details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
-.go{position:fixed;inset:0;z-index:10;background:rgba(23,18,43,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
+.go{position:fixed;top:0;right:0;bottom:0;left:0;z-index:10;background:rgba(23,18,43,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
 .go-n{font:800 168px/1 var(--display);color:var(--spot);letter-spacing:-.05em;animation:pop .9s ease-out}
 .go-t{font:800 22px var(--display);color:var(--fg)}
 .go-s{color:var(--muted);font-size:14px;text-align:center}
@@ -220,7 +221,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 .recorde{text-align:center;margin:0;font:800 16px var(--display);color:var(--good);animation:carimbo .45s both}
 .fill{width:0;transition:width .8s cubic-bezier(.3,1,.4,1)}
 .som{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 10px;font:600 12px var(--body);cursor:pointer}
-#confete{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+#confete{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:20}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -250,13 +251,14 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <button class="grande alt" id="ir-duelo"><b>Duelo</b><small>Dois cantam a mesma música. Quem vence?</small></button>
     <div class="conexao" id="conexao">
       <div class="linha"><b id="cx-titulo">Conectar à TV</b><span class="hint" id="cx-status"></span></div>
-      <p class="hint" id="cx-texto">No navegador da TV, abra <strong>cantai-gorete.netlify.app/tv</strong> e escaneie o QR Code, ou digite o código aqui.</p>
+      <p class="hint" id="cx-texto">No navegador da TV, digite <strong>cantai-gorete.netlify.app/tv</strong>. Depois escaneie o QR Code da TV, ou digite o código aqui.</p>
       <div class="pl-ctrl" style="grid-template-columns:1fr auto" id="cx-form">
         <input id="cx-codigo" class="cod-in" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" aria-label="Código da TV">
         <button type="button" class="mini" id="cx-entrar">Conectar</button>
       </div>
       <button type="button" class="mini" id="cx-sair" hidden>Desconectar da TV</button>
     </div>
+    <a class="mini virar-tv" href="/tv">Este aparelho é a TV? Toque aqui pra abrir a tela da TV</a>
     <div class="atalhos">
       <button class="atalho" data-ir="musicas"><b>Músicas</b><small>lista e sorteio</small></button>
       <button class="atalho" data-ir="rank"><b>Ranking</b><small>da noite</small></button>
@@ -455,7 +457,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <summary>Conectar o celular à TV (recomendado)</summary>
       <div class="corpo">
         <ol>
-          <li>No navegador da TV, abra <strong>cantai-gorete.netlify.app/tv</strong>.</li>
+          <li>No navegador da TV, digite <strong>cantai-gorete.netlify.app</strong> e escolha “Este aparelho é a TV”. Ou digite direto <strong>cantai-gorete.netlify.app/tv</strong>.</li>
           <li>Aperte OK no controle pra ativar o som.</li>
           <li>No celular, escaneie o QR Code da TV, ou toque em “Conectar à TV” no início e digite o código.</li>
           <li>Escolha a música no celular. Ela toca na TV, o celular vira o microfone e a nota aparece na TV.</li>
@@ -559,6 +561,10 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 <div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s" id="go-s">Prepare a voz!</div></div>
 
 <script>
+/* compatibilidade com navegadores de TV mais antigos */
+if(!Object.entries) Object.entries = function(o){ return Object.keys(o).map(function(k){ return [k, o[k]]; }); };
+if(!String.prototype.padStart) String.prototype.padStart = function(n, c){ var s = String(this); c = c || ' '; while(s.length < n) s = c + s; return s; };
+if(!Array.prototype.includes) Array.prototype.includes = function(x){ return this.indexOf(x) !== -1; };
 (() => {
 const $ = id => document.getElementById(id);
 const NOTAS = ['Dó','Dó#','Ré','Ré#','Mi','Fá','Fá#','Sol','Sol#','Lá','Lá#','Si'];
@@ -588,16 +594,20 @@ function telas(t){
   window.scrollTo(0,0);
 }
 const espera = ms => new Promise(r=>setTimeout(r,ms));
-async function contagem321(){
+function contagem321(){
   $('go-nome').textContent = cantorAtual();
   $('go-s').textContent = desafioAtual ? 'Desafio: ' + desafioAtual : (modo==='fora' ? 'Dê o play na TV ou na caixa agora!' : 'Prepare a voz!');
   $('go').hidden = false;
-  for(const n of ['3','2','1']){
-    const el = $('go-n'); el.textContent = n;
-    el.style.animation='none'; void el.offsetWidth; el.style.animation='';
-    await espera(1000);
-  }
-  $('go').hidden = true;
+  const ns = ['3','2','1']; let i = 0;
+  return new Promise(fim => {
+    const passo = () => {
+      if(i>=ns.length){ $('go').hidden = true; fim(); return; }
+      const el = $('go-n'); el.textContent = ns[i++];
+      el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+      setTimeout(passo, 1000);
+    };
+    passo();
+  });
 }
 
 /* ---------- modo de música ---------- */
@@ -995,7 +1005,7 @@ function yin(buf, sr){
 let ctx, stream, analyser, buf, timer, wake;
 let frames, t0, primeiraVoz, ultimaVoz, piso, terminando;
 
-$('cantar').onclick = async () => {
+$('cantar').onclick = () => {
   $('erro').hidden = true;
   if(!duelo && tipo==='duelo'){
     const a=$('nome1').value.trim(), b=$('nome2').value.trim();
@@ -1003,18 +1013,21 @@ $('cantar').onclick = async () => {
     duelo = {nomes:[a,b], i:0, notas:[null,null]};
   }
   if(modo!=='fora' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
-  await iniciarRodada();
+  iniciarRodada();
 };
-async function iniciarRodada(){
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
-  }catch(e){
+function iniciarRodada(){
+  stream = null;
+  const falhou = () => {
     mostrarErro(location.protocol==='https:'||location.hostname==='localhost' ? 'O navegador não liberou o microfone. Permita o acesso ao microfone e tente de novo.' : 'O microfone só funciona quando a página abre por um endereço https.');
     if(tela!=='extras') telas('extras');
     return false;
-  }
-  ctx = new (window.AudioContext||window.webkitAudioContext)();
-  await ctx.resume();
+  };
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve(falhou());
+  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}})
+    .then(st => { stream = st; ctx = new (window.AudioContext||window.webkitAudioContext)(); return ctx.resume(); }, () => null)
+    .then(ok => { if(!stream) return falhou(); return seguirRodada(); });
+}
+function seguirRodada(){
   const src = ctx.createMediaStreamSource(stream);
   analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
   src.connect(analyser);
@@ -1024,7 +1037,7 @@ async function iniciarRodada(){
   $('live-desafio').hidden = !desafioAtual; $('live-desafio').querySelector('span').textContent = desafioAtual;
   palpitesAtuais = (!duelo && $('x-palpite').checked) ? lerPalpites() : [];
   $('nota').textContent = '–'; $('status').textContent = 'Esperando a voz…'; $('tempo').textContent = '0:00'; $('contagem').hidden = true;
-  try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){}
+  try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').then(w => { wake = w; }, () => {}); }catch(e){}
   telas('live');
   jaAvancou = false; liveIndex = -1;
   if(modo==='aqui' && ytPlayer){
@@ -1036,11 +1049,12 @@ async function iniciarRodada(){
     salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual});
     salaAvancar = false; salvarRecente($('link').value);
   }
-  await contagem321();
-  if(terminando) return true;
-  t0 = performance.now();
-  timer = setInterval(tick, 50);
-  return true;
+  return contagem321().then(() => {
+    if(terminando) return true;
+    t0 = performance.now();
+    timer = setInterval(tick, 50);
+    return true;
+  });
 }
 function mostrarErro(t){ $('erro').textContent=t; $('erro').hidden=false; }
 
@@ -1084,11 +1098,11 @@ $('encerrar').onclick = () => encerrar();
 function encerrar(){
   if(terminando) return; terminando = true;
   clearInterval(timer);
-  stream?.getTracks().forEach(t=>t.stop());
-  ctx?.close();
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  if(ctx) ctx.close();
   if(modo==='sala') salaEnviar({t:'stop'});
-  try{ wake?.release(); }catch(e){}
-  try{ ytPlayer?.pauseVideo(); }catch(e){}
+  try{ if(wake) wake.release(); }catch(e){}
+  try{ if(ytPlayer) ytPlayer.pauseVideo(); }catch(e){}
   $('contagem').hidden = true;
   resultado(calcular());
 }
@@ -1110,7 +1124,7 @@ function calcular(){
   const af = 0.7*clamp((prox-0.6)/0.3) + 0.3*clamp((encaixe-0.6)/0.35);
   // estabilidade: oscilação dentro das notas sustentadas
   const desvios = []; let seg = [frames[0]];
-  const fecha = () => { if(seg.length>=4){ const m=seg.reduce((a,f)=>a+f.midi,0)/seg.length; desvios.push(Math.sqrt(seg.reduce((a,f)=>a+(f.midi-m)**2,0)/seg.length)*100); } };
+  const fecha = () => { if(seg.length>=4){ const m=seg.reduce((a,f)=>a+f.midi,0)/seg.length; desvios.push(Math.sqrt(seg.reduce((a,f)=>a+Math.pow(f.midi-m,2),0)/seg.length)*100); } };
   for(let i=1;i<frames.length;i++){
     const f=frames[i], p=frames[i-1];
     if(Math.round(f.midi)===Math.round(p.midi) && f.t-p.t<120) seg.push(f); else { fecha(); seg=[f]; }
