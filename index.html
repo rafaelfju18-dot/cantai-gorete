@@ -68,6 +68,45 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li b{color:var(--spot)}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+input[type=number]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px}
+.box{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.box ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.box strong{font-size:14px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duo>*{min-width:0}
+.extra{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer}
+.extra input{width:20px;height:20px;accent-color:var(--spot);margin-top:2px;flex:none}
+.extra b{display:block;font-size:15px}
+.extra small{color:var(--muted);font-size:13px}
+.palp{display:grid;grid-template-columns:1fr 90px 40px;gap:8px;align-items:center}
+.palp>*{min-width:0}
+.mini{appearance:none;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:10px;padding:10px;font:600 14px var(--body);cursor:pointer}
+.lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lista li{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:14px}
+.lista li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sorteio{text-align:center;font:800 20px var(--display);color:var(--spot);min-height:28px;margin:0}
+.desafio{border:1px dashed var(--spot);border-radius:12px;padding:10px 14px;text-align:center;font-weight:600}
+.desafio small{display:block;color:var(--muted);font-weight:400;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.vez{background:rgba(255,181,71,.12);border:1px solid var(--spot);border-radius:12px;padding:10px 14px;font-weight:600;text-align:center}
+.palpres{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.palpres li{display:flex;justify-content:space-between;gap:8px;padding:6px 10px;border-radius:8px;background:var(--bg);font-variant-numeric:tabular-nums}
+.palpres li.ganhou{outline:1px solid var(--good);color:var(--good)}
+.placar{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;text-align:center}
+.placar .lado{display:flex;flex-direction:column;gap:2px;min-width:0}
+.placar .lado b{font:800 48px/1 var(--display);font-variant-numeric:tabular-nums}
+.placar .lado span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.placar .lado.venceu b{color:var(--spot)}
+.placar .x{color:var(--muted);font-weight:600}
+.trofeus{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.trofeus li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--bg)}
+.trofeus .med{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:800 18px var(--display);color:#2a1a00;background:var(--spot)}
+.trofeus b{display:block}
+.trofeus small{color:var(--muted)}
+details.ajuda{border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+details.ajuda summary{padding:12px 14px;font-weight:600;cursor:pointer}
+details.ajuda .corpo{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px;font-size:14px}
+details.ajuda h3{margin:0;font:800 15px var(--display)}
+details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
 .go{position:fixed;inset:0;z-index:10;background:rgba(23,18,43,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
 .go-n{font:800 168px/1 var(--display);color:var(--spot);letter-spacing:-.05em;animation:pop .9s ease-out}
 .go-t{font:800 22px var(--display);color:var(--fg)}
@@ -97,9 +136,21 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 
   <!-- PREPARAR -->
   <section id="s-prep" class="card">
-    <h2>Quem vai cantar?</h2>
-    <div class="field"><label for="nome">Nome</label><input id="nome" type="text" placeholder="Ex.: Vó Lúcia" autocomplete="off" maxlength="30"></div>
-    <div class="field">
+    <h2 id="prep-titulo">Quem vai cantar?</h2>
+    <div class="vez" id="vez" hidden></div>
+    <div class="field" id="f-tipo">
+      <label>Tipo de rodada</label>
+      <div class="seg">
+        <button type="button" id="t-solo" aria-pressed="true">Solo<small>uma pessoa canta</small></button>
+        <button type="button" id="t-duelo" aria-pressed="false">Duelo<small>dois cantam a mesma música</small></button>
+      </div>
+    </div>
+    <div class="field" id="f-nome"><label for="nome">Nome</label><input id="nome" type="text" placeholder="Ex.: Vó Lúcia" autocomplete="off" maxlength="30"></div>
+    <div class="duo" id="f-duelo" hidden>
+      <div class="field"><label for="nome1">Cantor 1</label><input id="nome1" type="text" placeholder="Ex.: Tio Zé" autocomplete="off" maxlength="30"></div>
+      <div class="field"><label for="nome2">Cantor 2</label><input id="nome2" type="text" placeholder="Ex.: Bia" autocomplete="off" maxlength="30"></div>
+    </div>
+    <div class="field" id="f-musica">
       <label>Onde toca a música?</label>
       <div class="seg">
         <button type="button" id="m-aqui" aria-pressed="true">Neste celular<small>vídeo do YouTube aqui</small></button>
@@ -109,11 +160,54 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
     <div class="field" id="yt-field">
       <label for="link">Link do vídeo de karaokê</label>
       <input id="link" type="url" inputmode="url" placeholder="Cole aqui o link do YouTube">
-      <p class="hint">Não tem o link? <a id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>, copie o link do vídeo e volte aqui.</p>
+      <p class="hint">Não tem o link? <a id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>, copie o link do vídeo e volte aqui. Ou sorteie uma da <a href="#s-musicas" id="ir-lista">lista da família</a>.</p>
+    </div>
+    <div class="box" id="fora-ajuda" hidden>
+      <strong>Como funciona o modo “Na TV ou caixa”</strong>
+      <ol>
+        <li>Coloque o vídeo de karaokê na TV, ou a música no Spotify ou na caixa de som, e deixe pausado no começo.</li>
+        <li>Toque em “Cantar” aqui no celular.</li>
+        <li>Durante a contagem 3, 2, 1, dê o play na TV ou na caixa.</li>
+        <li>Cante segurando o celular perto da boca. Ele vira o microfone: só escuta e dá a nota.</li>
+      </ol>
+      <p class="hint">Quanto mais perto da boca e mais longe da caixa de som, mais justa fica a nota.</p>
+    </div>
+    <label class="extra" for="x-desafio"><input type="checkbox" id="x-desafio"><span><b>Sortear um desafio</b><small>Ex.: cante como robô, cante sem rir.</small></span></label>
+    <label class="extra" for="x-palpite" id="l-palpite"><input type="checkbox" id="x-palpite"><span><b>Palpites da família</b><small>Cada um chuta a nota; quem chegar mais perto ganha ponto.</small></span></label>
+    <div class="box" id="palpites" hidden>
+      <strong>Palpites</strong>
+      <div id="palp-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button type="button" class="mini" id="palp-add">Adicionar palpite</button>
     </div>
     <p class="err" id="erro" hidden></p>
     <button class="btn" id="cantar">Cantar</button>
-    <p class="hint">Segure o celular perto da boca. A música termina sozinha depois de 10 segundos sem voz, ou quando você tocar em “Encerrar”.</p>
+    <p class="hint">A música termina sozinha depois de 10 segundos sem voz, ou quando você tocar em “Encerrar”.</p>
+    <details class="ajuda">
+      <summary>Como usar na TV</summary>
+      <div class="corpo">
+        <p class="hint">Por enquanto, a TV mostra a tela do celular. A versão com placar próprio na TV vem na próxima etapa.</p>
+        <h3>Android</h3>
+        <ol><li>Puxe a barra de cima da tela.</li><li>Toque em “Transmitir tela”, “Smart View” (Samsung) ou “Espelhamento”.</li><li>Escolha a sua TV.</li></ol>
+        <h3>iPhone</h3>
+        <ol><li>Abra a Central de Controle.</li><li>Toque em “Espelhamento de Tela”.</li><li>Escolha a Apple TV ou a TV compatível com AirPlay.</li></ol>
+        <h3>Chromecast ou Google TV</h3>
+        <ol><li>Abra o app Google Home.</li><li>Escolha o aparelho e toque em “Transmitir minha tela”.</li></ol>
+        <h3>Outra opção</h3>
+        <p class="hint" style="margin:0">Abra o vídeo de karaokê direto no YouTube da TV e use o modo “Na TV ou caixa”. Assim o celular fica livre só como microfone.</p>
+      </div>
+    </details>
+  </section>
+
+  <section id="s-musicas" class="card">
+    <h2>Músicas da família</h2>
+    <p class="sorteio" id="sorteio" aria-live="polite"></p>
+    <button class="btn ghost" id="sortear">Sortear música</button>
+    <ul class="lista" id="musicas"></ul>
+    <p class="hint" id="musicas-vazio">Nenhuma música ainda. Adicione as favoritas da família com o nome e o link do YouTube.</p>
+    <div class="field"><label for="mus-nome">Nome da música</label><input id="mus-nome" type="text" placeholder="Ex.: Evidências" maxlength="60" autocomplete="off"></div>
+    <div class="field"><label for="mus-link">Link do YouTube</label><input id="mus-link" type="url" inputmode="url" placeholder="Cole o link do vídeo de karaokê"></div>
+    <p class="err" id="mus-erro" hidden></p>
+    <button class="mini" id="mus-add">Adicionar à lista</button>
   </section>
 
   <!-- AO VIVO -->
@@ -124,6 +218,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
       <div class="meter" aria-hidden="true"><div class="needle" id="agulha"></div></div>
       <div class="meter-scale"><span>baixo</span><span>afinado</span><span>alto</span></div>
     </div>
+    <div class="desafio" id="live-desafio" hidden><small>Desafio</small><span></span></div>
     <div class="countdown" id="contagem" hidden>Encerrando em <span id="cont-n">5</span>…</div>
     <button class="btn stop" id="encerrar">Encerrar</button>
   </section>
@@ -138,6 +233,9 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
     <p class="recorde" id="res-rec" hidden>Novo recorde da noite!</p>
     <p class="comment" id="res-coment"></p>
     <p class="dica" id="res-dica"></p>
+    <div class="desafio" id="res-desafio" hidden><small>Desafio cumprido</small><span></span></div>
+    <div class="box" id="res-palp" hidden><strong>Palpites</strong><ul class="palpres" id="res-palp-lista"></ul></div>
+    <div class="box" id="res-duelo" hidden><strong id="duelo-titulo" style="text-align:center">Resultado do duelo</strong><div class="placar" id="placar"></div></div>
     <div class="bars">
       <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="b-af"></div></div><b id="v-af">0</b></div>
       <div class="bar-row"><span>Estabilidade</span><div class="track"><div class="fill" id="b-es"></div></div><b id="v-es">0</b></div>
@@ -150,31 +248,44 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
   <section class="card" id="s-rank" hidden>
     <h2>Ranking da noite</h2>
     <ol class="rank" id="rank"></ol>
+    <button class="btn" id="ver-trofeus">Encerrar a noite e ver troféus</button>
     <button class="btn ghost" id="zerar">Zerar ranking</button>
+  </section>
+
+  <section class="card" id="s-trof" hidden>
+    <h2>Troféus da noite</h2>
+    <ul class="trofeus" id="trofeus"></ul>
+    <button class="btn" id="trof-voltar">Voltar a cantar</button>
   </section>
 </div>
 <canvas id="confete" hidden></canvas>
 
-<div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s">Prepare a voz!</div></div>
+<div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s" id="go-s">Prepare a voz!</div></div>
 
 <script>
 (() => {
 const $ = id => document.getElementById(id);
 const NOTAS = ['Dó','Dó#','Ré','Ré#','Mi','Fá','Fá#','Sol','Sol#','Lá','Lá#','Si'];
 let modo = 'aqui', ytPlayer = null, ytReady = false, ytQueued = null;
+let tipo = 'solo', duelo = null, desafioAtual = '', palpitesAtuais = [];
+function cantorAtual(){ return duelo ? duelo.nomes[duelo.i] : ($('nome').value.trim() || 'Cantor sem nome'); }
+const DESAFIOS = ['Cante como um robô','Cante sussurrando','Cante sem rir','Cante como cantor de ópera','Cante dançando','Cante de olhos fechados','Cante olhando para alguém da família','Cante como se fosse o último show da sua vida','Cante fazendo careta','Cante como se estivesse tremendo de frio','Cante com a mão no coração o tempo todo','Cante em câmera lenta nos refrões'];
 
 /* ---------- telas ---------- */
 function telas(t){
   $('s-prep').hidden = t!=='prep';
+  $('s-musicas').hidden = t!=='prep' || !!duelo;
   $('s-live').hidden = t!=='live';
   $('s-res').hidden = t!=='res';
-  $('s-rank').hidden = t==='live' || !lerRank().length;
-  $('player-box').hidden = !(modo==='aqui' && ytPlayer && t!=='res');
+  $('s-trof').hidden = t!=='trof';
+  $('s-rank').hidden = !(t==='prep'||t==='res') || !lerRank().length;
+  $('player-box').hidden = !(modo==='aqui' && ytPlayer && (t==='prep'||t==='live'));
   window.scrollTo(0,0);
 }
 const espera = ms => new Promise(r=>setTimeout(r,ms));
 async function contagem321(){
-  $('go-nome').textContent = $('nome').value.trim() || 'Sua vez';
+  $('go-nome').textContent = cantorAtual();
+  $('go-s').textContent = desafioAtual ? 'Desafio: ' + desafioAtual : (modo==='fora' ? 'Dê o play na TV ou na caixa agora!' : 'Prepare a voz!');
   $('go').hidden = false;
   for(const n of ['3','2','1']){
     const el = $('go-n'); el.textContent = n;
@@ -190,8 +301,74 @@ function setModo(m){
   $('m-aqui').setAttribute('aria-pressed', m==='aqui');
   $('m-fora').setAttribute('aria-pressed', m==='fora');
   $('yt-field').hidden = m!=='aqui';
+  $('fora-ajuda').hidden = m!=='fora';
   $('player-box').hidden = m!=='aqui' || !ytPlayer;
 }
+
+/* ---------- tipo de rodada ---------- */
+function setTipo(t){
+  tipo = t;
+  $('t-solo').setAttribute('aria-pressed', t==='solo');
+  $('t-duelo').setAttribute('aria-pressed', t==='duelo');
+  $('f-nome').hidden = t!=='solo';
+  $('f-duelo').hidden = t!=='duelo';
+  $('l-palpite').hidden = t!=='solo';
+  if(t!=='solo'){ $('x-palpite').checked = false; $('palpites').hidden = true; }
+}
+$('t-solo').onclick = () => setTipo('solo');
+$('t-duelo').onclick = () => setTipo('duelo');
+
+/* ---------- palpites ---------- */
+function linhaPalpite(){
+  const row = document.createElement('div'); row.className = 'palp';
+  const n = document.createElement('input'); n.type='text'; n.placeholder='Quem chuta'; n.maxLength=20; n.setAttribute('aria-label','Nome de quem dá o palpite');
+  const v = document.createElement('input'); v.type='number'; v.min=0; v.max=100; v.inputMode='numeric'; v.placeholder='Nota'; v.setAttribute('aria-label','Palpite de nota');
+  const x = document.createElement('button'); x.type='button'; x.className='mini'; x.textContent='×'; x.setAttribute('aria-label','Remover palpite'); x.onclick = () => row.remove();
+  row.append(n,v,x); $('palp-lista').appendChild(row);
+}
+$('x-palpite').onchange = () => { $('palpites').hidden = !$('x-palpite').checked; if($('x-palpite').checked && !$('palp-lista').children.length){ linhaPalpite(); linhaPalpite(); } };
+$('palp-add').onclick = linhaPalpite;
+function lerPalpites(){
+  return [...$('palp-lista').children].map(r=>({nome:r.children[0].value.trim(), v:parseInt(r.children[1].value,10)})).filter(p=>p.nome && !isNaN(p.v));
+}
+function lerPontos(){ try{ return JSON.parse(localStorage.getItem('cantai-palpites')||'{}'); }catch(e){ return {}; } }
+function salvarPontos(o){ try{ localStorage.setItem('cantai-palpites', JSON.stringify(o)); }catch(e){} }
+
+/* ---------- músicas da família ---------- */
+function lerMusicas(){ try{ return JSON.parse(localStorage.getItem('cantai-musicas')||'[]'); }catch(e){ return []; } }
+function salvarMusicas(m){ try{ localStorage.setItem('cantai-musicas', JSON.stringify(m)); }catch(e){} }
+function mostrarMusicas(){
+  const m = lerMusicas(), ul = $('musicas'); ul.textContent='';
+  $('musicas-vazio').hidden = m.length>0; $('sortear').disabled = m.length<1; $('sortear').style.opacity = m.length<1 ? .5 : 1;
+  m.forEach((x,i)=>{
+    const li=document.createElement('li'); const t=document.createElement('span'); t.textContent=x.nome;
+    const b=document.createElement('button'); b.type='button'; b.className='mini'; b.textContent='Remover';
+    b.onclick=()=>{ const l=lerMusicas(); l.splice(i,1); salvarMusicas(l); mostrarMusicas(); };
+    li.append(t,b); ul.appendChild(li);
+  });
+}
+$('mus-add').onclick = () => {
+  const nome=$('mus-nome').value.trim(), link=$('mus-link').value.trim();
+  $('mus-erro').hidden = true;
+  if(!nome || !videoId(link)){ $('mus-erro').textContent='Preencha o nome e um link válido do YouTube.'; $('mus-erro').hidden=false; return; }
+  const l=lerMusicas(); l.push({nome, link}); salvarMusicas(l);
+  $('mus-nome').value=''; $('mus-link').value=''; mostrarMusicas();
+};
+$('sortear').onclick = () => {
+  const m = lerMusicas(); if(!m.length) return;
+  const escolha = sorteia(m); let n = 0;
+  const rapido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const giro = setInterval(() => {
+    $('sorteio').textContent = sorteia(m).nome; n++;
+    if(n>=14 || rapido){
+      clearInterval(giro);
+      $('sorteio').textContent = '🎤 ' + escolha.nome;
+      setModo('aqui'); $('link').value = escolha.link; const id = videoId(escolha.link); if(id) carregar(id);
+      if(typeof tom==='function' && somLigado){ try{ tom(784,0,.15); tom(1047,.12,.3); }catch(e){} }
+    } else if(somLigado){ try{ tom(600+Math.random()*300,0,.05,'square',.04); }catch(e){} }
+  }, 90);
+};
+$('ir-lista').onclick = (e) => { e.preventDefault(); $('s-musicas').scrollIntoView({behavior:'smooth'}); };
 $('m-aqui').onclick = () => setModo('aqui');
 $('m-fora').onclick = () => setModo('fora');
 
@@ -229,7 +406,6 @@ function mostrarRank(){
     li.append(p,w,b); ol.appendChild(li);
   });
 }
-$('zerar').onclick = () => { salvarRank([]); mostrarRank(); };
 mostrarRank();
 
 /* ---------- detecção de tom (YIN simplificado) ---------- */
@@ -254,6 +430,11 @@ let frames, t0, primeiraVoz, ultimaVoz, piso, terminando;
 
 $('cantar').onclick = async () => {
   $('erro').hidden = true;
+  if(!duelo && tipo==='duelo'){
+    const a=$('nome1').value.trim(), b=$('nome2').value.trim();
+    if(!a || !b){ mostrarErro('Escreva o nome dos dois cantores do duelo.'); return; }
+    duelo = {nomes:[a,b], i:0, notas:[null,null]};
+  }
   if(modo==='aqui' && !videoId($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
   try{
     stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
@@ -268,6 +449,9 @@ $('cantar').onclick = async () => {
   src.connect(analyser);
   buf = new Float32Array(analyser.fftSize);
   frames = []; primeiraVoz = 0; ultimaVoz = 0; piso = 0.004; terminando = false;
+  desafioAtual = $('x-desafio').checked ? sorteia(DESAFIOS) : '';
+  $('live-desafio').hidden = !desafioAtual; $('live-desafio').querySelector('span').textContent = desafioAtual;
+  palpitesAtuais = (!duelo && $('x-palpite').checked) ? lerPalpites() : [];
   $('nota').textContent = '–'; $('status').textContent = 'Esperando a voz…'; $('tempo').textContent = '0:00'; $('contagem').hidden = true;
   try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){}
   telas('live');
@@ -444,18 +628,29 @@ let revelaId = 0;
 function resultado(r){
   const id = ++revelaId;
   telas('res');
-  const nome = $('nome').value.trim() || 'Cantor sem nome';
+  const nome = cantorAtual();
+  $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-duelo').hidden = true;
+  $('denovo').textContent = duelo && duelo.i===0 ? 'Agora é a vez de ' + duelo.nomes[1] : 'Próximo cantor';
   $('res-nome').textContent = nome;
   ['af','es','en'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
   $('res-selo').hidden = true; $('res-rec').hidden = true; $('res-coment').textContent=''; $('res-dica').textContent='';
   if(!r){
     $('res-espera').hidden = true; $('res-nota').style.visibility='visible'; $('res-nota').innerHTML = '–';
     $('res-coment').textContent = 'Não deu pra ouvir a voz o suficiente. Segure o celular mais perto da boca e tente de novo.';
+    if(duelo) $('denovo').textContent = 'Tentar de novo';
+    if(duelo) duelo.repetir = true;
     return;
   }
   const melhorAntes = Math.max(-1, ...lerRank().map(x=>x.nota));
   const d = new Date();
-  const rank = lerRank(); rank.push({nome, nota:r.nota, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
+  const rank = lerRank(); rank.push({nome, nota:r.nota, af:r.af, es:r.es, en:r.en, desafio:desafioAtual, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
+  if(duelo) duelo.notas[duelo.i] = r.nota;
+  let ganhadoresPalpite = [];
+  if(palpitesAtuais.length){
+    const melhorDif = Math.min(...palpitesAtuais.map(p=>Math.abs(p.v-r.nota)));
+    ganhadoresPalpite = palpitesAtuais.filter(p=>Math.abs(p.v-r.nota)===melhorDif).map(p=>p.nome);
+    const pts = lerPontos(); ganhadoresPalpite.forEach(n=>pts[n]=(pts[n]||0)+1); salvarPontos(pts);
+  }
   salvarRank(rank);
   const fx = faixa(r.nota), recorde = melhorAntes >= 0 && r.nota > melhorAntes;
   const rapido = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -481,7 +676,28 @@ function resultado(r){
       $('res-coment').textContent = sem(FRASES[fx]);
       $('res-dica').textContent = dica(r);
       ['af','es','en'].forEach((k,i)=>setTimeout(()=>{ if(id!==revelaId) return; $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent=r[k]; }, rapido?0:250*i));
-      if(fx==='lenda'||fx==='estrela'||recorde) confete();
+      if(desafioAtual){ $('res-desafio').hidden=false; $('res-desafio').querySelector('span').textContent=desafioAtual; }
+      if(palpitesAtuais.length){
+        const ul=$('res-palp-lista'); ul.textContent='';
+        palpitesAtuais.slice().sort((a,b)=>Math.abs(a.v-r.nota)-Math.abs(b.v-r.nota)).forEach(p=>{
+          const li=document.createElement('li'); const g=ganhadoresPalpite.includes(p.nome);
+          if(g) li.className='ganhou';
+          const a=document.createElement('span'); a.textContent=p.nome + (g?' ganhou ponto!':'');
+          const b=document.createElement('span'); b.textContent='chutou ' + p.v;
+          li.append(a,b); ul.appendChild(li);
+        });
+        $('res-palp').hidden=false;
+      }
+      let venceuDuelo = false;
+      if(duelo && duelo.i===1 && duelo.notas[0]!==null){
+        const [a,b]=duelo.notas, pl=$('placar'); pl.textContent='';
+        const lado=(nm,v,ven)=>{ const d=document.createElement('div'); d.className='lado'+(ven?' venceu':''); const x=document.createElement('b'); x.textContent=v; const y=document.createElement('span'); y.textContent=nm; d.append(x,y); return d; };
+        const xx=document.createElement('span'); xx.className='x'; xx.textContent='x';
+        pl.append(lado(duelo.nomes[0],a,a>b), xx, lado(duelo.nomes[1],b,b>a));
+        $('duelo-titulo').textContent = a===b ? 'Empate! Revanche?' : (a>b?duelo.nomes[0]:duelo.nomes[1]) + ' venceu o duelo!';
+        $('res-duelo').hidden=false; venceuDuelo = true;
+      }
+      if(fx==='lenda'||fx==='estrela'||recorde||venceuDuelo) confete();
       mostrarRank(); $('s-rank').hidden = false;
     }
   }, rapido ? 0 : 1900);
@@ -489,9 +705,50 @@ function resultado(r){
 
 $('denovo').onclick = () => {
   revelaId++;
-  $('nome').value = '';
+  if(duelo && duelo.repetir){ duelo.repetir = false; }
+  else if(duelo && duelo.i===0){ duelo.i = 1; }
+  else { duelo = null; $('nome').value=''; $('nome1').value=''; $('nome2').value=''; $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true; }
+  prepararTela();
   telas('prep');
 };
+function prepararTela(){
+  const emDuelo = !!duelo;
+  $('f-tipo').hidden = emDuelo; $('f-nome').hidden = emDuelo || tipo!=='solo'; $('f-duelo').hidden = emDuelo || tipo!=='duelo';
+  $('vez').hidden = !emDuelo; if(emDuelo) $('vez').textContent = 'Duelo: vez de ' + duelo.nomes[duelo.i] + (duelo.i===1 ? ' (mesma música)' : '');
+  $('prep-titulo').textContent = emDuelo ? 'Duelo' : 'Quem vai cantar?';
+  $('l-palpite').hidden = emDuelo || tipo!=='solo';
+}
+
+/* ---------- troféus ---------- */
+$('ver-trofeus').onclick = () => {
+  const r = lerRank(), ul = $('trofeus'); ul.textContent='';
+  const pts = lerPontos();
+  const melhor = (k) => r.filter(x=>typeof x[k]==='number').sort((a,b)=>b[k]-a[k])[0];
+  const cont = {}; r.forEach(x=>cont[x.nome]=(cont[x.nome]||0)+1);
+  const corajoso = Object.entries(cont).sort((a,b)=>b[1]-a[1])[0];
+  const desafiante = r.filter(x=>x.desafio).length ? Object.entries(r.filter(x=>x.desafio).reduce((o,x)=>(o[x.nome]=(o[x.nome]||0)+1,o),{})).sort((a,b)=>b[1]-a[1])[0] : null;
+  const palpiteiro = Object.entries(pts).sort((a,b)=>b[1]-a[1])[0];
+  const itens = [];
+  const c = melhor('nota'); if(c) itens.push(['1º','Campeão da noite', c.nome, 'nota ' + c.nota]);
+  const af = melhor('af'); if(af) itens.push(['♪','Mais afinado', af.nome, 'afinação ' + af.af]);
+  const es = melhor('es'); if(es) itens.push(['≡','Voz mais firme', es.nome, 'estabilidade ' + es.es]);
+  const en = melhor('en'); if(en) itens.push(['!','Mais animado', en.nome, 'energia ' + en.en]);
+  if(corajoso) itens.push(['★','Mais corajoso', corajoso[0], corajoso[1] + (corajoso[1]>1?' apresentações':' apresentação')]);
+  if(desafiante) itens.push(['?','Rei dos desafios', desafiante[0], desafiante[1] + (desafiante[1]>1?' desafios':' desafio')]);
+  if(palpiteiro) itens.push(['◎','Rei do palpite', palpiteiro[0], palpiteiro[1] + (palpiteiro[1]>1?' acertos':' acerto')]);
+  if(!itens.length){ const li=document.createElement('li'); li.textContent='Ninguém cantou ainda. Bora começar!'; ul.appendChild(li); }
+  itens.forEach(([m,t,n,d])=>{
+    const li=document.createElement('li'); const md=document.createElement('span'); md.className='med'; md.textContent=m;
+    const tx=document.createElement('span'); const b=document.createElement('b'); b.textContent=t+': '+n; const sm=document.createElement('small'); sm.textContent=d;
+    tx.append(b,sm); li.append(md,tx); ul.appendChild(li);
+  });
+  telas('trof');
+  if(itens.length){ confete(); fanfarra('lenda'); }
+};
+$('trof-voltar').onclick = () => telas('prep');
+$('zerar').onclick = () => { salvarRank([]); salvarPontos({}); mostrarRank(); telas('prep'); };
+
+mostrarMusicas();
 })();
 </script>
 </body>
