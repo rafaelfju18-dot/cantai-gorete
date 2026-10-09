@@ -20,7 +20,8 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{margin:0}
+html,body{margin:0;overflow-x:hidden}
+#s-boas{overflow-x:clip}
 body{background:radial-gradient(60% 40% at 50% 0%,rgba(255,220,180,.10),transparent 70%),linear-gradient(180deg,rgba(19,8,9,.35) 0,var(--bg) 340px),repeating-linear-gradient(90deg,#3a0a11 0,#5e111b 26px,#3a0a11 52px) 0 0/100% 340px no-repeat;background-color:var(--bg);color:var(--fg);font:16px/1.5 var(--body);min-height:100vh;padding:env(safe-area-inset-top,0) 16px calc(24px + env(safe-area-inset-bottom,0))}
 .wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-block:20px}
 .logo{display:inline-flex;align-items:flex-end;line-height:1;white-space:nowrap}
@@ -73,12 +74,17 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+#salvas-painel{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .busca-box{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
 input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px;-webkit-appearance:none}
 .sug li a em.tag-src{color:var(--muted);font-weight:500}
 /* ===== show de abertura ===== */
-.show{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line);
-  background:radial-gradient(70% 55% at 50% 30%,#3d0c15 0%,#160709 70%);--pulso:0;--amp:0}
+.show{position:relative;aspect-ratio:4/5;max-width:100%;overflow:hidden;margin:-8px -16px 0;width:calc(100% + 32px);max-width:none;
+  background:radial-gradient(60% 50% at 50% 42%,rgba(110,18,32,.55) 0%,transparent 75%);--pulso:0;--amp:0;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 10%,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 10%,#000 88%,transparent 100%)}
+.show-som{position:absolute;right:20px;top:9%;z-index:7;appearance:none;border:1px solid var(--line);background:rgba(19,8,9,.7);color:var(--fg);border-radius:999px;padding:8px 14px;font:600 13px var(--body);cursor:pointer;backdrop-filter:blur(4px)}
+.show-som[aria-pressed=true]{border-color:var(--spot);color:var(--spot)}
+.show-barra{position:absolute;left:32px;right:32px;bottom:10%;z-index:7;height:3px;opacity:.6}
 .luz{position:absolute;left:50%;top:-20%;width:120%;height:90%;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(255,228,190,.18),transparent 70%);opacity:calc(.5 + var(--pulso)*.5);pointer-events:none}
 .cena{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;opacity:0;transform:scale(.94);transition:opacity .35s ease,transform .6s cubic-bezier(.2,1.2,.3,1);pointer-events:none}
 .show[data-cena="1"] .cena[data-c="1"],.show[data-cena="2"] .cena[data-c="2"],.show[data-cena="3"] .cena[data-c="3"],.show[data-cena="4"] .cena[data-c="4"],
@@ -453,12 +459,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         <p class="s-leg" data-entra="6">Escolha como entrar aqui embaixo</p>
       </section>
       <div class="cortina e" aria-hidden="true"></div><div class="cortina d" aria-hidden="true"></div>
-      <button type="button" class="show-play" id="show-play"><span class="tri" aria-hidden="true"></span><b>Assistir o show</b><small>como funciona · com trilha sonora</small></button>
-    </div>
-    <div class="show-ctrl" id="show-ctrl" hidden>
-      <button type="button" class="mini" id="show-pausa">Pausar</button>
-      <div class="barra" aria-hidden="true"><i id="show-prog"></i></div>
-      <button type="button" class="mini" id="show-mudo">Sem som</button>
+      <button type="button" class="show-som" id="show-som" aria-pressed="false"><span aria-hidden="true">♪</span> Ligar a trilha</button>
+      <div class="barra show-barra" aria-hidden="true"><i id="show-prog"></i></div>
     </div>
     <div class="escolha">
       <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante só no celular ou conecte a uma TV ou notebook</small></button>
@@ -524,6 +526,11 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         <div class="duo">
           <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
           <button type="button" class="mini" id="sortear2">Sortear da lista</button>
+        </div>
+        <button type="button" class="mini" id="ver-salvas" aria-expanded="false">Minhas músicas salvas</button>
+        <div id="salvas-painel" hidden>
+          <ul class="sug" id="salvas-lista"></ul>
+          <p class="hint" id="salvas-vazio" hidden>Você ainda não salvou nenhuma música. Busque no YouTube, cole o link e toque em “Salvar na lista da família”.</p>
         </div>
       </div>
       <label for="link">Link do vídeo de karaokê</label>
@@ -835,7 +842,7 @@ function telas(t){
   if(t==='rank') mostrarRank();
   if(t==='musicas') mostrarMusicas();
   if(t==='musicas' || t==='musica') mostrarRecentes();
-  if(t==='musica'){ buscar(); atualizaSalvarLink(); }
+  if(t==='musica'){ buscar(); atualizaSalvarLink(); mostrarSalvas(); $('salvas-painel').hidden = true; }
   window.scrollTo(0,0);
 }
 const espera = ms => new Promise(r=>setTimeout(r,ms));
@@ -1194,6 +1201,19 @@ function buscar(){
   });
 }
 $('busca-mus').addEventListener('input', buscar);
+function mostrarSalvas(){
+  const l = salvasParaBusca(), ul = $('salvas-lista'); ul.textContent='';
+  $('ver-salvas').textContent = 'Minhas músicas salvas' + (l.length ? ' (' + l.length + ')' : '');
+  $('salvas-vazio').hidden = l.length>0;
+  l.forEach(x => {
+    const li=document.createElement('li'), a=document.createElement('a'); a.href='#';
+    const sp=document.createElement('span'); sp.textContent=x.nome; const sm=document.createElement('small'); sm.textContent=x.de; sp.appendChild(sm);
+    const em=document.createElement('em'); em.textContent='Usar'; a.append(sp,em);
+    a.onclick = (e) => { e.preventDefault(); usarLink(x.link); $('sorteio2').textContent='🎤 ' + x.nome; $('salvas-painel').hidden=true; $('ver-salvas').setAttribute('aria-expanded','false'); atualizaSalvarLink(); };
+    li.appendChild(a); ul.appendChild(li);
+  });
+}
+$('ver-salvas').onclick = () => { const abrir = $('salvas-painel').hidden; mostrarSalvas(); $('salvas-painel').hidden = !abrir; $('ver-salvas').setAttribute('aria-expanded', abrir); };
 $('busca-mus').addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); const p = $('busca-res').querySelector('a'); if(p) p.click(); } });
 // depois de colar um link novo, oferece salvar na lista com o nome buscado
 let ultimoTermo = '';
@@ -1863,13 +1883,14 @@ function iniciarTV(){
 }
 
 /* ======================= BOAS-VINDAS E MODO DO APARELHO ======================= */
-/* ---------- show de abertura (sincronizado com a trilha) ---------- */
-// trilha: swing a ~199 bpm; 1 batida = 0,3019 s; cada cena dura 16 batidas
+/* ---------- show de abertura: passa sozinho, em loop, como parte da página ----------
+   trilha: swing a ~199 bpm; 1 batida = 0,3019 s; cada cena dura 16 batidas */
 const BATIDA = 0.3019, INICIO = 0.116, POR_CENA = 16, CENAS = 8;
-const showSt = { audio:null, an:null, buf:null, raf:0, relogio:null, confeteFeito:false, mudo:false, pausado:false };
+const TOTAL_SHOW = INICIO + CENAS*POR_CENA*BATIDA;
+const showSt = { audio:null, an:null, buf:null, raf:0, relogio:0, som:false, ultimoT:0, confeteFeito:false };
 function showAudio(){
   if(showSt.audio) return showSt.audio;
-  const a = new Audio('/trilha.mp3'); a.preload = 'auto'; showSt.audio = a;
+  const a = new Audio('/trilha.mp3'); a.preload = 'auto'; a.loop = true; showSt.audio = a;
   try{
     const c = ac(); const src = c.createMediaElementSource(a); const an = c.createAnalyser(); an.fftSize = 512;
     src.connect(an); an.connect(c.destination); showSt.an = an; showSt.buf = new Uint8Array(an.fftSize);
@@ -1878,68 +1899,62 @@ function showAudio(){
 }
 function showTempo(){
   const a = showSt.audio;
-  if(showSt.relogio!==null) return (performance.now() - showSt.relogio)/1000;
-  return a ? a.currentTime : 0;
+  if(showSt.som && a && !a.paused) return a.currentTime % TOTAL_SHOW;
+  return ((performance.now() - showSt.relogio)/1000) % TOTAL_SHOW;
 }
 function showQuadro(){
   const el = $('show'), t = showTempo();
+  if(t < showSt.ultimoT){ el.querySelectorAll('[data-entra]').forEach(x => x.classList.remove('on')); showSt.confeteFeito = false; }
+  showSt.ultimoT = t;
   const bt = Math.max(0, (t - INICIO)/BATIDA), b = Math.floor(bt);
   const cena = Math.min(CENAS, Math.floor(b/POR_CENA) + 1), bi = b - (cena-1)*POR_CENA;
-  if(el.getAttribute('data-cena') !== String(cena)) el.setAttribute('data-cena', cena);
+  if(el.getAttribute('data-cena') !== String(cena)){
+    el.setAttribute('data-cena', cena);
+    el.querySelectorAll('.cena:not([data-c="'+cena+'"]) [data-entra]').forEach(x => x.classList.remove('on'));
+  }
   el.querySelectorAll('.cena[data-c="'+cena+'"] [data-entra]').forEach(x => x.classList.toggle('on', bi >= +x.getAttribute('data-entra')));
   el.style.setProperty('--pulso', Math.pow(1 - (bt % 1), 3).toFixed(3));
-  let amp = 0;
-  if(showSt.an && !showSt.mudo){ showSt.an.getByteTimeDomainData(showSt.buf); let q=0; for(let i=0;i<showSt.buf.length;i++){ const v=(showSt.buf[i]-128)/128; q+=v*v; } amp = Math.sqrt(q/showSt.buf.length); }
-  else amp = 0.12*Math.pow(1 - (bt % 1), 2);
+  let amp;
+  if(showSt.som && showSt.an){ showSt.an.getByteTimeDomainData(showSt.buf); let q=0; for(let i=0;i<showSt.buf.length;i++){ const v=(showSt.buf[i]-128)/128; q+=v*v; } amp = Math.sqrt(q/showSt.buf.length); }
+  else amp = 0.14*Math.pow(1 - (bt % 1), 2);
   el.style.setProperty('--amp', Math.min(.5, amp).toFixed(3));
   if(cena===6) $('show-nota').textContent = Math.round(87*Math.min(1, bi/8));
-  if(cena===6 && bi>=9 && !showSt.confeteFeito){ showSt.confeteFeito = true; confete(); }
-  const total = INICIO + CENAS*POR_CENA*BATIDA;
-  $('show-prog').style.width = Math.min(100, t/total*100) + '%';
-  const acabou = t >= total || (showSt.audio && showSt.audio.ended && showSt.relogio===null);
-  if(acabou){ showFim(); return; }
-  if(tela==='boas' && !showSt.pausado) showSt.raf = requestAnimationFrame(showQuadro);
+  if(cena===6 && bi>=9 && !showSt.confeteFeito){ showSt.confeteFeito = true; if(showSt.som) confete(); }
+  $('show-prog').style.width = (t/TOTAL_SHOW*100) + '%';
+  if(tela==='boas') showSt.raf = requestAnimationFrame(showQuadro);
 }
-function showFim(){
-  cancelAnimationFrame(showSt.raf);
-  const el = $('show'); el.setAttribute('data-cena', CENAS);
-  el.querySelectorAll('.cena[data-c="'+CENAS+'"] [data-entra]').forEach(x => x.classList.add('on'));
-  el.classList.remove('tocando'); $('show-play').querySelector('b').textContent = 'Ver de novo';
-  $('show-play').querySelector('small').textContent = 'o show tem 39 segundos';
-  $('show-pausa').textContent = 'Pausar';
-}
-function showTocar(){
+function showIniciarAuto(){
   const el = $('show');
-  showSt.confeteFeito = false; showSt.pausado = false; showSt.relogio = null;
+  cancelAnimationFrame(showSt.raf);
+  showSt.relogio = performance.now(); showSt.ultimoT = 0;
   el.querySelectorAll('[data-entra]').forEach(x => x.classList.remove('on'));
-  el.setAttribute('data-cena', 1); el.classList.add('tocando');
-  setTimeout(() => el.classList.add('aberta'), 150);
-  $('show-ctrl').hidden = false;
-  const a = showAudio();
-  try{ ac().resume(); }catch(e){}
-  a.muted = showSt.mudo; a.currentTime = 0;
-  const p = a.play();
-  if(p && p.catch) p.catch(() => { showSt.relogio = performance.now(); });   // sem áudio: segue no relógio
-  cancelAnimationFrame(showSt.raf); showSt.raf = requestAnimationFrame(showQuadro);
+  el.classList.remove('aberta'); el.setAttribute('data-cena', 1);
+  setTimeout(() => el.classList.add('aberta'), 400);   // a cortina abre sozinha
+  showSt.raf = requestAnimationFrame(showQuadro);
 }
 function showParar(){
   cancelAnimationFrame(showSt.raf);
   const a = showSt.audio; if(!a || a.paused) return;
-  // abaixa o volume aos poucos e pausa
   let v = 1; const d = setInterval(() => { v -= .1; a.volume = Math.max(0, v); if(v<=0){ clearInterval(d); a.pause(); a.volume = 1; } }, 40);
 }
-function showPreparar(){
-  const el = $('show'); el.setAttribute('data-cena', 1); el.classList.remove('tocando','aberta');
-  el.querySelectorAll('[data-entra]').forEach(x => x.classList.add('on'));
-  $('show-ctrl').hidden = true;
-}
-$('show-play').onclick = showTocar;
-$('show-pausa').onclick = () => {
-  const a = showSt.audio; if(!a) return;
-  if(showSt.pausado){ showSt.pausado = false; if(showSt.relogio===null) a.play(); $('show-pausa').textContent='Pausar'; showSt.raf = requestAnimationFrame(showQuadro); }
-  else { showSt.pausado = true; a.pause(); $('show-pausa').textContent='Continuar'; }
+function showPreparar(){ showIniciarAuto(); }
+$('show-som').onclick = () => {
+  const btn = $('show-som');
+  if(!showSt.som){
+    const a = showAudio();
+    try{ ac().resume(); }catch(e){}
+    a.currentTime = showTempo();   // entra no ponto em que o show está
+    const p = a.play();
+    showSt.som = true;
+    if(p && p.catch) p.catch(() => { showSt.som = false; btn.setAttribute('aria-pressed','false'); btn.innerHTML = '<span aria-hidden="true">♪</span> Ligar a trilha'; });
+    btn.setAttribute('aria-pressed','true'); btn.innerHTML = '<span aria-hidden="true">♪</span> Desligar a trilha';
+  } else {
+    const a = showSt.audio; const t = showTempo();
+    showSt.som = false; if(a) a.pause();
+    showSt.relogio = performance.now() - t*1000;   // continua sem som do mesmo ponto
+    btn.setAttribute('aria-pressed','false'); btn.innerHTML = '<span aria-hidden="true">♪</span> Ligar a trilha';
+  }
 };
-$('show-mudo').onclick = () => { showSt.mudo = !showSt.mudo; if(showSt.audio) showSt.audio.muted = showSt.mudo; $('show-mudo').textContent = showSt.mudo ? 'Com som' : 'Sem som'; };
 function lerModo(){ try{ return localStorage.getItem('cantai-modo'); }catch(e){ return null; } }
 function salvarModo(m){ try{ if(m) localStorage.setItem('cantai-modo', m); else localStorage.removeItem('cantai-modo'); }catch(e){} }
 function boasVindasDeVolta(){
