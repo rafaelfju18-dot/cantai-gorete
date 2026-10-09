@@ -100,10 +100,10 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .atalho small{color:var(--muted);font-size:12px}
 .btn.cantar{font-size:22px;padding:20px}
 a.mini{display:block;text-align:center;text-decoration:none}
-.abas{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
-.abas button{appearance:none;background:none;border:0;color:var(--muted);font:600 13px var(--body);padding:10px 4px;border-radius:12px;cursor:pointer}
+.abas{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:5px;box-shadow:0 6px 18px rgba(10,6,24,.45)}
+.abas button{appearance:none;background:none;border:0;color:var(--muted);font:600 13px var(--body);padding:10px 2px;border-radius:12px;cursor:pointer;min-width:0}
 .abas button[aria-current=page]{color:var(--spot);background:rgba(255,181,71,.1)}
-body.com-abas .wrap{padding-bottom:84px}
+body.com-abas .wrap{padding-bottom:72px}
 
 input[type=number]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px}
 .box{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
@@ -174,6 +174,12 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <span class="passo" id="passo" hidden></span>
     <button type="button" class="som" id="som" aria-pressed="true">Som: ligado</button>
   </header>
+  <nav class="abas" id="abas" aria-label="Menu">
+  <button data-aba="home" aria-current="page">Início</button>
+  <button data-aba="musicas">Músicas</button>
+  <button data-aba="rank">Ranking</button>
+  <button data-aba="ajuda">Como usar</button>
+</nav>
   <div id="player-box" hidden><div id="player"></div></div>
 
   <!-- INÍCIO -->
@@ -410,12 +416,6 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   </section>
 </div>
 
-<nav class="abas" id="abas" aria-label="Menu">
-  <button data-aba="home" aria-current="page">Início</button>
-  <button data-aba="musicas">Músicas</button>
-  <button data-aba="rank">Ranking</button>
-  <button data-aba="ajuda">Como usar</button>
-</nav>
 <canvas id="confete" hidden></canvas>
 
 <div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s" id="go-s">Prepare a voz!</div></div>
