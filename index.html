@@ -68,6 +68,62 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+/* ===== boas-vindas ===== */
+#s-boas{gap:18px;padding-block:6px 10px}
+.boas-t{margin:0;font:800 34px/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.boas-t span{color:var(--spot)}
+.boas-s{margin:0;color:var(--muted);font-size:16px}
+.anim{position:relative;height:230px;border-radius:20px;background:linear-gradient(180deg,#221a3d,#1b1533);border:1px solid var(--line);overflow:hidden}
+.a-tv{position:absolute;left:18px;top:26px;width:200px}
+.a-tela{height:118px;border-radius:10px;background:#0e0a1e;border:3px solid #3a2f63;position:relative;overflow:hidden}
+.a-pe{width:60px;height:8px;margin:6px auto 0;border-radius:4px;background:#3a2f63}
+.a-qr,.a-video,.a-nota,.a-placar{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;opacity:0;transition:opacity .5s,transform .5s}
+.a-qr svg{width:64px;height:64px;background:#fff;border-radius:6px;padding:5px}
+.a-video{display:flex;align-items:flex-end;justify-content:center;gap:6px;padding-bottom:28px}
+.a-video span{width:10px;border-radius:3px;background:var(--spot);height:20px;animation:eq .7s ease-in-out infinite alternate}
+.a-video span:nth-child(2){animation-delay:.15s}.a-video span:nth-child(3){animation-delay:.3s}.a-video span:nth-child(4){animation-delay:.45s}.a-video span:nth-child(5){animation-delay:.6s}
+.a-video em{position:absolute;top:10px;left:0;right:0;text-align:center;font-style:normal;font-size:11px;color:var(--muted)}
+@keyframes eq{from{height:12px}to{height:52px}}
+.a-nota{font:800 54px/1 var(--display);color:var(--spot);transform:scale(.6)}
+.a-nota small{display:block;font:600 11px var(--body);color:var(--fg);text-align:center;letter-spacing:.06em;text-transform:uppercase}
+.a-cel{position:absolute;right:26px;top:40px;width:86px;height:160px;border-radius:16px;background:#0e0a1e;border:3px solid #4b3f7a;transition:transform .8s cubic-bezier(.3,1.2,.4,1);transform:rotate(5deg)}
+.a-cel-tela{position:absolute;top:8px;right:6px;bottom:8px;left:6px;border-radius:10px;background:var(--panel);overflow:hidden}
+.a-scan{position:absolute;left:0;right:0;height:2px;background:var(--good);box-shadow:0 0 10px var(--good);top:10%;opacity:0}
+.a-mic{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;opacity:0;transition:opacity .4s}
+.a-mic i{width:22px;height:34px;border-radius:11px;background:var(--spot);position:relative}
+.a-mic b{position:absolute;width:44px;height:44px;border-radius:50%;border:2px solid var(--spot);opacity:0}
+.a-ok{position:absolute;left:4px;right:4px;bottom:8px;text-align:center;font-size:10px;font-weight:600;color:var(--good);opacity:0;transition:opacity .4s}
+.a-conf{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;opacity:0}
+.a-conf span{position:absolute;top:-10px;width:6px;height:10px;border-radius:2px}
+.anim[data-p="1"] .a-qr{opacity:1}
+.anim[data-p="2"] .a-qr{opacity:1}
+.anim[data-p="2"] .a-cel{transform:translateX(-62px) translateY(-8px) rotate(-10deg)}
+.anim[data-p="2"] .a-scan{opacity:1;animation:scan 1.2s ease-in-out infinite alternate}
+@keyframes scan{from{top:10%}to{top:86%}}
+.anim[data-p="3"] .a-video{opacity:1}
+.anim[data-p="3"] .a-cel,.anim[data-p="4"] .a-cel{transform:translateX(0) rotate(0)}
+.anim[data-p="3"] .a-mic{opacity:1}
+.anim[data-p="3"] .a-mic b{animation:onda 1.4s ease-out infinite}
+.anim[data-p="3"] .a-mic b.o2{animation-delay:.7s}
+@keyframes onda{from{transform:scale(.6);opacity:.9}to{transform:scale(1.8);opacity:0}}
+.anim[data-p="3"] .a-ok,.anim[data-p="4"] .a-ok{opacity:1}
+.anim[data-p="4"] .a-nota{opacity:1;transform:scale(1)}
+.anim[data-p="4"] .a-conf{opacity:1}
+.anim[data-p="4"] .a-conf span{animation:cai 1.8s linear infinite}
+@keyframes cai{from{transform:translateY(0) rotate(0)}to{transform:translateY(250px) rotate(540deg)}}
+.legenda{display:flex;gap:12px;align-items:flex-start;min-height:62px}
+.legenda .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--spot);color:#2a1a00;display:grid;place-items:center;font:800 17px var(--display)}
+.legenda b{display:block;font:800 19px/1.2 var(--display)}
+.legenda span{color:var(--muted);font-size:14px}
+.pontos{display:flex;gap:8px;justify-content:center}
+.pontos button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer}
+.pontos button[aria-current=true]{background:var(--spot);width:26px;border-radius:5px}
+.escolha{display:grid;gap:10px}
+.boas-rodape{text-align:center;color:var(--muted);font-size:13px;margin:0}
+.voltas{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;color:var(--muted)}
+.voltas b{color:var(--fg)}
+.tv-trocar{appearance:none;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:.6vh 1.2vw;font:600 1.1vw var(--body);cursor:pointer;margin-left:1.5vw}
+@media (prefers-reduced-motion:reduce){.a-cel{transition:none}}
 .virar-tv{display:block;text-align:center;text-decoration:none;padding:14px;font-size:15px}
 /* conexão com a TV (celular) */
 .conexao{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;border:1px dashed var(--line);background:var(--panel)}
@@ -241,8 +297,31 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 </nav>
   <div id="player-box" hidden><div id="player"></div></div>
 
+  <!-- BOAS-VINDAS -->
+  <section id="s-boas" class="tela" hidden>
+    <h1 class="boas-t">Karaokê da família, <span>com nota</span> e disputa.</h1>
+    <p class="boas-s">A TV vira o palco e o celular vira o microfone. Veja como funciona:</p>
+    <div class="anim" id="anim" data-p="1" role="img" aria-label="Animação: a TV mostra um QR Code, o celular escaneia, a pessoa canta e a nota aparece na TV">
+      <div class="a-tv"><div class="a-tela">
+        <div class="a-qr"><svg viewBox='0 0 7 7' aria-hidden='true'><path fill='#17122b' d='M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM1 1v1h1V1zM5 1v1h1V1zM1 5v1h1V5zM4 4h1v1H4zM5 5h1v1H5zM6 4h1v1H6zM4 6h1v1H4zM6 6h1v1H6z'/><path fill='#fff' d='M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z'/></svg></div>
+        <div class="a-video"><em>tocando na TV</em><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="a-nota">87<small>Estrela da noite</small></div>
+      </div><div class="a-pe"></div></div>
+      <div class="a-cel"><div class="a-cel-tela"><div class="a-scan"></div><div class="a-mic"><i></i><b class="o1"></b><b class="o2"></b></div><div class="a-ok">conectado</div></div></div>
+      <div class="a-conf"><span style="left:8%;background:#ffb547;animation-delay:0s"></span><span style="left:20%;background:#5fd39b;animation-delay:0.4s"></span><span style="left:33%;background:#ff7a6b;animation-delay:0.9s"></span><span style="left:46%;background:#b79cff;animation-delay:0.2s"></span><span style="left:58%;background:#ffb547;animation-delay:1.1s"></span><span style="left:70%;background:#5fd39b;animation-delay:0.6s"></span><span style="left:82%;background:#ff7a6b;animation-delay:1.4s"></span><span style="left:92%;background:#f4effc;animation-delay:0.3s"></span><span style="left:14%;background:#b79cff;animation-delay:1.2s"></span><span style="left:64%;background:#f4effc;animation-delay:0.8s"></span></div>
+    </div>
+    <div class="legenda" aria-live="polite"><span class="num" id="anim-n">1</span><div><b id="anim-t"></b><span id="anim-s"></span></div></div>
+    <div class="pontos" id="anim-pontos"><button type="button" aria-label="Passo 1"></button><button type="button" aria-label="Passo 2"></button><button type="button" aria-label="Passo 3"></button><button type="button" aria-label="Passo 4"></button></div>
+    <div class="escolha">
+      <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante, salve músicas e conecte a uma TV quando quiser</small></button>
+      <button class="grande alt" id="entrar-tv"><b>Esta tela é a TV</b><small>Mostra o QR Code, toca as músicas e revela as notas</small></button>
+    </div>
+    <p class="boas-rodape">Suas músicas, ranking e preferências ficam salvos neste navegador.</p>
+  </section>
+
   <!-- INÍCIO -->
   <section id="s-home" class="tela">
+    <div class="voltas" id="voltas" hidden></div>
     <div class="hero">
       <p class="hero-t">Karaokê da família</p>
       <h1>Quem solta a voz primeiro?</h1>
@@ -258,7 +337,6 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       </div>
       <button type="button" class="mini" id="cx-sair" hidden>Desconectar da TV</button>
     </div>
-    <a class="mini virar-tv" href="/tv">Este aparelho é a TV? Toque aqui pra abrir a tela da TV</a>
     <div class="atalhos">
       <button class="atalho" data-ir="musicas"><b>Músicas</b><small>lista e sorteio</small></button>
       <button class="atalho" data-ir="rank"><b>Ranking</b><small>da noite</small></button>
@@ -489,6 +567,13 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       </div>
     </details>
     <details class="ajuda">
+      <summary>Trocar o jeito de usar</summary>
+      <div class="corpo">
+        <p class="hint" style="margin:0">Este navegador lembra que você entrou pelo celular. Pra usar este aparelho como TV, ou ver a apresentação de novo, toque abaixo. Suas músicas continuam salvas.</p>
+        <button type="button" class="mini" id="rever-boas">Voltar à tela de boas-vindas</button>
+      </div>
+    </details>
+    <details class="ajuda">
       <summary>Dicas pra nota ficar justa</summary>
       <div class="corpo">
         <ol>
@@ -505,7 +590,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 <section id="tv" hidden>
   <div class="tv-topo">
     <div class="logo">Cant<span>aí</span> Gorete</div>
-    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b></div>
+    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b><button type="button" class="tv-trocar" id="tv-trocar">Usar como celular</button></div>
   </div>
   <div class="tv-corpo">
     <div class="tv-card">
@@ -574,7 +659,7 @@ function cantorAtual(){ return duelo ? duelo.nomes[duelo.i] : ($('nome').value.t
 const DESAFIOS = ['Cante como um robô','Cante sussurrando','Cante sem rir','Cante como cantor de ópera','Cante dançando','Cante de olhos fechados','Cante olhando para alguém da família','Cante como se fosse o último show da sua vida','Cante fazendo careta','Cante como se estivesse tremendo de frio','Cante com a mão no coração o tempo todo','Cante em câmera lenta nos refrões'];
 
 /* ---------- telas ---------- */
-const TELAS = ['home','quem','musica','extras','live','res','musicas','rank','trof','ajuda'];
+const TELAS = ['boas','home','quem','musica','extras','live','res','musicas','rank','trof','ajuda'];
 const PASSOS = {quem:1, musica:2, extras:3};
 const ABAS = ['home','musicas','rank','trof','ajuda'];
 let tela = 'home';
@@ -1572,16 +1657,56 @@ function iniciarTV(){
   if(window.YT && window.YT.Player) tvYtPronto = true;
 }
 
-if(ehTV){ iniciarTV(); }
-else {
+/* ======================= BOAS-VINDAS E MODO DO APARELHO ======================= */
+const PASSOS_ANIM = [
+  ['Abra o app na TV', 'No navegador da TV, ela mostra um QR Code com o código da sala.'],
+  ['Escaneie com o celular', 'Cada pessoa aponta a câmera pro QR Code e entra na sala.'],
+  ['Escolha a música e cante', 'O vídeo toca na TV e o celular vira o microfone.'],
+  ['A nota aparece na TV', 'Com suspense, título, confete e ranking da noite.']
+];
+let animP = 1, animTimer = null;
+function animIr(n){
+  animP = n; $('anim').setAttribute('data-p', n);
+  $('anim-n').textContent = n; $('anim-t').textContent = PASSOS_ANIM[n-1][0]; $('anim-s').textContent = PASSOS_ANIM[n-1][1];
+  [...$('anim-pontos').children].forEach((b,i)=>b.setAttribute('aria-current', i===n-1));
+}
+function animIniciar(){
+  animIr(1); clearInterval(animTimer);
+  animTimer = setInterval(() => { if(tela!=='boas'){ clearInterval(animTimer); return; } animIr(animP % 4 + 1); }, 3200);
+}
+[...$('anim-pontos').children].forEach((b,i)=>b.onclick = () => { animIr(i+1); animIniciar(); animIr(i+1); });
+function lerModo(){ try{ return localStorage.getItem('cantai-modo'); }catch(e){ return null; } }
+function salvarModo(m){ try{ if(m) localStorage.setItem('cantai-modo', m); else localStorage.removeItem('cantai-modo'); }catch(e){} }
+function boasVindasDeVolta(){
+  const m = lerMusicas().length, r = lerRank().length;
+  const partes = [];
+  if(m) partes.push(m + (m>1?' músicas salvas':' música salva'));
+  if(r) partes.push(r + (r>1?' apresentações no ranking':' apresentação no ranking'));
+  $('voltas').hidden = !partes.length;
+  if(partes.length) $('voltas').innerHTML = '<b>Que bom te ver de volta!</b> ' + partes.join(' e ') + '.';
+}
+function entrarCelular(){
+  salvarModo('celular');
   const q = new URLSearchParams(location.search).get('sala');
   if(q){ celularConectar(q); history.replaceState(null,'','/'); }
   else { try{ const g = JSON.parse(localStorage.getItem('cantai-sala')||'null'); if(g && Date.now()-g.quando < 12*3600e3) celularConectar(g.code); }catch(e){} }
-  mostrarConexao();
+  mostrarConexao(); boasVindasDeVolta(); telas('home');
 }
-
-mostrarMusicas();
-telas('home');
+function entrarTV(){ salvarModo('tv'); if(location.pathname!=='/tv') history.replaceState(null,'','/tv'); iniciarTV(); }
+$('entrar-cel').onclick = entrarCelular;
+$('entrar-tv').onclick = entrarTV;
+$('rever-boas').onclick = () => { salvarModo(null); telas('boas'); animIniciar(); };
+$('tv-trocar').onclick = () => { salvarModo('celular'); location.href = '/'; };
+// rotear lembrando como o aparelho entrou da última vez
+(function(){
+  mostrarMusicas();
+  const q = new URLSearchParams(location.search).get('sala');
+  const salvo = lerModo();
+  if(ehTV){ salvarModo('tv'); iniciarTV(); return; }
+  if(q || salvo==='celular'){ entrarCelular(); return; }   // escaneou o QR: é celular
+  if(salvo==='tv'){ entrarTV(); return; }
+  mostrarConexao(); telas('boas'); animIniciar();
+})();
 })();
 </script>
 </body>
