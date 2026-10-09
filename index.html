@@ -67,6 +67,16 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li b{color:var(--spot)}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:8px 14px;font:600 14px var(--body);cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--spot);background:rgba(255,181,71,.14);color:var(--spot)}
+.sug{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sug li a{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);color:var(--fg);text-decoration:none;font-size:14px}
+.sug li a span{min-width:0}
+.sug li a small{display:block;color:var(--muted);font-size:12px}
+.sug li a em{font-style:normal;color:var(--spot);font-weight:600;font-size:13px;white-space:nowrap}
+.pl-ctrl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.pl-ctrl span{text-align:center;font-size:13px;color:var(--muted)}
 .topo{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;min-height:40px}
 .topo .logo{grid-column:1/3}
 .topo .voltar:not([hidden])~.logo{display:none}
@@ -200,7 +210,12 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     </div>
     <div class="field" id="yt-field">
       <label for="link">Link do vídeo de karaokê</label>
-      <input id="link" type="url" inputmode="url" placeholder="Cole aqui o link do YouTube">
+      <input id="link" type="url" inputmode="url" placeholder="Cole o link de um vídeo ou de uma playlist">
+      <div class="pl-ctrl" id="pl-ctrl" hidden>
+        <button type="button" class="mini" id="pl-ant" aria-label="Música anterior da playlist">‹ Anterior</button>
+        <span id="pl-info">Playlist carregada</span>
+        <button type="button" class="mini" id="pl-prox" aria-label="Próxima música da playlist">Próxima ›</button>
+      </div>
       <div class="duo">
         <button type="button" class="mini" id="sortear2">Sortear da lista</button>
         <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
@@ -284,9 +299,17 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <ul class="lista" id="musicas"></ul>
     <p class="hint" id="musicas-vazio">Nenhuma música ainda. Adicione as favoritas da família com o nome e o link do YouTube.</p>
     <div class="box">
+      <strong>Sugestões por estilo</strong>
+      <p class="hint">Toque numa música pra buscar o karaokê no YouTube. Escolha o vídeo, copie o link e cole no campo “Adicionar música”, logo abaixo.</p>
+      <div class="chips" id="estilos" role="group" aria-label="Estilos musicais"></div>
+      <ul class="sug" id="sugestoes"></ul>
+      <a class="mini" id="ver-playlists" target="_blank" rel="noopener" href="#">Ver playlists de karaokê desse estilo</a>
+      <p class="hint">Dica: uma playlist inteira também vale. Copie o link da playlist e cole aqui ou no passo da música. A cada novo cantor, o app passa pra próxima música.</p>
+    </div>
+    <div class="box" id="add-box">
       <strong>Adicionar música</strong>
       <div class="field"><label for="mus-nome">Nome da música</label><input id="mus-nome" type="text" placeholder="Ex.: Evidências" maxlength="60" autocomplete="off"></div>
-      <div class="field"><label for="mus-link">Link do YouTube</label><input id="mus-link" type="url" inputmode="url" placeholder="Cole o link do vídeo de karaokê"></div>
+      <div class="field"><label for="mus-link">Link do YouTube</label><input id="mus-link" type="url" inputmode="url" placeholder="Link de um vídeo ou de uma playlist"></div>
       <p class="err" id="mus-erro" hidden></p>
       <button class="mini" id="mus-add">Adicionar à lista</button>
     </div>
@@ -441,7 +464,7 @@ $('quem-ok').onclick = () => {
 };
 $('musica-ok').onclick = () => {
   $('musica-erro').hidden = true;
-  if(modo==='aqui' && !videoId($('link').value)){ $('musica-erro').textContent='Cole o link de um vídeo do YouTube, sorteie da lista, ou escolha “Na TV ou caixa”.'; $('musica-erro').hidden=false; return; }
+  if(modo==='aqui' && !linkOk($('link').value)){ $('musica-erro').textContent='Cole o link de um vídeo ou playlist do YouTube, sorteie da lista, ou escolha “Na TV ou caixa”.'; $('musica-erro').hidden=false; return; }
   prepararExtras(); telas('extras');
 };
 $('voltar').onclick = () => {
@@ -484,7 +507,7 @@ function mostrarMusicas(){
 $('mus-add').onclick = () => {
   const nome=$('mus-nome').value.trim(), link=$('mus-link').value.trim();
   $('mus-erro').hidden = true;
-  if(!nome || !videoId(link)){ $('mus-erro').textContent='Preencha o nome e um link válido do YouTube.'; $('mus-erro').hidden=false; return; }
+  if(!nome || !linkOk(link)){ $('mus-erro').textContent='Preencha o nome e um link válido de vídeo ou playlist do YouTube.'; $('mus-erro').hidden=false; return; }
   const l=lerMusicas(); l.push({nome, link}); salvarMusicas(l);
   $('mus-nome').value=''; $('mus-link').value=''; mostrarMusicas();
 };
@@ -497,7 +520,7 @@ function girar(alvo, aoFim){
     if(n>=14 || rapido){
       clearInterval(giro);
       $(alvo).textContent = '🎤 ' + escolha.nome;
-      setModo('aqui'); $('link').value = escolha.link; const id = videoId(escolha.link); if(id) carregar(id);
+      setModo('aqui'); $('link').value = escolha.link; carregar(escolha.link);
       if(somLigado){ try{ tom(784,0,.15); tom(1047,.12,.3); }catch(e){} }
       if(aoFim) aoFim(escolha);
     } else if(somLigado){ try{ tom(600+Math.random()*300,0,.05,'square',.04); }catch(e){} }
@@ -523,15 +546,77 @@ function videoId(u){
   const m = u.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);
   return m ? m[1] : null;
 }
+function playlistId(u){ const m = (u||'').match(/[?&]list=([\w-]{10,})/); return m ? m[1] : null; }
+function linkOk(u){ return !!(videoId(u) || playlistId(u)); }
+let emPlaylist = false, pausarAoTrocar = false;
 window.onYouTubeIframeAPIReady = () => { ytReady = true; if(ytQueued) carregar(ytQueued); };
 (function(){ const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); })();
-function carregar(id){
-  if(!ytReady){ ytQueued = id; return; }
-  $('player-box').hidden = false;
-  if(ytPlayer){ ytPlayer.cueVideoById(id); return; }
-  ytPlayer = new YT.Player('player',{videoId:id,playerVars:{playsinline:1,rel:0}});
+function carregar(link){
+  const v = videoId(link), list = playlistId(link);
+  if(!v && !list) return;
+  if(!ytReady){ ytQueued = link; return; }
+  emPlaylist = !!list;
+  $('pl-ctrl').hidden = !emPlaylist;
+  if(tela==='musica' || tela==='live') $('player-box').hidden = false;
+  if(!ytPlayer){
+    const vars = {playsinline:1, rel:0};
+    if(list){ vars.listType='playlist'; vars.list=list; }
+    ytPlayer = new YT.Player('player',{videoId: list ? undefined : v, playerVars:vars, events:{onStateChange:estadoPlayer}});
+    return;
+  }
+  if(list) ytPlayer.cuePlaylist({listType:'playlist', list, index:0});
+  else ytPlayer.cueVideoById(v);
+  atualizaPl();
 }
-$('link').addEventListener('input', () => { const id = videoId($('link').value); if(id) carregar(id); });
+function estadoPlayer(e){
+  if(pausarAoTrocar && e.data===1){ pausarAoTrocar=false; try{ ytPlayer.pauseVideo(); }catch(x){} }
+  atualizaPl();
+}
+function atualizaPl(){
+  if(!emPlaylist || !ytPlayer || !ytPlayer.getPlaylist) return;
+  const l = ytPlayer.getPlaylist(), i = ytPlayer.getPlaylistIndex();
+  if(l && l.length) $('pl-info').textContent = 'Música ' + (i+1) + ' de ' + l.length;
+}
+function trocarPl(dir){
+  if(!ytPlayer) return; pausarAoTrocar = true;
+  try{ dir>0 ? ytPlayer.nextVideo() : ytPlayer.previousVideo(); }catch(e){}
+}
+$('pl-ant').onclick = () => trocarPl(-1);
+$('pl-prox').onclick = () => trocarPl(1);
+$('link').addEventListener('input', () => { if(linkOk($('link').value)) carregar($('link').value); });
+
+/* ---------- sugestões por estilo ---------- */
+const ESTILOS = {
+  'Sertanejo': [['Evidências','Chitãozinho & Xororó'],['Fio de Cabelo','Chitãozinho & Xororó'],['É o Amor','Zezé Di Camargo & Luciano'],['Infiel','Marília Mendonça'],['Camaro Amarelo','Munhoz & Mariano'],['Ai Se Eu Te Pego','Michel Teló']],
+  'Pagode': [['Cheia de Manias','Raça Negra'],['É Tarde Demais','Raça Negra'],['Deixa Acontecer','Grupo Revelação'],['Tá Escrito','Grupo Revelação'],['Ousadia & Alegria','Thiaguinho']],
+  'MPB': [['Velha Infância','Tribalistas'],['Sozinho','Caetano Veloso'],['Ainda Bem','Marisa Monte'],['Trem-Bala','Ana Vilela'],['Tocando em Frente','Almir Sater'],['Garota de Ipanema','Tom Jobim']],
+  'Rock nacional': [['Pais e Filhos','Legião Urbana'],['Tempo Perdido','Legião Urbana'],['Exagerado','Cazuza'],['Do Seu Lado','Jota Quest'],['Anna Júlia','Los Hermanos'],['Lanterna dos Afogados','Os Paralamas do Sucesso']],
+  'Anos 80 e 90': [['Whisky a Go-Go','Roupa Nova'],['Mania de Você','Rita Lee'],['Fogo e Paixão','Wando'],['Meu Erro','Os Paralamas do Sucesso'],['Você Não Vale Nada','Calcinha Preta']],
+  'Forró': [['Asa Branca','Luiz Gonzaga'],['Xote das Meninas','Luiz Gonzaga'],['Esperando na Janela','Gilberto Gil'],['Anunciação','Alceu Valença'],['Morena Tropicana','Alceu Valença']],
+  'Gospel': [['Raridade','Anderson Freire'],['Ressuscita-me','Aline Barros'],['Sonda-me','Aline Barros'],['Faz Um Milagre em Mim','Regis Danese']],
+  'Infantil': [['Ilariê','Xuxa'],['Lua de Cristal','Xuxa'],['Aquarela','Toquinho'],['Galinha Pintadinha','Galinha Pintadinha']],
+  'Internacional': [['Bohemian Rhapsody','Queen'],['I Will Survive','Gloria Gaynor'],['Dancing Queen','ABBA'],['Shallow','Lady Gaga & Bradley Cooper'],["Livin' on a Prayer",'Bon Jovi'],["Don't Stop Believin'",'Journey']]
+};
+const yt = q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+function mostrarEstilo(nome){
+  document.querySelectorAll('#estilos .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.estilo===nome));
+  const ul = $('sugestoes'); ul.textContent='';
+  ESTILOS[nome].forEach(([musica, artista]) => {
+    const li=document.createElement('li'), a=document.createElement('a');
+    a.href = yt(musica + ' ' + artista + ' karaokê'); a.target='_blank'; a.rel='noopener';
+    const sp=document.createElement('span'); sp.textContent=musica; const sm=document.createElement('small'); sm.textContent=artista; sp.appendChild(sm);
+    const em=document.createElement('em'); em.textContent='Buscar';
+    a.append(sp, em);
+    a.addEventListener('click', () => { $('mus-nome').value = musica + ' – ' + artista; $('mus-link').value=''; });
+    li.appendChild(a); ul.appendChild(li);
+  });
+  $('ver-playlists').href = yt('karaokê ' + nome.toLowerCase()) + '&sp=EgIQAw%3D%3D';
+}
+Object.keys(ESTILOS).forEach((nome,i) => {
+  const b=document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.estilo=nome; b.textContent=nome;
+  b.onclick = () => mostrarEstilo(nome); $('estilos').appendChild(b);
+});
+mostrarEstilo('Sertanejo');
 
 /* ---------- ranking local ---------- */
 function lerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-rank')||'[]'); }catch(e){ return []; } }
@@ -578,7 +663,7 @@ $('cantar').onclick = async () => {
     if(!a || !b){ mostrarErro('Escreva o nome dos dois cantores do duelo.'); return; }
     duelo = {nomes:[a,b], i:0, notas:[null,null]};
   }
-  if(modo==='aqui' && !videoId($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
+  if(modo==='aqui' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
   try{
     stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
   }catch(e){
@@ -853,7 +938,8 @@ $('denovo').onclick = () => {
   else if(duelo){ novaRodada('duelo'); }
   else {
     $('nome').value=''; $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
-    $('link').value=''; $('sorteio2').textContent='';
+    if(emPlaylist && modo==='aqui'){ trocarPl(1); } else { $('link').value=''; $('pl-ctrl').hidden=true; }
+    $('sorteio2').textContent='';
     tipo='solo'; prepararQuem(); telas('quem');
   }
 };
