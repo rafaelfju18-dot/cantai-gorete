@@ -55,7 +55,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .score small{font-size:28px;color:var(--muted)}
 .comment{text-align:center;font-size:17px;margin:0}
 .bars{display:flex;flex-direction:column;gap:12px}
-.bar-row{display:grid;grid-template-columns:96px 1fr 40px;align-items:center;gap:10px;font-size:14px}
+.bar-row{display:grid;grid-template-columns:96px 1fr 44px;align-items:center;gap:10px;font-size:14px}
 .bar-row b{text-align:right;font-variant-numeric:tabular-nums}
 .track{height:10px;border-radius:5px;background:var(--bg);overflow:hidden}
 .fill{height:100%;background:var(--spot);border-radius:5px}
@@ -221,6 +221,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         <a class="mini" id="busca" href="https://www.youtube.com/results?search_query=karaok%C3%AA" target="_blank" rel="noopener">Buscar no YouTube</a>
       </div>
       <p class="sorteio" id="sorteio2" aria-live="polite"></p>
+      <div class="field" id="rec-passo" hidden><label>Usadas recentemente</label><ul class="sug" id="rec-lista2"></ul></div>
     </div>
     <div class="box" id="fora-ajuda" hidden>
       <strong>Como funciona</strong>
@@ -282,6 +283,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="b-af"></div></div><b id="v-af">0</b></div>
       <div class="bar-row"><span>Estabilidade</span><div class="track"><div class="fill" id="b-es"></div></div><b id="v-es">0</b></div>
       <div class="bar-row"><span>Energia</span><div class="track"><div class="fill" id="b-en"></div></div><b id="v-en">0</b></div>
+      <div class="bar-row"><span>Tempo</span><div class="track"><div class="fill" id="b-tp"></div></div><b id="v-tp">0</b></div>
     </div>
     </div>
     <button class="btn" id="denovo">Próximo cantor</button>
@@ -297,6 +299,10 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <p class="sorteio" id="sorteio" aria-live="polite"></p>
     <button class="btn" id="sortear">Sortear e cantar</button>
     <ul class="lista" id="musicas"></ul>
+    <div class="box" id="rec-box" hidden>
+      <strong>Usadas recentemente</strong>
+      <ul class="lista" id="rec-lista"></ul>
+    </div>
     <p class="hint" id="musicas-vazio">Nenhuma música ainda. Adicione as favoritas da família com o nome e o link do YouTube.</p>
     <div class="box">
       <strong>Sugestões por estilo</strong>
@@ -407,6 +413,7 @@ function telas(t){
   document.querySelectorAll('#abas button').forEach(b => { if(b.dataset.aba===t || (t==='trof' && b.dataset.aba==='rank')) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
   if(t==='rank') mostrarRank();
   if(t==='musicas') mostrarMusicas();
+  if(t==='musicas' || t==='musica') mostrarRecentes();
   window.scrollTo(0,0);
 }
 const espera = ms => new Promise(r=>setTimeout(r,ms));
@@ -568,8 +575,13 @@ function carregar(link){
   else ytPlayer.cueVideoById(v);
   atualizaPl();
 }
+let liveIndex = -1, jaAvancou = false;
 function estadoPlayer(e){
   if(pausarAoTrocar && e.data===1){ pausarAoTrocar=false; try{ ytPlayer.pauseVideo(); }catch(x){} }
+  if(tela==='live' && !terminando){
+    if(e.data===0){ encerrar(); return; }
+    if(emPlaylist && liveIndex>=0){ let i=-1; try{ i=ytPlayer.getPlaylistIndex(); }catch(x){} if(i>=0 && i!==liveIndex){ jaAvancou=true; try{ ytPlayer.pauseVideo(); }catch(x){} encerrar(); return; } }
+  }
   atualizaPl();
 }
 function atualizaPl(){
@@ -584,6 +596,46 @@ function trocarPl(dir){
 $('pl-ant').onclick = () => trocarPl(-1);
 $('pl-prox').onclick = () => trocarPl(1);
 $('link').addEventListener('input', () => { if(linkOk($('link').value)) carregar($('link').value); });
+
+/* ---------- músicas usadas recentemente ---------- */
+function lerRecentes(){ try{ return JSON.parse(localStorage.getItem('cantai-recentes')||'[]'); }catch(e){ return []; } }
+function salvarRecente(link){
+  if(!linkOk(link)) return;
+  let titulo = '';
+  try{ titulo = ytPlayer.getVideoData().title || ''; }catch(e){}
+  if(playlistId(link)) titulo = 'Playlist' + (titulo ? ' · ' + titulo : '');
+  const l = lerRecentes().filter(x=>x.link!==link);
+  l.unshift({link, titulo: titulo || 'Vídeo do YouTube'});
+  try{ localStorage.setItem('cantai-recentes', JSON.stringify(l.slice(0,12))); }catch(e){}
+}
+function usarLink(link){ setModo('aqui'); $('link').value = link; carregar(link); }
+function mostrarRecentes(){
+  const l = lerRecentes();
+  // passo da música: atalhos rápidos
+  const u2 = $('rec-lista2'); u2.textContent=''; $('rec-passo').hidden = !l.length;
+  l.slice(0,5).forEach(x=>{
+    const li=document.createElement('li'), a=document.createElement('a'); a.href='#';
+    const sp=document.createElement('span'); sp.textContent=x.titulo; const em=document.createElement('em'); em.textContent='Usar';
+    a.append(sp,em); a.onclick=(e)=>{ e.preventDefault(); usarLink(x.link); $('sorteio2').textContent='🎤 '+x.titulo; };
+    li.appendChild(a); u2.appendChild(li);
+  });
+  // aba músicas: cantar de novo ou salvar na lista
+  const ul = $('rec-lista'); ul.textContent=''; $('rec-box').hidden = !l.length;
+  const salvas = lerMusicas().map(m=>m.link);
+  l.forEach(x=>{
+    const li=document.createElement('li'); const t=document.createElement('span'); t.textContent=x.titulo;
+    const box=document.createElement('span'); box.style.display='flex'; box.style.gap='6px';
+    const c=document.createElement('button'); c.type='button'; c.className='mini'; c.textContent='Cantar';
+    c.onclick=()=>{ novaRodada('solo'); usarLink(x.link); };
+    box.appendChild(c);
+    if(!salvas.includes(x.link)){
+      const sv=document.createElement('button'); sv.type='button'; sv.className='mini'; sv.textContent='Salvar';
+      sv.onclick=()=>{ const m=lerMusicas(); m.push({nome:x.titulo, link:x.link}); salvarMusicas(m); mostrarMusicas(); mostrarRecentes(); };
+      box.appendChild(sv);
+    }
+    li.append(t,box); ul.appendChild(li);
+  });
+}
 
 /* ---------- sugestões por estilo ---------- */
 const ESTILOS = {
@@ -683,7 +735,12 @@ $('cantar').onclick = async () => {
   $('nota').textContent = '–'; $('status').textContent = 'Esperando a voz…'; $('tempo').textContent = '0:00'; $('contagem').hidden = true;
   try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){}
   telas('live');
-  if(modo==='aqui' && ytPlayer){ try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){} }
+  jaAvancou = false; liveIndex = -1;
+  if(modo==='aqui' && ytPlayer){
+    try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
+    try{ if(emPlaylist) liveIndex = ytPlayer.getPlaylistIndex(); }catch(e){}
+    salvarRecente($('link').value);
+  }
   await contagem321();
   if(terminando) return;
   t0 = performance.now();
@@ -747,8 +804,8 @@ function calcular(){
   // vídeos de karaokê às vezes estão fora do Lá 440: descobre o "deslocamento" geral e desconta
   let sx=0, sy=0; frames.forEach(f=>{ const a=2*Math.PI*f.midi; sx+=Math.cos(a); sy+=Math.sin(a); });
   const off = Math.atan2(sy,sx)/(2*Math.PI);
-  let prox = 0; const hist = new Array(12).fill(0);
-  frames.forEach(f => { const m=f.midi-off, n=Math.round(m), c=Math.abs(m-n)*100; prox += c<=15 ? 1 : Math.max(0,(50-c)/35); hist[((n%12)+12)%12]++; });
+  let prox = 0, afinados = 0; const hist = new Array(12).fill(0);
+  frames.forEach(f => { const m=f.midi-off, n=Math.round(m), c=Math.abs(m-n)*100; if(c<=15) afinados++; prox += c<=15 ? 1 : Math.max(0,(50-c)/35); hist[((n%12)+12)%12]++; });
   prox /= frames.length;
   const maior = [0,2,4,5,7,9,11]; let melhor = 0;
   for(let k=0;k<12;k++){ let s=0; maior.forEach(i=>s+=hist[(k+i)%12]); melhor=Math.max(melhor,s); }
@@ -770,8 +827,12 @@ function calcular(){
   const duracao = Math.max(1, (ultimaVoz-primeiraVoz)/1000);
   const presenca = (frames.length*0.05)/duracao;
   const en = 0.5*clamp(faixa/18) + 0.5*clamp(presenca/0.5);
-  const nota = Math.round(100*(0.58*af + 0.25*es + 0.17*en));
-  return {nota, af:Math.round(af*100), es:Math.round(es*100), en:Math.round(en*100)};
+  // tempo: a nota completa só vale com pelo menos 1 minuto de voz; trechos curtos ficam com nota baixa
+  const T = frames.length*0.05, fT = clamp(T/60), fator = Math.pow(fT, 0.6);
+  // quem fica afinado por mais tempo ganha um bônus de até 5 pontos
+  const afinSeg = afinados*0.05, tecnica = 0.58*af + 0.25*es + 0.17*en;
+  const nota = Math.round(Math.min(100, (100*tecnica + 5*clamp(afinSeg/45)*tecnica) * fator));
+  return {nota, af:Math.round(af*100), es:Math.round(es*100), en:Math.round(en*100), tp:Math.round(fT*100), seg:Math.round(T), afinSeg:Math.round(afinSeg), fator};
 }
 
 /* ---------- frases e títulos ---------- */
@@ -779,6 +840,7 @@ const sorteia = a => a[Math.floor(Math.random()*a.length)];
 let ultimaFrase = '';
 function sem(a){ const b=a.filter(x=>x!==ultimaFrase); const f=sorteia(b.length?b:a); ultimaFrase=f; return f; }
 const FRASES = {
+  curto:['Foi só um aperitivo! Canta a música inteira pra valer.','Entrou, cantou um pedacinho e saiu. Os jurados querem mais!','Esquenta concluído. Agora vem a música toda!','Isso foi um teaser. Cadê o show completo?'],
   lenda:['Pode parar tudo: temos uma lenda na sala!','Isso foi show de estádio. A família está de pé!','Arrepiou até o sofá. Que voz!','Alguém liga pro programa de calouros, urgente!'],
   estrela:['Mandou muito bem! A família vai pedir bis.','Afinado, firme e com presença. Que apresentação!','Essa voz merece microfone de ouro.','Brilhou! Só faltou o holofote.'],
   bom:['Mandou bem! Dá pra sentir o ensaio do chuveiro.','Boa! Mais um pouquinho e vira estrela da casa.','Bonito de ver. A plateia aprovou!','Sólido! Ninguém saiu da sala.'],
@@ -792,6 +854,7 @@ const DICAS = {
   top:['Destaque: a afinação foi o ponto forte.','Destaque: que firmeza nas notas longas!','Destaque: energia de sobra, a sala inteira sentiu.']
 };
 const SELOS = {
+  curto:['Só um aperitivo','Esquenta','Teaser'],
   lenda:['Lenda da sala','Rouxinol da família','Voz de ouro'],
   estrela:['Estrela da noite','Estrela do sofá','Show de bola'],
   bom:['Cantor de churrasco','Voz de respeito','Afinado na medida'],
@@ -800,6 +863,8 @@ const SELOS = {
 };
 function faixa(n){ return n>=90?'lenda':n>=80?'estrela':n>=65?'bom':n>=50?'medio':'baixo'; }
 function dica(r){
+  if(r.fator < 0.95) return 'Você cantou ' + r.seg + ' s com voz. A nota completa vale a partir de 1 minuto cantando.';
+  if(r.afinSeg >= 30 && r.af >= 60) return 'Ficou afinado por ' + r.afinSeg + ' s. Isso pesou a favor!';
   const k = [['af',r.af],['es',r.es],['en',r.en]].sort((a,b)=>a[1]-b[1]);
   if(k[0][1] >= 70){ const top = k[2][0]; return DICAS.top[['af','es','en'].indexOf(top)]; }
   if(r.en>=80 && r.af<50) return 'A animação compensou a afinação. A plateia agradece!';
@@ -860,7 +925,7 @@ function resultado(r){
   $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-duelo').hidden = true;
   $('denovo').textContent = duelo ? (duelo.i===0 ? 'Agora é a vez de ' + duelo.nomes[1] : 'Novo duelo') : 'Próximo cantor';
   $('res-nome').textContent = nome;
-  ['af','es','en'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
+  ['af','es','en','tp'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
   $('res-selo').hidden = true; $('res-rec').hidden = true; $('res-coment').textContent=''; $('res-dica').textContent='';
   if(!r){
     $('res-espera').hidden = true; $('res-nota').style.visibility='visible'; $('res-nota').innerHTML = '–';
@@ -899,11 +964,11 @@ function resultado(r){
     })();
     function final(){
       fanfarra(fx);
-      $('res-selo').textContent = sorteia(SELOS[fx]); $('res-selo').hidden = false;
+      $('res-selo').textContent = sorteia(SELOS[r.seg<20 ? 'curto' : fx]); $('res-selo').hidden = false;
       $('res-rec').hidden = !recorde;
-      $('res-coment').textContent = sem(FRASES[fx]);
+      $('res-coment').textContent = sem(FRASES[r.seg<20 ? 'curto' : fx]);
       $('res-dica').textContent = dica(r);
-      ['af','es','en'].forEach((k,i)=>setTimeout(()=>{ if(id!==revelaId) return; $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent=r[k]; }, rapido?0:250*i));
+      ['af','es','en','tp'].forEach((k,i)=>setTimeout(()=>{ if(id!==revelaId) return; $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent = k==='tp' ? r.seg+'s' : r[k]; }, rapido?0:250*i));
       if(desafioAtual){ $('res-desafio').hidden=false; $('res-desafio').querySelector('span').textContent=desafioAtual; }
       if(palpitesAtuais.length){
         const ul=$('res-palp-lista'); ul.textContent='';
@@ -938,7 +1003,7 @@ $('denovo').onclick = () => {
   else if(duelo){ novaRodada('duelo'); }
   else {
     $('nome').value=''; $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
-    if(emPlaylist && modo==='aqui'){ trocarPl(1); } else { $('link').value=''; $('pl-ctrl').hidden=true; }
+    if(emPlaylist && modo==='aqui'){ if(!jaAvancou) trocarPl(1); jaAvancou=false; } else { $('link').value=''; $('pl-ctrl').hidden=true; }
     $('sorteio2').textContent='';
     tipo='solo'; prepararQuem(); telas('quem');
   }
