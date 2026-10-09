@@ -68,6 +68,64 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+/* conexão com a TV (celular) */
+.conexao{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;border:1px dashed var(--line);background:var(--panel)}
+.conexao.ok{border-style:solid;border-color:var(--good)}
+.conexao b{font:800 17px var(--display)}
+.conexao .linha{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.conexao .linha>*{min-width:0}
+.cod-in{text-transform:uppercase;letter-spacing:.3em;font-weight:800;text-align:center}
+.st-ok{color:var(--good)} .st-esp{color:var(--muted)}
+.seg.tres{grid-template-columns:1fr 1fr 1fr}
+/* ===== modo TV ===== */
+body.tv{padding:0;overflow:hidden;height:100vh}
+body.tv .wrap{display:none}
+#tv{position:fixed;inset:0;display:flex;flex-direction:column;padding:3vh 3.5vw;gap:2.5vh;font-size:1.6vw}
+.tv-topo{display:flex;justify-content:space-between;align-items:center}
+.tv-topo .logo{font-size:3.2vw}
+.tv-codigo{display:flex;align-items:center;gap:1.2vw;font-size:1.3vw;color:var(--muted)}
+.tv-codigo b{font:800 2.4vw var(--display);letter-spacing:.25em;color:var(--fg)}
+.tv-corpo{flex:1;min-height:0;display:grid;grid-template-columns:1.1fr 1fr;gap:3vw}
+.tv-card{background:var(--panel);border:1px solid var(--line);border-radius:2vw;padding:3vh 2.5vw;display:flex;flex-direction:column;gap:2vh;min-height:0;overflow:hidden}
+.tv-card h2{font-size:2.4vw}
+.tv-qr{display:flex;gap:2.5vw;align-items:center}
+.tv-qr #qr{background:#fff;border-radius:1.2vw;padding:1vw;width:16vw;height:16vw;flex:none}
+.tv-qr #qr svg,.tv-qr #qr img{width:100%;height:100%;display:block}
+.tv-qr ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:1vh;font-size:1.5vw}
+.tv-grande{font:800 4.2vw/1.05 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.tv-sala{display:flex;flex-wrap:wrap;gap:.8vw}
+.tv-sala span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.6vh 1.2vw;font-weight:600}
+.tv-rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1vh}
+.tv-rank li{display:grid;grid-template-columns:3vw 1fr auto;gap:1vw;align-items:center;padding:1.2vh 1.2vw;border-radius:1vw;background:var(--bg);font-size:1.7vw;font-variant-numeric:tabular-nums}
+.tv-rank li b{color:var(--spot);font:800 2vw var(--display)}
+.tv-rank li small{color:var(--muted);margin-left:.6vw;font-size:1.2vw}
+#tv-palco{position:fixed;inset:0;background:#000;display:flex;flex-direction:column}
+#tv-player-box{flex:1;position:relative}
+#tv-player-box iframe{position:absolute;inset:0;width:100%;height:100%}
+.tv-faixa{display:flex;justify-content:space-between;align-items:center;gap:2vw;padding:1.6vh 2.5vw;background:var(--panel);font-size:1.8vw}
+.tv-faixa b{font:800 2.2vw var(--display);color:var(--spot)}
+.tv-faixa .desafio{border-color:var(--spot);padding:.6vh 1.2vw}
+#tv-res{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(80% 70% at 50% 30%,#2c2152,var(--bg));padding:4vh 4vw}
+.tv-res-in{width:min(70vw,1100px);display:flex;flex-direction:column;align-items:center;gap:2.2vh;text-align:center}
+.tv-res-in .tag{font-size:1.6vw}
+.tv-res-in .score{font-size:13vw}
+.tv-res-in .score small{font-size:3.5vw}
+.tv-res-in .selo{font-size:2vw;padding:.8vh 2vw}
+.tv-res-in .comment{font-size:2.6vw}
+.tv-res-in .dica{font-size:1.6vw}
+.tv-res-in .bars{width:60%;gap:1.4vh}
+.tv-res-in .bar-row{grid-template-columns:12vw 1fr 6vw;font-size:1.6vw}
+.tv-res-in .track{height:1.4vh}
+.tv-res-in .suspense p{font-size:3vw}
+.tv-res-in .mic-pulse{width:10vw;height:10vw}
+.tv-res-in .mic-pulse span{width:4vw;height:4vw}
+.tv-res-in .placar .lado b{font-size:6vw}
+.tv-res-in .placar{width:60%;font-size:2vw}
+#tv-ativar{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);text-align:center;padding:4vw}
+#tv-ativar button{font-size:2.6vw;padding:2.4vh 5vw;width:auto;margin-top:3vh}
+#tv-go{position:fixed;inset:0;z-index:25;display:grid;place-items:center;background:rgba(23,18,43,.9)}
+#tv-go .go-n{font-size:22vw}
+#tv-go .go-t{font-size:3vw}
 .proxima{border-color:var(--spot)}
 .proxima strong{font:800 17px var(--display);color:var(--spot)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -190,6 +248,15 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     </div>
     <button class="grande" id="ir-solo"><b>Cantar solo</b><small>Uma pessoa canta e o app dá a nota</small></button>
     <button class="grande alt" id="ir-duelo"><b>Duelo</b><small>Dois cantam a mesma música. Quem vence?</small></button>
+    <div class="conexao" id="conexao">
+      <div class="linha"><b id="cx-titulo">Conectar à TV</b><span class="hint" id="cx-status"></span></div>
+      <p class="hint" id="cx-texto">No navegador da TV, abra <strong>cantai-gorete.netlify.app/tv</strong> e escaneie o QR Code, ou digite o código aqui.</p>
+      <div class="pl-ctrl" style="grid-template-columns:1fr auto" id="cx-form">
+        <input id="cx-codigo" class="cod-in" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" aria-label="Código da TV">
+        <button type="button" class="mini" id="cx-entrar">Conectar</button>
+      </div>
+      <button type="button" class="mini" id="cx-sair" hidden>Desconectar da TV</button>
+    </div>
     <div class="atalhos">
       <button class="atalho" data-ir="musicas"><b>Músicas</b><small>lista e sorteio</small></button>
       <button class="atalho" data-ir="rank"><b>Ranking</b><small>da noite</small></button>
@@ -214,7 +281,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <!-- PASSO 2: MÚSICA -->
   <section id="s-musica" class="card tela" hidden>
     <h2>Onde toca a música?</h2>
-    <div class="seg">
+    <div class="seg" id="seg-modo">
+      <button type="button" id="m-sala" aria-pressed="false" hidden>Na TV conectada<small>toca na TV, nota na TV</small></button>
       <button type="button" id="m-aqui" aria-pressed="true">Neste celular<small>vídeo do YouTube aqui</small></button>
       <button type="button" id="m-fora" aria-pressed="false">Na TV ou caixa<small>o celular só escuta</small></button>
     </div>
@@ -241,6 +309,10 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         </div>
       </div>
       <div class="field" id="rec-passo" hidden><label>Usadas recentemente</label><ul class="sug" id="rec-lista2"></ul></div>
+    </div>
+    <div class="box" id="sala-ajuda" hidden>
+      <strong>Toca na TV conectada</strong>
+      <p class="hint">Cole o link aqui. Quando você tocar em “Cantar”, o vídeo abre na TV, o celular vira o microfone e a nota aparece na TV.</p>
     </div>
     <div class="box" id="fora-ajuda" hidden>
       <strong>Como funciona</strong>
@@ -380,7 +452,19 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <section class="card tela" id="s-ajuda" hidden>
     <h2>Como usar</h2>
     <details class="ajuda" open>
-      <summary>Mostrar o app na TV</summary>
+      <summary>Conectar o celular à TV (recomendado)</summary>
+      <div class="corpo">
+        <ol>
+          <li>No navegador da TV, abra <strong>cantai-gorete.netlify.app/tv</strong>.</li>
+          <li>Aperte OK no controle pra ativar o som.</li>
+          <li>No celular, escaneie o QR Code da TV, ou toque em “Conectar à TV” no início e digite o código.</li>
+          <li>Escolha a música no celular. Ela toca na TV, o celular vira o microfone e a nota aparece na TV.</li>
+        </ol>
+        <p class="hint">Vários celulares podem entrar na mesma TV. O ranking da noite aparece na tela da TV.</p>
+      </div>
+    </details>
+    <details class="ajuda">
+      <summary>Espelhar a tela do celular</summary>
       <div class="corpo">
         <p class="hint">Por enquanto, a TV mostra a tela do celular. A versão com placar próprio na TV vem na próxima etapa.</p>
         <h3>Android</h3>
@@ -416,6 +500,60 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   </section>
 </div>
 
+<section id="tv" hidden>
+  <div class="tv-topo">
+    <div class="logo">Cant<span>aí</span> Gorete</div>
+    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b></div>
+  </div>
+  <div class="tv-corpo">
+    <div class="tv-card">
+      <p class="tv-grande" id="tv-chamada">Pegue o celular e venha cantar!</p>
+      <div class="tv-qr">
+        <div id="qr" aria-label="QR Code para entrar na sala"></div>
+        <ol>
+          <li>Abra a câmera do celular e aponte pro código.</li>
+          <li>Ou abra <strong>cantai-gorete.netlify.app</strong>, toque em “Conectar à TV” e digite o código.</li>
+          <li>Escolha a música no celular e cante. A nota aparece aqui.</li>
+        </ol>
+      </div>
+      <div><h2 style="font-size:1.8vw;margin-bottom:1vh">Na sala</h2><div class="tv-sala" id="tv-sala"><span>Ninguém ainda</span></div></div>
+    </div>
+    <div class="tv-card">
+      <h2>Ranking da noite</h2>
+      <ol class="tv-rank" id="tv-rank"></ol>
+      <p class="hint" id="tv-rank-vazio" style="font-size:1.5vw">Quem vai abrir a noite?</p>
+    </div>
+  </div>
+  <div id="tv-palco" hidden>
+    <div id="tv-player-box"><div id="tv-player"></div></div>
+    <div class="tv-faixa"><span><b id="tv-cantor"></b> está cantando</span><div class="desafio" id="tv-desafio" hidden><small>Desafio</small><span></span></div><span class="hint" style="font-size:1.4vw">Sala <span id="tv-cod2"></span></span></div>
+  </div>
+  <div id="tv-res" hidden>
+    <div class="tv-res-in">
+      <div class="tag" id="tvr-nome"></div>
+      <div class="suspense" id="tvr-espera"><div class="mic-pulse"><span></span></div><p id="tvr-espera-t">Os jurados estão decidindo…</p></div>
+      <div class="score" id="tvr-nota" style="visibility:hidden">0<small>/100</small></div>
+      <div class="selo" id="tvr-selo" hidden></div>
+      <p class="comment" id="tvr-coment"></p>
+      <p class="dica" id="tvr-dica"></p>
+      <div class="placar" id="tvr-placar" hidden></div>
+      <div class="bars" id="tvr-bars" hidden>
+        <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="tb-af"></div></div><b id="tv-af">0</b></div>
+        <div class="bar-row"><span>Estabilidade</span><div class="track"><div class="fill" id="tb-es"></div></div><b id="tv-es">0</b></div>
+        <div class="bar-row"><span>Energia</span><div class="track"><div class="fill" id="tb-en"></div></div><b id="tv-en">0</b></div>
+        <div class="bar-row"><span>Tempo</span><div class="track"><div class="fill" id="tb-tp"></div></div><b id="tv-tp">0</b></div>
+      </div>
+    </div>
+  </div>
+  <div id="tv-go" hidden><div style="text-align:center"><div class="go-t" id="tv-go-nome"></div><div class="go-n" id="tv-go-n">3</div></div></div>
+  <div id="tv-ativar">
+    <div>
+      <div class="logo" style="font-size:5vw">Cant<span>aí</span> Gorete</div>
+      <p style="font-size:2vw;color:var(--muted);margin:2vh 0 0">Tela da TV pro karaokê da família</p>
+      <button class="btn" id="tv-ok" autofocus>Aperte OK pra começar</button>
+    </div>
+  </div>
+</section>
 <canvas id="confete" hidden></canvas>
 
 <div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s" id="go-s">Prepare a voz!</div></div>
@@ -465,12 +603,16 @@ async function contagem321(){
 /* ---------- modo de música ---------- */
 function setModo(m){
   modo = m;
+  $('m-sala').setAttribute('aria-pressed', m==='sala');
   $('m-aqui').setAttribute('aria-pressed', m==='aqui');
   $('m-fora').setAttribute('aria-pressed', m==='fora');
-  $('yt-field').hidden = m!=='aqui';
+  $('yt-field').hidden = m==='fora';
   $('fora-ajuda').hidden = m!=='fora';
+  $('sala-ajuda').hidden = m!=='sala';
   $('player-box').hidden = m!=='aqui' || !ytPlayer;
+  if(m==='aqui' && linkOk($('link').value)) carregar($('link').value);
 }
+$('m-sala').onclick = () => setModo('sala');
 
 /* ---------- fluxo da rodada ---------- */
 function novaRodada(t){
@@ -534,7 +676,7 @@ $('quem-ok').onclick = () => {
 };
 $('musica-ok').onclick = () => {
   $('musica-erro').hidden = true;
-  if(modo==='aqui' && !linkOk($('link').value)){ $('musica-erro').textContent='Cole o link de um vídeo ou playlist do YouTube, sorteie da lista, ou escolha “Na TV ou caixa”.'; $('musica-erro').hidden=false; return; }
+  if(modo!=='fora' && !linkOk($('link').value)){ $('musica-erro').textContent='Cole o link de um vídeo ou playlist do YouTube, sorteie da lista, ou escolha “Na TV ou caixa”.'; $('musica-erro').hidden=false; return; }
   prepararExtras(); telas('extras');
 };
 $('voltar').onclick = () => {
@@ -590,7 +732,7 @@ function girar(alvo, aoFim){
     if(n>=14 || rapido){
       clearInterval(giro);
       $(alvo).textContent = '🎤 ' + escolha.nome;
-      setModo('aqui'); $('link').value = escolha.link; carregar(escolha.link);
+      if(modo==='fora') setModo(sala.code?'sala':'aqui'); $('link').value = escolha.link; if(modo==='aqui') carregar(escolha.link);
       if(somLigado){ try{ tom(784,0,.15); tom(1047,.12,.3); }catch(e){} }
       if(aoFim) aoFim(escolha);
     } else if(somLigado){ try{ tom(600+Math.random()*300,0,.05,'square',.04); }catch(e){} }
@@ -659,7 +801,7 @@ function trocarPl(dir){
 }
 $('pl-ant').onclick = () => trocarPl(-1);
 $('pl-prox').onclick = () => trocarPl(1);
-$('link').addEventListener('input', () => { if(linkOk($('link').value)) carregar($('link').value); });
+$('link').addEventListener('input', () => { if(modo==='aqui' && linkOk($('link').value)) carregar($('link').value); });
 
 /* ---------- fila de músicas ---------- */
 let fila = [];
@@ -683,7 +825,9 @@ $('lista-toda').onclick = () => {
   novaRodada('solo'); usarLink(m[0].link); fila = m.slice(1).map(x=>x.link); mostrarFila();
 };
 function temProxima(){
-  if(duelo || modo!=='aqui') return false;
+  if(duelo) return false;
+  if(modo==='sala') return fila.length>0 || !!playlistId($('link').value);
+  if(modo!=='aqui') return false;
   if(fila.length) return true;
   if(emPlaylist && ytPlayer && ytPlayer.getPlaylist){
     if(jaAvancou) return true;
@@ -693,11 +837,13 @@ function temProxima(){
 }
 function descreverProxima(){
   if(fila.length) return nomeDoLink(fila[0]);
+  if(modo==='sala') return 'Próxima música da playlist, na TV';
   try{ const l=ytPlayer.getPlaylist(), i=ytPlayer.getPlaylistIndex() + (jaAvancou?0:1); return 'Música ' + (i+1) + ' de ' + l.length + ' da playlist'; }catch(e){ return 'Próxima da playlist'; }
 }
 // passa pra próxima música; "pausar" deixa parada pra o próximo cantor apertar Cantar
 function avancarMusica(pausar){
   if(fila.length){ usarLink(fila.shift()); mostrarFila(); return; }
+  if(modo==='sala'){ if(playlistId($('link').value)) salaAvancar = true; return; }
   if(emPlaylist){ if(!jaAvancou){ pausar ? trocarPl(1) : (pausarAoTrocar=false, ytPlayer.nextVideo()); } jaAvancou=false; }
 }
 let proxTimer = null;
@@ -738,7 +884,7 @@ function salvarRecente(link){
   l.unshift({link, titulo: titulo || 'Vídeo do YouTube'});
   try{ localStorage.setItem('cantai-recentes', JSON.stringify(l.slice(0,12))); }catch(e){}
 }
-function usarLink(link){ setModo('aqui'); $('link').value = link; carregar(link); }
+function usarLink(link){ if(modo==='fora') setModo(sala.code?'sala':'aqui'); $('link').value = link; if(modo==='aqui') carregar(link); }
 function mostrarRecentes(){
   const l = lerRecentes();
   // passo da música: atalhos rápidos
@@ -856,7 +1002,7 @@ $('cantar').onclick = async () => {
     if(!a || !b){ mostrarErro('Escreva o nome dos dois cantores do duelo.'); return; }
     duelo = {nomes:[a,b], i:0, notas:[null,null]};
   }
-  if(modo==='aqui' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
+  if(modo!=='fora' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
   await iniciarRodada();
 };
 async function iniciarRodada(){
@@ -885,6 +1031,10 @@ async function iniciarRodada(){
     pausarAoTrocar = false;
     try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
     salvarRecente($('link').value);
+  }
+  if(modo==='sala'){
+    salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual});
+    salaAvancar = false; salvarRecente($('link').value);
   }
   await contagem321();
   if(terminando) return true;
@@ -936,6 +1086,7 @@ function encerrar(){
   clearInterval(timer);
   stream?.getTracks().forEach(t=>t.stop());
   ctx?.close();
+  if(modo==='sala') salaEnviar({t:'stop'});
   try{ wake?.release(); }catch(e){}
   try{ ytPlayer?.pauseVideo(); }catch(e){}
   $('contagem').hidden = true;
@@ -1079,12 +1230,14 @@ function resultado(r){
     if(duelo) $('denovo').textContent = 'Tentar de novo';
     if(duelo) duelo.repetir = true;
     else setTimeout(() => { if(id===revelaId) agendarProxima(id); }, 800);
+    if(modo==='sala') salaEnviar({t:'result', nome, r:null});
     return;
   }
   const melhorAntes = Math.max(-1, ...lerRank().map(x=>x.nota));
   const d = new Date();
   const rank = lerRank(); rank.push({nome, nota:r.nota, af:r.af, es:r.es, en:r.en, desafio:desafioAtual, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
   if(duelo) duelo.notas[duelo.i] = r.nota;
+  if(modo==='sala') salaEnviar({t:'result', nome, r, desafio:desafioAtual, duelo: duelo ? {nomes:duelo.nomes, notas:duelo.notas, fim: duelo.i===1} : null});
   let ganhadoresPalpite = [];
   if(palpitesAtuais.length){
     const melhorDif = Math.min(...palpitesAtuais.map(p=>Math.abs(p.v-r.nota)));
@@ -1152,7 +1305,7 @@ $('denovo').onclick = () => {
   else {
     $('nome').value=''; $('palp-lista').textContent=''; $('x-palpite').checked=false; $('palpites').hidden=true;
     pararProxima();
-    if(modo==='aqui' && (fila.length || emPlaylist)) avancarMusica(true); else { $('link').value=''; $('pl-ctrl').hidden=true; }
+    if((modo==='aqui' && (fila.length || emPlaylist)) || (modo==='sala' && (fila.length || playlistId($('link').value)))) avancarMusica(true); else { $('link').value=''; $('pl-ctrl').hidden=true; }
     $('sorteio2').textContent='';
     tipo='solo'; prepararQuem(); telas('quem');
   }
@@ -1191,6 +1344,227 @@ function abrirTrofeus(festa){
 }
 $('trof-voltar').onclick = () => telas('home');
 $('zerar').onclick = () => { salvarRank([]); salvarPontos({}); mostrarRank(); };
+
+/* ======================= CONEXÃO TV <-> CELULAR =======================
+   Mensagens curtas (play, stop, resultado) passam pelo ntfy.sh, um serviço
+   gratuito de mensagens em tempo real. A voz nunca sai do celular. */
+const NTFY = 'https://ntfy.sh/';
+const meuId = Math.random().toString(36).slice(2,10);
+const sala = { code:null, es:null, tvViva:false, aoReceber:null };
+let salaAvancar = false;
+const topico = c => 'cantaigorete-sala-' + c;
+function salaEnviar(msg){
+  if(!sala.code) return;
+  msg.de = meuId;
+  fetch(NTFY + topico(sala.code), {method:'POST', body: JSON.stringify(msg)}).catch(()=>{});
+}
+function salaOuvir(code, aoReceber, aoAbrir){
+  if(sala.es) sala.es.close();
+  sala.code = code; sala.aoReceber = aoReceber;
+  sala.es = new EventSource(NTFY + topico(code) + '/sse');
+  sala.es.onopen = () => { aoAbrir && aoAbrir(); };
+  sala.es.onmessage = (e) => {
+    let d; try{ d = JSON.parse(e.data); }catch(x){ return; }
+    if(d.event && d.event!=='message') return;
+    let m; try{ m = JSON.parse(d.message); }catch(x){ return; }
+    if(!m || m.de===meuId) return;
+    sala.aoReceber && sala.aoReceber(m);
+  };
+}
+function salaFechar(){ if(sala.es) sala.es.close(); sala.es=null; sala.code=null; sala.tvViva=false; }
+const ALFA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const novoCodigo = () => Array.from({length:6},()=>ALFA[Math.floor(Math.random()*ALFA.length)]).join('');
+
+/* ---------- lado do celular ---------- */
+function mostrarConexao(){
+  const on = !!sala.code;
+  $('conexao').classList.toggle('ok', on && sala.tvViva);
+  $('cx-titulo').textContent = on ? 'TV ' + sala.code : 'Conectar à TV';
+  $('cx-status').textContent = on ? (sala.tvViva ? 'conectado' : 'procurando a TV…') : '';
+  $('cx-status').className = 'hint ' + (sala.tvViva ? 'st-ok' : 'st-esp');
+  $('cx-texto').hidden = on; $('cx-form').hidden = on; $('cx-sair').hidden = !on;
+  $('m-sala').hidden = !on;
+  $('seg-modo').classList.toggle('tres', on);
+}
+function celularConectar(code){
+  code = (code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length!==6) return false;
+  salaOuvir(code, (m) => {
+    if(m.t==='tv'){ if(!sala.tvViva){ sala.tvViva = true; mostrarConexao(); } }
+    if(m.t==='ended' && tela==='live' && !terminando && modo==='sala') encerrar();
+  }, () => salaEnviar({t:'oi', nome: ($('nome').value.trim() || '')}));
+  try{ localStorage.setItem('cantai-sala', JSON.stringify({code, quando:Date.now()})); }catch(e){}
+  mostrarConexao(); setModo('sala');
+  setTimeout(() => { if(sala.code===code && !sala.tvViva){ salaEnviar({t:'oi'}); } }, 4000);
+  return true;
+}
+$('cx-entrar').onclick = () => { if(!celularConectar($('cx-codigo').value)){ $('cx-status').textContent='o código tem 6 letras e números'; } };
+$('cx-codigo').addEventListener('keydown', e => { if(e.key==='Enter') $('cx-entrar').click(); });
+$('cx-sair').onclick = () => { salaFechar(); try{ localStorage.removeItem('cantai-sala'); }catch(e){} if(modo==='sala') setModo('aqui'); mostrarConexao(); };
+
+/* ---------- lado da TV ---------- */
+const ehTV = location.pathname.replace(/\/+$/,'') === '/tv' || new URLSearchParams(location.search).has('tv');
+let tvPlayer = null, tvYtPronto = false, tvLista = null, tvNaSala = new Map(), tvRevelaId = 0;
+function tvTela(qual){
+  $('tv-palco').hidden = qual!=='palco';
+  $('tv-res').hidden = qual!=='res';
+}
+function tvLerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-tv-rank')||'[]'); }catch(e){ return []; } }
+function tvRank(){
+  const r = tvLerRank(), soma = {};
+  r.forEach(x=>{ soma[x.nome]=soma[x.nome]||{pts:0,n:0}; soma[x.nome].pts+=x.nota; soma[x.nome].n++; });
+  const ol=$('tv-rank'); ol.textContent='';
+  const lst = Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,6);
+  $('tv-rank-vazio').hidden = lst.length>0;
+  lst.forEach(([nome,v],i)=>{
+    const li=document.createElement('li'); const p=document.createElement('span'); p.textContent=(i+1)+'º';
+    const w=document.createElement('span'); w.textContent=nome; const sm=document.createElement('small'); sm.textContent=v.n+(v.n>1?' músicas':' música'); w.appendChild(sm);
+    const b=document.createElement('b'); b.textContent=v.pts; li.append(p,w,b); ol.appendChild(li);
+  });
+}
+function tvSala(){
+  const box=$('tv-sala'); box.textContent='';
+  const nomes=[...new Set([...tvNaSala.values()].filter(Boolean))];
+  const n = tvNaSala.size;
+  if(!n){ const s=document.createElement('span'); s.textContent='Ninguém ainda'; box.appendChild(s); return; }
+  nomes.forEach(x=>{ const s=document.createElement('span'); s.textContent=x; box.appendChild(s); });
+  const semNome = n - nomes.length;
+  if(semNome>0){ const s=document.createElement('span'); s.textContent = semNome + (semNome>1?' celulares conectados':' celular conectado'); box.appendChild(s); }
+}
+function tvQR(code){
+  const url = location.origin + '/?sala=' + code;
+  const s=document.createElement('script');
+  s.src='/qr.js';
+  s.onload = () => { try{ const q = qrcode(0,'M'); q.addData(url); q.make(); $('qr').innerHTML = q.createSvgTag({cellSize:6, margin:0, scalable:true}); }catch(e){} };
+  document.head.appendChild(s);
+}
+function tvComPlayer(token, cb, tent=0){
+  if(token!==tvRevelaId) return;
+  if(!tvYtPronto){ if(tent<40) setTimeout(() => tvComPlayer(token, cb, tent+1), 500); return; }
+  cb();
+}
+function tvTocar(m){
+  const token = tvRevelaId;
+  const v = videoId(m.link), list = playlistId(m.link);
+  $('tv-cantor').textContent = m.nome || 'Alguém';
+  $('tv-desafio').hidden = !m.desafio; $('tv-desafio').querySelector('span').textContent = m.desafio || '';
+  tvTela('palco'); tvIndice = -1;
+  // prepara o vídeo (parado) enquanto a contagem roda
+  let pronto = false, querTocar = false;
+  const tocar = () => { try{ if(list && m.avancar && tvLista===list) tvPlayer.nextVideo(); else { tvPlayer.seekTo(0,true); tvPlayer.playVideo(); } }catch(e){} };
+  tvComPlayer(token, () => {
+    if(!tvPlayer){
+      tvPlayer = new YT.Player('tv-player', {width:'100%', height:'100%', videoId: list ? undefined : v,
+        playerVars: Object.assign({playsinline:1, rel:0}, list ? {listType:'playlist', list} : {}),
+        events:{onStateChange: tvEstado, onReady: () => { pronto = true; if(querTocar && token===tvRevelaId) tocar(); }}});
+      tvLista = list || null;
+      return;
+    }
+    if(!(list && tvLista===list && m.avancar)){
+      if(list){ tvLista = list; tvPlayer.cuePlaylist({listType:'playlist', list, index:0}); }
+      else if(v){ tvLista = null; tvPlayer.cueVideoById(v); }
+    }
+    pronto = true; if(querTocar && token===tvRevelaId) tocar();
+  });
+  $('tv-go-nome').textContent = m.nome || ''; $('tv-go').hidden = false;
+  let n = 3; $('tv-go-n').textContent = n;
+  const t = setInterval(() => {
+    if(token!==tvRevelaId){ clearInterval(t); $('tv-go').hidden = true; return; }
+    n--;
+    if(n>0){ $('tv-go-n').textContent = n; return; }
+    clearInterval(t); $('tv-go').hidden = true;
+    querTocar = true; if(pronto) tocar();
+  }, 1000);
+}
+let tvIndice = -1;
+function tvEstado(e){
+  if($('tv-palco').hidden) return;
+  if(e.data===1 && tvLista && tvIndice<0){ try{ tvIndice = tvPlayer.getPlaylistIndex(); }catch(x){} }
+  if(e.data===0){ salaEnviar({t:'ended'}); return; }
+  if(tvLista && tvIndice>=0){ let i=-1; try{ i=tvPlayer.getPlaylistIndex(); }catch(x){} if(i>=0 && i!==tvIndice){ try{ tvPlayer.pauseVideo(); }catch(x){} salaEnviar({t:'ended'}); } }
+}
+function tvResultado(m){
+  const id = ++tvRevelaId;
+  try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){}
+  $('tv-go').hidden = true;
+  tvTela('res');
+  $('tvr-nome').textContent = m.nome || '';
+  $('tvr-selo').hidden = true; $('tvr-coment').textContent=''; $('tvr-dica').textContent=''; $('tvr-placar').hidden = true; $('tvr-bars').hidden = true;
+  ['af','es','en','tp'].forEach(k=>{ $('tb-'+k).style.width='0%'; $('tv-'+k).textContent='–'; });
+  const el = $('tvr-nota');
+  if(!m.r){
+    $('tvr-espera').hidden = true; el.style.visibility='visible'; el.innerHTML='–';
+    $('tvr-coment').textContent = 'Não deu pra ouvir a voz. Celular mais perto da boca!';
+    setTimeout(() => { if(id===tvRevelaId) tvTela('lobby'); }, 9000);
+    return;
+  }
+  const r = m.r, fx = faixa(r.nota);
+  const rank = tvLerRank(); rank.push({nome:m.nome, nota:r.nota}); try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(rank)); }catch(e){}
+  $('tvr-espera').hidden = false; el.style.visibility='hidden';
+  $('tvr-espera-t').textContent = sorteia(['Os jurados estão decidindo…','Somando os aplausos…','Conferindo cada nota…','Consultando a vó…']);
+  rufar(1.8);
+  setTimeout(() => {
+    if(id!==tvRevelaId) return;
+    $('tvr-espera').hidden = true; el.style.visibility='visible';
+    el.classList.remove('revela'); void el.offsetWidth; el.classList.add('revela');
+    const t0 = performance.now();
+    (function conta(){
+      if(id!==tvRevelaId) return;
+      const k = Math.min(1,(performance.now()-t0)/1400), v = Math.round(r.nota*(1-Math.pow(1-k,3)));
+      el.innerHTML = v + '<small>/100</small>';
+      if(k<1) requestAnimationFrame(conta); else fim();
+    })();
+    function fim(){
+      fanfarra(fx);
+      $('tvr-selo').textContent = sorteia(SELOS[r.seg<20 ? 'curto' : fx]); $('tvr-selo').hidden = false;
+      $('tvr-coment').textContent = sem(FRASES[r.seg<20 ? 'curto' : fx]);
+      $('tvr-dica').textContent = m.desafio ? 'Desafio: ' + m.desafio : dica(r);
+      $('tvr-bars').hidden = false;
+      ['af','es','en','tp'].forEach((k,i)=>setTimeout(()=>{ if(id!==tvRevelaId) return; $('tb-'+k).style.width=r[k]+'%'; $('tv-'+k).textContent = k==='tp' ? r.seg+'s' : r[k]; }, 300*i));
+      let festa = fx==='lenda' || fx==='estrela';
+      if(m.duelo && m.duelo.fim){
+        const [a,b] = m.duelo.notas, pl=$('tvr-placar'); pl.textContent='';
+        const lado=(nm,v,ven)=>{ const d=document.createElement('div'); d.className='lado'+(ven?' venceu':''); const x=document.createElement('b'); x.textContent=v; const y=document.createElement('span'); y.textContent=nm; d.append(x,y); return d; };
+        const xx=document.createElement('span'); xx.className='x'; xx.textContent='x';
+        pl.append(lado(m.duelo.nomes[0],a,a>b), xx, lado(m.duelo.nomes[1],b,b>a)); pl.hidden = false;
+        $('tvr-coment').textContent = a===b ? 'Empate! Revanche?' : (a>b?m.duelo.nomes[0]:m.duelo.nomes[1]) + ' venceu o duelo!';
+        festa = true;
+      }
+      if(festa) confete();
+      tvRank();
+      setTimeout(() => { if(id===tvRevelaId) tvTela('lobby'); }, 14000);
+    }
+  }, 1900);
+}
+function iniciarTV(){
+  document.body.classList.add('tv');
+  $('tv').hidden = false;
+  let code = null;
+  try{ const g = JSON.parse(localStorage.getItem('cantai-tv-sala')||'null'); if(g && Date.now()-g.quando < 12*3600e3) code = g.code; }catch(e){}
+  if(!code){ code = novoCodigo(); try{ localStorage.setItem('cantai-tv-sala', JSON.stringify({code, quando:Date.now()})); }catch(e){} }
+  $('tv-cod').textContent = code; $('tv-cod2').textContent = code;
+  tvQR(code); tvRank(); tvSala();
+  salaOuvir(code, (m) => {
+    if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); salaEnviar({t:'tv'}); }
+    if(m.t==='play'){ if(m.nome) tvNaSala.set(m.de, m.nome); tvSala(); tvRevelaId++; tvTocar(m); salaEnviar({t:'tv'}); }
+    if(m.t==='stop'){ try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){} }
+    if(m.t==='result'){ tvResultado(m); }
+  }, () => salaEnviar({t:'tv'}));
+  const ativar = () => { $('tv-ativar').hidden = true; try{ ac().resume(); tom(660,0,.12,'sine',.05); }catch(e){} };
+  $('tv-ok').onclick = ativar;
+  document.addEventListener('keydown', e => { if(!$('tv-ativar').hidden && (e.key==='Enter' || e.keyCode===13)) ativar(); });
+  const anterior = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = () => { anterior && anterior(); tvYtPronto = true; };
+  if(window.YT && window.YT.Player) tvYtPronto = true;
+}
+
+if(ehTV){ iniciarTV(); }
+else {
+  const q = new URLSearchParams(location.search).get('sala');
+  if(q){ celularConectar(q); history.replaceState(null,'','/'); }
+  else { try{ const g = JSON.parse(localStorage.getItem('cantai-sala')||'null'); if(g && Date.now()-g.quando < 12*3600e3) celularConectar(g.code); }catch(e){} }
+  mostrarConexao();
+}
 
 mostrarMusicas();
 telas('home');
