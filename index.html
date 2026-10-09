@@ -73,6 +73,69 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+/* ===== show de abertura ===== */
+.show{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(70% 55% at 50% 30%,#3d0c15 0%,#160709 70%);--pulso:0;--amp:0}
+.luz{position:absolute;left:50%;top:-20%;width:120%;height:90%;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(255,228,190,.18),transparent 70%);opacity:calc(.5 + var(--pulso)*.5);pointer-events:none}
+.cena{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;opacity:0;transform:scale(.94);transition:opacity .35s ease,transform .6s cubic-bezier(.2,1.2,.3,1);pointer-events:none}
+.show[data-cena="1"] .cena[data-c="1"],.show[data-cena="2"] .cena[data-c="2"],.show[data-cena="3"] .cena[data-c="3"],.show[data-cena="4"] .cena[data-c="4"],
+.show[data-cena="5"] .cena[data-c="5"],.show[data-cena="6"] .cena[data-c="6"],.show[data-cena="7"] .cena[data-c="7"],.show[data-cena="8"] .cena[data-c="8"]{opacity:1;transform:none}
+[data-entra]{opacity:0;transform:translateY(16px) scale(.85);transition:opacity .3s ease,transform .45s cubic-bezier(.2,1.6,.3,1)}
+[data-entra].on{opacity:1;transform:none}
+.pulsa{transform:scale(calc(1 + var(--pulso)*.05))}
+.s-logo{display:flex;flex-direction:column;align-items:center;line-height:.85}
+.s-logo .m-cantai{font-size:76px}
+.s-logo .m-gorete{font-size:56px;margin:-20px 0 0 64px}
+.s-tit{margin:0;font:400 46px/1 var(--poster);text-transform:uppercase;letter-spacing:.01em}
+.s-tit em{font:400 50px var(--script);color:var(--spot);text-transform:none;font-style:normal;display:inline-block;transform:rotate(-6deg)}
+.s-leg{margin:0;font:600 16px var(--body);color:var(--gold);max-width:24ch}
+.s-aparelhos{display:flex;align-items:flex-end;justify-content:center;gap:18px}
+.ap{display:flex;flex-direction:column;align-items:center;gap:8px;font:600 13px var(--body);color:var(--fg)}
+.ap i{display:block;border:3px solid var(--fg);border-radius:6px;background:rgba(230,57,70,.18)}
+.ap-tv{width:96px;height:58px;position:relative}
+.ap-tv::after{content:"";position:absolute;left:50%;bottom:-11px;width:30px;height:6px;margin-left:-15px;border-radius:3px;background:var(--fg)}
+.ap-note{width:74px;height:46px;position:relative;border-bottom-width:6px!important}
+.ap-cel{width:30px;height:54px;border-radius:8px!important}
+.s-scan{position:relative;width:250px;height:150px}
+.sc-tv{position:absolute;left:0;top:10px;width:170px;height:110px;border:4px solid var(--fg);border-radius:10px;background:#0b0405;display:grid;place-items:center}
+.sc-tv svg{width:62px;height:62px;background:#fff;border-radius:6px;padding:5px}
+.sc-cel{position:absolute;right:6px;top:0;width:62px;height:118px;border:4px solid var(--fg);border-radius:14px;background:var(--panel);overflow:hidden;transform-origin:bottom center}
+.sc-cel.on{transform:rotate(-12deg) translateX(-26px)}
+.sc-cel b{position:absolute;left:0;right:0;height:3px;background:var(--good);box-shadow:0 0 10px var(--good);animation:scan 1.1s ease-in-out infinite alternate}
+.s-cartas{position:relative;width:250px;height:150px}
+.carta{position:absolute;left:50%;top:50%;width:170px;padding:14px 16px;margin:-38px 0 0 -85px;border-radius:14px;background:var(--fg);color:var(--bg);text-align:left;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.carta b{display:block;font:400 22px/1 var(--poster);text-transform:uppercase}
+.carta small{font-size:12px;opacity:.75}
+.carta:nth-child(1).on{transform:translate(-40px,-46px) rotate(-9deg)}
+.carta:nth-child(2).on{transform:translate(44px,-4px) rotate(7deg)}
+.carta:nth-child(3).on{transform:translate(-6px,44px) rotate(-2deg);background:var(--spot);color:var(--ink)}
+.s-mic{position:relative;width:150px;height:170px}
+.s-mic .cab{position:absolute;left:50%;top:10px;width:62px;height:90px;margin-left:-31px;border-radius:31px;background:repeating-linear-gradient(0deg,#e8e0d6 0 4px,#a99e93 4px 7px);box-shadow:inset 0 0 0 4px var(--fg);transform:rotate(calc(var(--pulso)*-4deg))}
+.s-mic .haste{position:absolute;left:50%;top:98px;width:12px;height:60px;margin-left:-6px;border-radius:6px;background:var(--fg)}
+.s-mic .o{position:absolute;left:50%;top:55px;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:3px solid var(--spot);opacity:calc(.15 + var(--amp)*1.4);transform:scale(calc(1 + var(--amp)*1.6))}
+.s-mic .o2{width:150px;height:150px;margin:-75px 0 0 -75px;transform:scale(calc(1 + var(--amp)*1.1))}
+.s-mic .o3{width:190px;height:190px;margin:-95px 0 0 -95px;border-color:var(--gold);transform:scale(calc(1 + var(--amp)*.7))}
+.s-grito{margin:0;font:400 58px/1 var(--poster);text-transform:uppercase;color:var(--fg)}
+.s-nota{font:400 150px/.9 var(--poster);color:var(--spot);font-variant-numeric:tabular-nums}
+.s-selo{transform:rotate(-4deg)}
+.s-selo.on{transform:rotate(-4deg)}
+.s-palavras{display:flex;flex-direction:column;align-items:center;gap:4px}
+.s-palavras b{font:400 60px/1 var(--poster);text-transform:uppercase}
+.s-palavras b:nth-child(2n){color:var(--spot)}
+.s-palavras b[data-entra]{transform:scale(2.2);opacity:0}
+.s-palavras b.on{transform:none;opacity:1}
+.cortina{position:absolute;top:0;bottom:0;width:51%;z-index:5;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%),repeating-linear-gradient(90deg,#4a0b14 0,#7c1522 16px,#4a0b14 32px);transition:transform 1.3s cubic-bezier(.65,0,.25,1);box-shadow:0 0 30px rgba(0,0,0,.6)}
+.cortina.e{left:0}.cortina.d{right:0}
+.show.aberta .cortina.e{transform:translateX(-100%)}
+.show.aberta .cortina.d{transform:translateX(100%)}
+.show-play{position:absolute;left:50%;top:50%;z-index:6;transform:translate(-50%,-50%);appearance:none;border:0;cursor:pointer;background:var(--fg);color:var(--bg);border-radius:20px;padding:18px 26px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 14px 40px rgba(0,0,0,.55);transition:opacity .4s}
+.show-play b{white-space:nowrap;font:400 26px var(--poster);text-transform:uppercase;letter-spacing:.02em}
+.show-play small{font:600 12px var(--body);opacity:.7}
+.show-play .tri{width:0;height:0;border-left:22px solid var(--spot);border-top:14px solid transparent;border-bottom:14px solid transparent;margin-bottom:4px}
+.show.tocando .show-play{opacity:0;pointer-events:none}
+.show-ctrl{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.barra{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--spot)}
 /* ===== boas-vindas ===== */
 #s-boas{gap:18px;padding-block:6px 10px}
 .boas-t{margin:0;font:800 24px/1.15 var(--display);text-wrap:balance}
@@ -335,22 +398,67 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="vinil" aria-hidden="true"><span>Cantaí</span></div>
       <p class="capa-pre">Karaokê da família</p>
       <h1 class="capa-logo" aria-label="Cantaí Gorete"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></h1>
-      <p class="capa-sub">A sala vira palco. O celular vira microfone. <b>A família vira plateia.</b></p>
+      <p class="capa-sub">Na TV, no notebook ou só no celular. <b>A família vira plateia.</b></p>
     </div>
-    <h2 class="boas-t">Como funciona</h2>
-    <div class="anim" id="anim" data-p="1" role="img" aria-label="Animação: a TV mostra um QR Code, o celular escaneia, a pessoa canta e a nota aparece na TV">
-      <div class="a-tv"><div class="a-tela">
-        <div class="a-qr"><svg viewBox='0 0 7 7' aria-hidden='true'><path fill='#130809' d='M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM1 1v1h1V1zM5 1v1h1V1zM1 5v1h1V5zM4 4h1v1H4zM5 5h1v1H5zM6 4h1v1H6zM4 6h1v1H4zM6 6h1v1H6z'/><path fill='#fff' d='M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z'/></svg></div>
-        <div class="a-video"><em>tocando na TV</em><span></span><span></span><span></span><span></span><span></span></div>
-        <div class="a-nota">87<small>Estrela da noite</small></div>
-      </div><div class="a-pe"></div></div>
-      <div class="a-cel"><div class="a-cel-tela"><div class="a-scan"></div><div class="a-mic"><i></i><b class="o1"></b><b class="o2"></b></div><div class="a-ok">conectado</div></div></div>
-      <div class="a-conf"><span style="left:8%;background:#e63946;animation-delay:0s"></span><span style="left:20%;background:#f2c46d;animation-delay:0.4s"></span><span style="left:33%;background:#ff8a5c;animation-delay:0.9s"></span><span style="left:46%;background:#f2c46d;animation-delay:0.2s"></span><span style="left:58%;background:#e63946;animation-delay:1.1s"></span><span style="left:70%;background:#f2c46d;animation-delay:0.6s"></span><span style="left:82%;background:#ff8a5c;animation-delay:1.4s"></span><span style="left:92%;background:#fbeee0;animation-delay:0.3s"></span><span style="left:14%;background:#f2c46d;animation-delay:1.2s"></span><span style="left:64%;background:#fbeee0;animation-delay:0.8s"></span></div>
+    <div class="show" id="show" data-cena="0">
+      <div class="luz" aria-hidden="true"></div>
+      <section class="cena" data-c="1">
+        <div class="s-logo pulsa"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></div>
+        <p class="s-leg" data-entra="8">o karaokê da família</p>
+      </section>
+      <section class="cena" data-c="2">
+        <h3 class="s-tit">A sala vira <em>palco</em></h3>
+        <div class="s-aparelhos">
+          <div class="ap" data-entra="3"><i class="ap-tv"></i><span>TV</span></div>
+          <div class="ap" data-entra="6"><i class="ap-note"></i><span>Notebook</span></div>
+          <div class="ap" data-entra="9"><i class="ap-cel"></i><span>Só o celular</span></div>
+        </div>
+        <p class="s-leg" data-entra="12">Escolha onde a festa acontece</p>
+      </section>
+      <section class="cena" data-c="3">
+        <h3 class="s-tit">Aponte e <em>entre</em></h3>
+        <div class="s-scan"><div class="sc-tv"><svg viewBox='0 0 7 7' aria-hidden='true'><path fill='#130809' d='M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM4 4h1v1H4zM5 5h1v1H5zM6 4h1v1H6zM4 6h1v1H4zM6 6h1v1H6z'/><path fill='#fff' d='M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z'/></svg></div><div class="sc-cel" data-entra="4"><b></b></div></div>
+        <p class="s-leg" data-entra="10">Escaneie o QR Code. Pronto, você está na sala.</p>
+      </section>
+      <section class="cena" data-c="4">
+        <h3 class="s-tit">Escolha a <em>música</em></h3>
+        <div class="s-cartas">
+          <div class="carta" data-entra="2"><b>Evidências</b><small>Chitãozinho &amp; Xororó</small></div>
+          <div class="carta" data-entra="4"><b>Pais e Filhos</b><small>Legião Urbana</small></div>
+          <div class="carta" data-entra="6"><b>Asa Branca</b><small>Luiz Gonzaga</small></div>
+        </div>
+        <p class="s-leg" data-entra="10">Do YouTube, da lista da família ou no sorteio</p>
+      </section>
+      <section class="cena" data-c="5">
+        <div class="s-mic" aria-hidden="true"><i class="o o1"></i><i class="o o2"></i><i class="o o3"></i><b class="cab"></b><b class="haste"></b></div>
+        <h3 class="s-grito pulsa">Solta a voz!</h3>
+        <p class="s-leg" data-entra="8">O celular vira o microfone</p>
+      </section>
+      <section class="cena" data-c="6">
+        <p class="s-leg">A nota sai na hora</p>
+        <div class="s-nota" id="show-nota">0</div>
+        <div class="selo s-selo" data-entra="9">Estrela da noite</div>
+      </section>
+      <section class="cena" data-c="7">
+        <div class="s-palavras">
+          <b data-entra="0">Duelos</b><b data-entra="4">Desafios</b><b data-entra="8">Palpites</b><b data-entra="12">Troféus</b>
+        </div>
+      </section>
+      <section class="cena" data-c="8">
+        <div class="s-logo pulsa"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></div>
+        <h3 class="s-tit" data-entra="2">Bora <em>cantar?</em></h3>
+        <p class="s-leg" data-entra="6">Escolha como entrar aqui embaixo</p>
+      </section>
+      <div class="cortina e" aria-hidden="true"></div><div class="cortina d" aria-hidden="true"></div>
+      <button type="button" class="show-play" id="show-play"><span class="tri" aria-hidden="true"></span><b>Assistir o show</b><small>como funciona · com trilha sonora</small></button>
     </div>
-    <div class="legenda" aria-live="polite"><span class="num" id="anim-n">1</span><div><b id="anim-t"></b><span id="anim-s"></span></div></div>
-    <div class="pontos" id="anim-pontos"><button type="button" aria-label="Passo 1"></button><button type="button" aria-label="Passo 2"></button><button type="button" aria-label="Passo 3"></button><button type="button" aria-label="Passo 4"></button></div>
+    <div class="show-ctrl" id="show-ctrl" hidden>
+      <button type="button" class="mini" id="show-pausa">Pausar</button>
+      <div class="barra" aria-hidden="true"><i id="show-prog"></i></div>
+      <button type="button" class="mini" id="show-mudo">Sem som</button>
+    </div>
     <div class="escolha">
-      <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante, salve músicas e conecte a uma TV quando quiser</small></button>
+      <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante só no celular ou conecte a uma TV ou notebook</small></button>
       <button class="grande alt" id="entrar-tv"><b>Esta tela é o palco</b><small>TV, notebook ou computador: mostra o QR Code, toca as músicas e revela as notas</small></button>
     </div>
     <p class="boas-rodape">Suas músicas, ranking e preferências ficam salvos neste navegador.</p>
@@ -1698,23 +1806,83 @@ function iniciarTV(){
 }
 
 /* ======================= BOAS-VINDAS E MODO DO APARELHO ======================= */
-const PASSOS_ANIM = [
-  ['Abra o app na TV ou no notebook', 'No navegador, a tela mostra um QR Code com o código da sala.'],
-  ['Escaneie com o celular', 'Cada pessoa aponta a câmera pro QR Code e entra na sala.'],
-  ['Escolha a música e cante', 'O vídeo toca na TV e o celular vira o microfone.'],
-  ['A nota aparece na TV', 'Com suspense, título, confete e ranking da noite.']
-];
-let animP = 1, animTimer = null;
-function animIr(n){
-  animP = n; $('anim').setAttribute('data-p', n);
-  $('anim-n').textContent = n; $('anim-t').textContent = PASSOS_ANIM[n-1][0]; $('anim-s').textContent = PASSOS_ANIM[n-1][1];
-  [...$('anim-pontos').children].forEach((b,i)=>b.setAttribute('aria-current', i===n-1));
+/* ---------- show de abertura (sincronizado com a trilha) ---------- */
+// trilha: swing a ~199 bpm; 1 batida = 0,3019 s; cada cena dura 16 batidas
+const BATIDA = 0.3019, INICIO = 0.116, POR_CENA = 16, CENAS = 8;
+const showSt = { audio:null, an:null, buf:null, raf:0, relogio:null, confeteFeito:false, mudo:false, pausado:false };
+function showAudio(){
+  if(showSt.audio) return showSt.audio;
+  const a = new Audio('/trilha.mp3'); a.preload = 'auto'; showSt.audio = a;
+  try{
+    const c = ac(); const src = c.createMediaElementSource(a); const an = c.createAnalyser(); an.fftSize = 512;
+    src.connect(an); an.connect(c.destination); showSt.an = an; showSt.buf = new Uint8Array(an.fftSize);
+  }catch(e){}
+  return a;
 }
-function animIniciar(){
-  animIr(1); clearInterval(animTimer);
-  animTimer = setInterval(() => { if(tela!=='boas'){ clearInterval(animTimer); return; } animIr(animP % 4 + 1); }, 3200);
+function showTempo(){
+  const a = showSt.audio;
+  if(showSt.relogio!==null) return (performance.now() - showSt.relogio)/1000;
+  return a ? a.currentTime : 0;
 }
-[...$('anim-pontos').children].forEach((b,i)=>b.onclick = () => { animIr(i+1); animIniciar(); animIr(i+1); });
+function showQuadro(){
+  const el = $('show'), t = showTempo();
+  const bt = Math.max(0, (t - INICIO)/BATIDA), b = Math.floor(bt);
+  const cena = Math.min(CENAS, Math.floor(b/POR_CENA) + 1), bi = b - (cena-1)*POR_CENA;
+  if(el.getAttribute('data-cena') !== String(cena)) el.setAttribute('data-cena', cena);
+  el.querySelectorAll('.cena[data-c="'+cena+'"] [data-entra]').forEach(x => x.classList.toggle('on', bi >= +x.getAttribute('data-entra')));
+  el.style.setProperty('--pulso', Math.pow(1 - (bt % 1), 3).toFixed(3));
+  let amp = 0;
+  if(showSt.an && !showSt.mudo){ showSt.an.getByteTimeDomainData(showSt.buf); let q=0; for(let i=0;i<showSt.buf.length;i++){ const v=(showSt.buf[i]-128)/128; q+=v*v; } amp = Math.sqrt(q/showSt.buf.length); }
+  else amp = 0.12*Math.pow(1 - (bt % 1), 2);
+  el.style.setProperty('--amp', Math.min(.5, amp).toFixed(3));
+  if(cena===6) $('show-nota').textContent = Math.round(87*Math.min(1, bi/8));
+  if(cena===6 && bi>=9 && !showSt.confeteFeito){ showSt.confeteFeito = true; confete(); }
+  const total = INICIO + CENAS*POR_CENA*BATIDA;
+  $('show-prog').style.width = Math.min(100, t/total*100) + '%';
+  const acabou = t >= total || (showSt.audio && showSt.audio.ended && showSt.relogio===null);
+  if(acabou){ showFim(); return; }
+  if(tela==='boas' && !showSt.pausado) showSt.raf = requestAnimationFrame(showQuadro);
+}
+function showFim(){
+  cancelAnimationFrame(showSt.raf);
+  const el = $('show'); el.setAttribute('data-cena', CENAS);
+  el.querySelectorAll('.cena[data-c="'+CENAS+'"] [data-entra]').forEach(x => x.classList.add('on'));
+  el.classList.remove('tocando'); $('show-play').querySelector('b').textContent = 'Ver de novo';
+  $('show-play').querySelector('small').textContent = 'o show tem 39 segundos';
+  $('show-pausa').textContent = 'Pausar';
+}
+function showTocar(){
+  const el = $('show');
+  showSt.confeteFeito = false; showSt.pausado = false; showSt.relogio = null;
+  el.querySelectorAll('[data-entra]').forEach(x => x.classList.remove('on'));
+  el.setAttribute('data-cena', 1); el.classList.add('tocando');
+  setTimeout(() => el.classList.add('aberta'), 150);
+  $('show-ctrl').hidden = false;
+  const a = showAudio();
+  try{ ac().resume(); }catch(e){}
+  a.muted = showSt.mudo; a.currentTime = 0;
+  const p = a.play();
+  if(p && p.catch) p.catch(() => { showSt.relogio = performance.now(); });   // sem áudio: segue no relógio
+  cancelAnimationFrame(showSt.raf); showSt.raf = requestAnimationFrame(showQuadro);
+}
+function showParar(){
+  cancelAnimationFrame(showSt.raf);
+  const a = showSt.audio; if(!a || a.paused) return;
+  // abaixa o volume aos poucos e pausa
+  let v = 1; const d = setInterval(() => { v -= .1; a.volume = Math.max(0, v); if(v<=0){ clearInterval(d); a.pause(); a.volume = 1; } }, 40);
+}
+function showPreparar(){
+  const el = $('show'); el.setAttribute('data-cena', 1); el.classList.remove('tocando','aberta');
+  el.querySelectorAll('[data-entra]').forEach(x => x.classList.add('on'));
+  $('show-ctrl').hidden = true;
+}
+$('show-play').onclick = showTocar;
+$('show-pausa').onclick = () => {
+  const a = showSt.audio; if(!a) return;
+  if(showSt.pausado){ showSt.pausado = false; if(showSt.relogio===null) a.play(); $('show-pausa').textContent='Pausar'; showSt.raf = requestAnimationFrame(showQuadro); }
+  else { showSt.pausado = true; a.pause(); $('show-pausa').textContent='Continuar'; }
+};
+$('show-mudo').onclick = () => { showSt.mudo = !showSt.mudo; if(showSt.audio) showSt.audio.muted = showSt.mudo; $('show-mudo').textContent = showSt.mudo ? 'Com som' : 'Sem som'; };
 function lerModo(){ try{ return localStorage.getItem('cantai-modo'); }catch(e){ return null; } }
 function salvarModo(m){ try{ if(m) localStorage.setItem('cantai-modo', m); else localStorage.removeItem('cantai-modo'); }catch(e){} }
 function boasVindasDeVolta(){
@@ -1726,16 +1894,17 @@ function boasVindasDeVolta(){
   if(partes.length) $('voltas').innerHTML = '<b>Que bom te ver de volta!</b> ' + partes.join(' e ') + '.';
 }
 function entrarCelular(){
+  showParar();
   salvarModo('celular');
   const q = new URLSearchParams(location.search).get('sala');
   if(q){ celularConectar(q); history.replaceState(null,'','/'); }
   else { try{ const g = JSON.parse(localStorage.getItem('cantai-sala')||'null'); if(g && Date.now()-g.quando < 12*3600e3) celularConectar(g.code); }catch(e){} }
   mostrarConexao(); boasVindasDeVolta(); telas('home');
 }
-function entrarTV(){ salvarModo('tv'); if(location.pathname!=='/tv') history.replaceState(null,'','/tv'); iniciarTV(); }
+function entrarTV(){ showParar(); salvarModo('tv'); if(location.pathname!=='/tv') history.replaceState(null,'','/tv'); iniciarTV(); }
 $('entrar-cel').onclick = entrarCelular;
 $('entrar-tv').onclick = entrarTV;
-$('rever-boas').onclick = () => { salvarModo(null); telas('boas'); animIniciar(); };
+$('rever-boas').onclick = () => { salvarModo(null); telas('boas'); showPreparar(); };
 $('tv-cheia').onclick = () => {
   const d = document, el = d.documentElement;
   const ativo = d.fullscreenElement || d.webkitFullscreenElement;
@@ -1754,7 +1923,7 @@ $('tv-trocar').onclick = () => { salvarModo('celular'); location.href = '/'; };
   if(ehTV){ salvarModo('tv'); iniciarTV(); return; }
   if(q || salvo==='celular'){ entrarCelular(); return; }   // escaneou o QR: é celular
   if(salvo==='tv'){ entrarTV(); return; }
-  mostrarConexao(); telas('boas'); animIniciar();
+  mostrarConexao(); telas('boas'); showPreparar();
 })();
 })();
 </script>
