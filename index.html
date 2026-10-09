@@ -65,6 +65,7 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank li .who small{color:var(--muted);margin-left:6px}
 .rank li b{color:var(--spot)}
+.rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
 .proxima{border-color:var(--spot)}
@@ -199,6 +200,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="field"><label for="nome1">Cantor 1</label><input id="nome1" type="text" placeholder="Ex.: Tio Zé" autocomplete="off" maxlength="30"></div>
       <div class="field"><label for="nome2">Cantor 2</label><input id="nome2" type="text" placeholder="Ex.: Bia" autocomplete="off" maxlength="30"></div>
     </div>
+    <div class="field" id="ja-cantaram" hidden><label>Já cantaram hoje</label><div class="chips" id="nomes-chips"></div><p class="hint" id="nomes-dica">Toque num nome ou escreva um novo.</p></div>
     <p class="err" id="quem-erro" hidden></p>
     <button class="btn" id="quem-ok">Escolher a música</button>
   </section>
@@ -306,6 +308,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       </div>
       <div class="field" id="prox-troca" hidden>
         <label for="prox-quem">Quem canta agora?</label>
+        <div class="chips" id="prox-chips"></div>
         <input id="prox-quem" type="text" maxlength="30" autocomplete="off" placeholder="Nome">
         <button type="button" class="btn" id="prox-cantar">Cantar</button>
       </div>
@@ -350,6 +353,10 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   <!-- RANKING -->
   <section class="card tela" id="s-rank" hidden>
     <h2>Ranking da noite</h2>
+    <div class="seg" id="rank-modo">
+      <button type="button" id="rk-total" aria-pressed="true">Pontos somados<small>quem canta mais, soma mais</small></button>
+      <button type="button" id="rk-melhor" aria-pressed="false">Melhores notas<small>cada apresentação</small></button>
+    </div>
     <ol class="rank" id="rank"></ol>
     <p class="hint" id="rank-vazio">Ninguém cantou ainda. Toque em “Início” e comece a primeira rodada.</p>
     <button class="btn" id="ver-trofeus">Encerrar a noite e ver troféus</button>
@@ -473,7 +480,37 @@ function novaRodada(t){
   $('quem-erro').hidden = true; $('musica-erro').hidden = true; $('erro').hidden = true;
   prepararQuem(); telas('quem');
 }
+function nomesDoRanking(){
+  const r = lerRank(), vistos = new Map();
+  r.forEach((x,i)=>{ const k=x.nome.trim(); if(!k || k==='Cantor sem nome') return; vistos.set(k, i); });
+  return [...vistos.entries()].sort((a,b)=>b[1]-a[1]).map(e=>e[0]); // mais recentes primeiro
+}
+function chipsNomes(alvo, aoEscolher){
+  const box=$(alvo); box.textContent='';
+  const nomes = nomesDoRanking();
+  nomes.forEach(n=>{
+    const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=n;
+    b.onclick=()=>aoEscolher(n, b); box.appendChild(b);
+  });
+  return nomes.length;
+}
+function marcarChips(){
+  const usados = tipo==='duelo' ? [$('nome1').value.trim(), $('nome2').value.trim()] : [$('nome').value.trim()];
+  document.querySelectorAll('#nomes-chips .chip').forEach(c=>c.setAttribute('aria-pressed', usados.includes(c.textContent)));
+}
+['nome','nome1','nome2'].forEach(id=>$(id).addEventListener('input', marcarChips));
 function prepararQuem(){
+  const qtd = chipsNomes('nomes-chips', (n)=>{
+    if(tipo==='duelo'){
+      const a=$('nome1'), b=$('nome2');
+      if(a.value.trim()===n) a.value=''; else if(b.value.trim()===n) b.value='';
+      else if(!a.value.trim()) a.value=n; else b.value=n;
+    } else $('nome').value = $('nome').value.trim()===n ? '' : n;
+    marcarChips();
+  });
+  $('ja-cantaram').hidden = !qtd;
+  $('nomes-dica').textContent = tipo==='duelo' ? 'Toque em dois nomes ou escreva novos.' : 'Toque num nome ou escreva um novo.';
+  marcarChips();
   $('f-nome').hidden = tipo!=='solo';
   $('f-duelo').hidden = tipo!=='duelo';
   $('quem-titulo').textContent = tipo==='duelo' ? 'Quem vai duelar?' : 'Quem vai cantar?';
@@ -686,7 +723,7 @@ function continuar(nome){
   setTimeout(() => iniciarRodada(), 700);
 }
 $('prox-ja').onclick = () => continuar(cantorAtual());
-$('prox-trocar').onclick = () => { pararProxima(); $('prox-t').textContent='Próxima: ' + descreverProxima(); $('prox-nome').textContent=''; $('prox-troca').hidden=false; $('prox-quem').value=''; $('prox-quem').focus(); };
+$('prox-trocar').onclick = () => { pararProxima(); $('prox-t').textContent='Próxima: ' + descreverProxima(); $('prox-nome').textContent=''; $('prox-troca').hidden=false; $('prox-quem').value=''; chipsNomes('prox-chips', (n)=>{ $('prox-quem').value=n; document.querySelectorAll('#prox-chips .chip').forEach(c=>c.setAttribute('aria-pressed', c.textContent===n)); }); };
 $('prox-cantar').onclick = () => continuar($('prox-quem').value.trim() || 'Cantor sem nome');
 $('prox-parar').onclick = () => { pararProxima(); $('prox-box').hidden = true; };
 
@@ -766,19 +803,30 @@ mostrarEstilo('Sertanejo');
 /* ---------- ranking local ---------- */
 function lerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-rank')||'[]'); }catch(e){ return []; } }
 function salvarRank(r){ try{ localStorage.setItem('cantai-rank', JSON.stringify(r)); }catch(e){} }
+let rankModo = 'total';
 function mostrarRank(){
-  const r = lerRank().sort((a,b)=>b.nota-a.nota);
-  $('rank-vazio').hidden = r.length>0; $('ver-trofeus').hidden = !r.length; $('zerar').hidden = !r.length;
+  const todas = lerRank();
+  $('rank-vazio').hidden = todas.length>0; $('ver-trofeus').hidden = !todas.length; $('zerar').hidden = !todas.length; $('rank-modo').hidden = !todas.length;
+  $('rk-total').setAttribute('aria-pressed', rankModo==='total'); $('rk-melhor').setAttribute('aria-pressed', rankModo==='melhor');
   const ol = $('rank'); ol.textContent='';
-  r.slice(0,10).forEach((x,i)=>{
+  const linha = (i, nome, extra, valor) => {
     const li=document.createElement('li');
     const p=document.createElement('span'); p.className='pos'; p.textContent=(i+1)+'º';
-    const w=document.createElement('span'); w.className='who'; w.textContent=x.nome;
-    const h=document.createElement('small'); h.textContent=x.hora; w.appendChild(h);
-    const b=document.createElement('b'); b.textContent=x.nota;
+    const w=document.createElement('span'); w.className='who'; w.textContent=nome;
+    const h=document.createElement('small'); h.textContent=extra; w.appendChild(h);
+    const b=document.createElement('b'); b.textContent=valor;
     li.append(p,w,b); ol.appendChild(li);
-  });
+  };
+  if(rankModo==='total'){
+    const soma = {};
+    todas.forEach(x=>{ const k=x.nome; soma[k]=soma[k]||{pts:0,n:0}; soma[k].pts+=x.nota; soma[k].n++; });
+    Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,15).forEach(([nome,v],i)=>linha(i, nome, v.n + (v.n>1?' músicas':' música'), v.pts));
+  } else {
+    todas.slice().sort((a,b)=>b.nota-a.nota).slice(0,10).forEach((x,i)=>linha(i, x.nome, x.hora, x.nota));
+  }
 }
+$('rk-total').onclick = () => { rankModo='total'; mostrarRank(); };
+$('rk-melhor').onclick = () => { rankModo='melhor'; mostrarRank(); };
 mostrarRank();
 
 /* ---------- detecção de tom (YIN simplificado) ---------- */
@@ -1124,6 +1172,8 @@ function abrirTrofeus(festa){
   const palpiteiro = Object.entries(pts).sort((a,b)=>b[1]-a[1])[0];
   const itens = [];
   const c = melhor('nota'); if(c) itens.push(['1º','Campeão da noite', c.nome, 'nota ' + c.nota]);
+  const somas = {}; r.forEach(x=>somas[x.nome]=(somas[x.nome]||0)+x.nota); const tot = Object.entries(somas).sort((a,b)=>b[1]-a[1])[0];
+  if(tot && r.length>1) itens.push(['Σ','Mais pontos somados', tot[0], tot[1] + ' pontos']);
   const af = melhor('af'); if(af) itens.push(['♪','Mais afinado', af.nome, 'afinação ' + af.af]);
   const es = melhor('es'); if(es) itens.push(['≡','Voz mais firme', es.nome, 'estabilidade ' + es.es]);
   const en = melhor('en'); if(en) itens.push(['!','Mais animado', en.nome, 'energia ' + en.en]);
