@@ -752,7 +752,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
         <ol>
           <li>Segure o celular a um palmo da boca.</li>
           <li>Afaste o celular da caixa de som.</li>
-          <li>No modo “Neste celular”, use fone ou caixa Bluetooth em volume moderado.</li>
+          <li>No modo “Neste celular”, use caixa Bluetooth ou o som da TV (espelhando a tela) em volume moderado.</li>
+          <li>Espelhando o celular na TV? O som do vídeo sai pela TV. Deixe o volume da TV moderado e o celular perto da boca.</li>
           <li>A música termina sozinha depois de 10 segundos sem voz.</li>
         </ol>
       </div>
@@ -1343,7 +1344,9 @@ function iniciarRodada(){
     return false;
   };
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve(falhou());
-  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}})
+  // Sem cancelamento de eco: com ele ligado, o Android entra em "modo de chamada" e o som do vídeo
+  // fica mudo ou sai pelo alto-falante de ligação, e o espelhamento de tela não leva o áudio pra TV.
+  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})
     .then(st => { stream = st; ctx = new (window.AudioContext||window.webkitAudioContext)(); return ctx.resume(); }, () => null)
     .then(ok => { if(!stream) return falhou(); return seguirRodada(); });
 }
