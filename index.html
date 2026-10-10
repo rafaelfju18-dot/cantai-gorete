@@ -418,6 +418,10 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <h1 class="capa-logo" aria-label="Cantaí Gorete"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></h1>
       <p class="capa-sub">Na TV, no notebook ou só no celular. <b>A família vira plateia.</b></p>
     </div>
+    <div class="escolha">
+      <button class="grande" id="entrar-cel"><b>Entrar pelo celular</b><small>Cante só no celular ou conecte a uma TV ou notebook</small></button>
+      <button class="grande alt" id="entrar-tv"><b>Modo TV ou notebook</b><small>Esta tela vira o palco: QR Code, músicas e notas em tela grande</small></button>
+    </div>
     <div class="show" id="show" data-cena="0">
       <div class="luz" aria-hidden="true"></div>
       <section class="cena" data-c="1">
@@ -470,10 +474,6 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="cortina e" aria-hidden="true"></div><div class="cortina d" aria-hidden="true"></div>
       <button type="button" class="show-som" id="show-som" aria-pressed="false"><span aria-hidden="true">♪</span> Ligar a trilha</button>
       <div class="barra show-barra" aria-hidden="true"><i id="show-prog"></i></div>
-    </div>
-    <div class="escolha">
-      <button class="grande" id="entrar-cel"><b>Entrar com o celular</b><small>Cante só no celular ou conecte a uma TV ou notebook</small></button>
-      <button class="grande alt" id="entrar-tv"><b>Esta tela é o palco</b><small>TV, notebook ou computador: mostra o QR Code, toca as músicas e revela as notas</small></button>
     </div>
     <p class="boas-rodape">Suas músicas, ranking e preferências ficam salvos neste navegador.</p>
   </section>
@@ -2034,8 +2034,8 @@ $('tv-trocar').onclick = () => { salvarModo('celular'); location.href = '/'; };
   const q = new URLSearchParams(location.search).get('sala');
   const salvo = lerModo();
   if(ehTV){ salvarModo('tv'); iniciarTV(); return; }
-  if(q || salvo==='celular'){ entrarCelular(); return; }   // escaneou o QR: é celular
-  if(salvo==='tv'){ entrarTV(); return; }
+  if(q){ entrarCelular(); return; }   // escaneou o QR: é celular e entra direto
+  // todo mundo começa pela tela inicial com o show e escolhe como entrar
   mostrarConexao(); telas('boas'); showPreparar();
 })();
 })();
