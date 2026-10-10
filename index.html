@@ -604,6 +604,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="meter" aria-hidden="true"><div class="needle" id="agulha"></div></div>
       <div class="meter-scale"><span>baixo</span><span>afinado</span><span>alto</span></div>
     </div>
+    <button type="button" class="btn" id="tocar-musica" hidden>▶ Tocar a música</button>
     <div class="desafio" id="live-desafio" hidden><small>Desafio</small><span></span></div>
     <div class="countdown" id="contagem" hidden>Encerrando em <span id="cont-n">5</span>…</div>
     <button class="btn stop" id="encerrar">Encerrar</button>
@@ -1054,7 +1055,15 @@ function carregar(link){
   atualizaPl();
 }
 let liveIndex = -1, jaAvancou = false;
+function conferirTocando(){
+  if(tela!=='live' || modo!=='aqui' || !ytPlayer || terminando) return;
+  let st = -1, mudo = false; try{ st = ytPlayer.getPlayerState(); mudo = ytPlayer.isMuted(); }catch(e){}
+  $('tocar-musica').hidden = (st===1 && !mudo);
+}
+$('tocar-musica').onclick = () => { try{ ytPlayer.unMute(); ytPlayer.setVolume(100); ytPlayer.playVideo(); }catch(e){} $('tocar-musica').hidden = true; setTimeout(conferirTocando, 2000); };
 function estadoPlayer(e){
+  if(tela==='live' && e.data===1) setTimeout(conferirTocando, 300);
+  if(tela==='live' && (e.data===2 || e.data===-1 || e.data===5) && !terminando) setTimeout(conferirTocando, 800);
   if(pausarAoTrocar && e.data===1){ pausarAoTrocar=false; try{ ytPlayer.pauseVideo(); }catch(x){} }
   if(tela==='live' && !terminando){
     if(e.data===1 && emPlaylist && liveIndex<0){ try{ liveIndex = ytPlayer.getPlaylistIndex(); }catch(x){} }
@@ -1334,8 +1343,18 @@ $('cantar').onclick = () => {
     duelo = {nomes:[a,b], i:0, notas:[null,null]};
   }
   if(modo!=='fora' && !linkOk($('link').value)){ mostrarErro('Cole o link de um vídeo do YouTube, ou escolha “Na TV ou caixa”.'); return; }
+  tocarNoToque();
   iniciarRodada();
 };
+// O Android só deixa o vídeo tocar com som se o play acontecer dentro do toque do usuário.
+// Por isso o vídeo começa aqui, antes de pedir o microfone (que é assíncrono).
+let tocouNoToque = false;
+function tocarNoToque(){
+  tocouNoToque = false;
+  if(modo!=='aqui' || !ytPlayer) return;
+  pausarAoTrocar = false;
+  try{ ytPlayer.unMute(); ytPlayer.setVolume(100); ytPlayer.seekTo(0,true); ytPlayer.playVideo(); tocouNoToque = true; }catch(e){}
+}
 function iniciarRodada(){
   stream = null;
   const falhou = () => {
@@ -1365,8 +1384,10 @@ function seguirRodada(){
   jaAvancou = false; liveIndex = -1;
   if(modo==='aqui' && ytPlayer){
     pausarAoTrocar = false;
-    try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
+    try{ ytPlayer.unMute(); if(!tocouNoToque) ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
+    tocouNoToque = false;
     salvarRecente($('link').value);
+    setTimeout(conferirTocando, 2500);
   }
   if(modo==='sala'){
     salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual});
@@ -1424,6 +1445,7 @@ function encerrar(){
   if(stream) stream.getTracks().forEach(t=>t.stop());
   if(ctx) ctx.close();
   if(modo==='sala') salaEnviar({t:'stop'});
+  $('tocar-musica').hidden = true;
   try{ if(wake) wake.release(); }catch(e){}
   try{ if(ytPlayer) ytPlayer.pauseVideo(); }catch(e){}
   $('contagem').hidden = true;
