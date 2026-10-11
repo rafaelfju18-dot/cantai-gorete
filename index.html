@@ -297,6 +297,11 @@ body.tv{background:radial-gradient(50% 40% at 50% 0%,rgba(255,220,180,.08),trans
 .tv-rank li small{color:var(--muted);margin-left:.6vw;font-size:1.2vw}
 #tv-palco{position:fixed;top:0;right:0;bottom:0;left:0;background:#000;display:flex;flex-direction:column}
 #tv-player-box{flex:1;position:relative}
+#tv-sem-video{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;background:radial-gradient(60% 50% at 50% 40%,rgba(110,18,32,.6),transparent 70%),var(--bg)}
+.tv-sv-nome{font:400 10vw/1 var(--poster);text-transform:uppercase;color:var(--fg);text-align:center;padding:0 4vw}
+.tv-sv-onda{display:flex;gap:1vw;align-items:flex-end;height:10vh}
+.tv-sv-onda span{width:1.4vw;background:var(--spot);border-radius:.5vw;animation:eq .7s ease-in-out infinite alternate}
+.tv-sv-onda span:nth-child(2n){animation-delay:.2s;background:var(--gold)}.tv-sv-onda span:nth-child(3n){animation-delay:.4s}
 #tv-player-box iframe{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%}
 .tv-faixa{display:flex;justify-content:space-between;align-items:center;gap:2vw;padding:1.6vh 2.5vw;background:var(--panel);font-size:1.8vw}
 .tv-faixa b{font:800 2.2vw var(--display);color:var(--spot)}
@@ -729,7 +734,8 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 
   <!-- RANKING -->
   <section class="card tela" id="s-rank" hidden>
-    <h2>Ranking da noite</h2>
+    <h2 id="rank-titulo">Ranking da noite</h2>
+    <p class="hint" id="rank-sala-nota" hidden style="margin:0">Mesmo ranking que aparece na TV ou no notebook. Atualiza sozinho a cada música.</p>
     <div class="seg" id="rank-modo">
       <button type="button" id="rk-total" aria-pressed="true">Pontos somados<small>quem canta mais, soma mais</small></button>
       <button type="button" id="rk-melhor" aria-pressed="false">Melhores notas<small>cada apresentação</small></button>
@@ -852,6 +858,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
   </div>
   <div id="tv-palco" hidden>
     <div id="tv-player-box"><div id="tv-player"></div></div>
+    <div id="tv-sem-video" hidden><p class="capa-pre" style="font-size:1.4vw">No palco agora</p><div class="tv-sv-nome" id="tv-sv-nome"></div><div class="tv-sv-onda" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><p class="hint" style="font-size:1.4vw;margin:0">A música está tocando no celular</p></div>
     <div class="tv-faixa"><span><b id="tv-cantor"></b> está cantando</span><span class="hint" id="tv-palpites" style="font-size:1.4vw" hidden></span><div class="desafio" id="tv-desafio" hidden><small>Desafio</small><span></span></div><span class="hint" style="font-size:1.4vw">Sala <span id="tv-cod2"></span></span></div>
   </div>
   <div id="tv-res" hidden>
@@ -973,8 +980,11 @@ function novaRodada(t){
   $('quem-erro').hidden = true; $('musica-erro').hidden = true; $('erro').hidden = true;
   prepararQuem(); telas('quem');
 }
+// Conectado a um palco, o ranking que vale é o da sala (mandado pelo palco); fora dele, o deste celular.
+function emSalaComRank(){ try{ return !!(sala.code && sala.rank); }catch(e){ return false; } }   // 'sala' é criada mais abaixo
+function rankAtual(){ return emSalaComRank() ? sala.rank : lerRank(); }
 function nomesDoRanking(){
-  const r = lerRank(), vistos = new Map();
+  const r = rankAtual(), vistos = new Map();
   r.forEach((x,i)=>{ const k=x.nome.trim(); if(!k || k==='Cantor sem nome') return; vistos.set(k, i); });
   return [...vistos.entries()].sort((a,b)=>b[1]-a[1]).map(e=>e[0]); // mais recentes primeiro
 }
@@ -1047,7 +1057,7 @@ function linhaPalpite(){
   const x = document.createElement('button'); x.type='button'; x.className='mini'; x.textContent='×'; x.setAttribute('aria-label','Remover palpite'); x.onclick = () => row.remove();
   row.append(n,v,x); $('palp-lista').appendChild(row);
 }
-function naSalaAoVivo(){ return modo==='sala' && !!sala.code; }
+function naSalaAoVivo(){ return !!sala.code; }
 function atualizaPalpiteUI(){
   const on = $('x-palpite').checked, salaOn = naSalaAoVivo();
   $('palp-sala').hidden = !(on && salaOn);
@@ -1380,7 +1390,9 @@ function lerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-rank')||
 function salvarRank(r){ try{ localStorage.setItem('cantai-rank', JSON.stringify(r)); }catch(e){} }
 let rankModo = 'total';
 function mostrarRank(){
-  const todas = lerRank();
+  const todas = rankAtual();
+  $('rank-titulo').textContent = emSalaComRank() ? 'Ranking da sala ' + sala.code : 'Ranking da noite';
+  $('rank-sala-nota').hidden = !emSalaComRank();
   $('rank-vazio').hidden = todas.length>0; $('ver-trofeus').hidden = !todas.length; $('zerar').hidden = !todas.length; $('rank-modo').hidden = !todas.length;
   $('rk-total').setAttribute('aria-pressed', rankModo==='total'); $('rk-melhor').setAttribute('aria-pressed', rankModo==='melhor');
   const ol = $('rank'); ol.textContent='';
@@ -1483,6 +1495,9 @@ function seguirRodada(){
   if(modo==='sala'){
     salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual, rodada:salaRodada, palpite:!!salaRodada});
     salaAvancar = false; salvarRecente($('link').value);
+  } else if(sala.code){
+    // música tocando no celular ou na caixa: o palco só mostra quem está cantando
+    salaEnviar({t:'play', semVideo:true, nome:cantorAtual(), desafio:desafioAtual, rodada:salaRodada, palpite:!!salaRodada});
   }
   return contagem321().then(() => {
     if(terminando) return true;
@@ -1680,14 +1695,14 @@ function resultado(r){
     if(duelo) $('denovo').textContent = 'Tentar de novo';
     if(duelo) duelo.repetir = true;
     else setTimeout(() => { if(id===revelaId) agendarProxima(id); }, 800);
-    if(modo==='sala') salaEnviar({t:'result', nome, r:null, rodada:salaRodada});
+    if(sala.code) salaEnviar({t:'result', nome, r:null, rodada:salaRodada});
     return;
   }
-  const melhorAntes = Math.max(-1, ...lerRank().filter(x=>x.tipo!=='palpite').map(x=>x.nota));
+  const melhorAntes = Math.max(-1, ...rankAtual().filter(x=>x.tipo!=='palpite').map(x=>x.nota));
   const d = new Date();
   const rank = lerRank(); rank.push({nome, nota:r.nota, musica:tituloAtual(), af:r.af, es:r.es, en:r.en, desafio:desafioAtual, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
   if(duelo) duelo.notas[duelo.i] = r.nota;
-  if(modo==='sala') salaEnviar({t:'result', nome, r, rodada:salaRodada, musica:tituloAtual(), desafio:desafioAtual, duelo: duelo ? {nomes:duelo.nomes, notas:duelo.notas, fim: duelo.i===1} : null});
+  if(sala.code) salaEnviar({t:'result', nome, r, rodada:salaRodada, musica:tituloAtual(), desafio:desafioAtual, duelo: duelo ? {nomes:duelo.nomes, notas:duelo.notas, fim: duelo.i===1} : null});
   let ganhadoresPalpite = [];
   if(palpitesAtuais.length){
     const melhorDif = Math.min(...palpitesAtuais.map(p=>Math.abs(p.v-r.nota)));
@@ -1767,8 +1782,9 @@ $('res-inicio').onclick = () => { revelaId++; pararProxima(); if(duelo && duelo.
 /* ---------- troféus ---------- */
 $('ver-trofeus').onclick = () => abrirTrofeus(true);
 function abrirTrofeus(festa){
-  const r = lerRank(), ul = $('trofeus'); ul.textContent='';
-  const pts = lerPontos();
+  const r = rankAtual(), ul = $('trofeus'); ul.textContent='';
+  let pts = lerPontos();
+  if(emSalaComRank()){ pts = {}; r.filter(x=>x.tipo==='palpite').forEach(x=>pts[x.nome]=(pts[x.nome]||0)+1); }
   const musicas = r.filter(x=>x.tipo!=='palpite');
   const melhor = (k) => musicas.filter(x=>typeof x[k]==='number').sort((a,b)=>b[k]-a[k])[0];
   const cont = {}; musicas.forEach(x=>cont[x.nome]=(cont[x.nome]||0)+1);
@@ -1795,7 +1811,7 @@ function abrirTrofeus(festa){
   if(festa && itens.length){ confete(); fanfarra('lenda'); }
 }
 $('trof-voltar').onclick = () => telas('home');
-$('zerar').onclick = () => { salvarRank([]); salvarPontos({}); mostrarRank(); };
+$('zerar').onclick = () => { if(emSalaComRank()){ salaEnviar({t:'zerar'}); sala.rank = []; } else { salvarRank([]); salvarPontos({}); } mostrarRank(); };
 
 /* ======================= CONEXÃO TV <-> CELULAR =======================
    Mensagens curtas (play, stop, resultado) passam pelo ntfy.sh, um serviço
@@ -1823,7 +1839,7 @@ function salaOuvir(code, aoReceber, aoAbrir){
     sala.aoReceber && sala.aoReceber(m);
   };
 }
-function salaFechar(){ if(sala.es) sala.es.close(); sala.es=null; sala.code=null; sala.tvViva=false; }
+function salaFechar(){ if(sala.es) sala.es.close(); sala.es=null; sala.code=null; sala.tvViva=false; sala.rank=null; }
 const ALFA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const novoCodigo = () => Array.from({length:6},()=>ALFA[Math.floor(Math.random()*ALFA.length)]).join('');
 
@@ -1845,8 +1861,9 @@ function celularConectar(code){
     if(m.t==='tv'){ if(m.pessoas) sala.pessoas = m.pessoas; if(!sala.tvViva){ sala.tvViva = true; mostrarConexao(); } if(tela==='extras') atualizaPalpiteUI(); }
     if(m.t==='ended' && tela==='live' && !terminando && modo==='sala') encerrar();
     if(m.t==='play' && m.palpite && m.rodada) abrirPedidoPalpite(m);
-    if(m.t==='result'){ fecharPedidoPalpite(m.rodada); registrarResultadoDaSala(m); }
+    if(m.t==='result'){ fecharPedidoPalpite(m.rodada); }
     if(m.t==='palpites-res') aplicarPalpitesDaSala(m);
+    if(m.t==='rank'){ sala.rank = desempacotarRank(m.l); if(tela==='rank') mostrarRank(); }
   }, () => salaEnviar({t:'oi', nome: meuNome()}));
   try{ localStorage.setItem('cantai-sala', JSON.stringify({code, quando:Date.now()})); }catch(e){}
   mostrarConexao(); setModo('sala');
@@ -1882,19 +1899,19 @@ $('pp-enviar').onclick = () => {
   $('pp-enviar').textContent = 'Mudar palpite';
 };
 // cada celular da sala guarda as apresentações dos outros, pra o ranking ficar igual em todos
-function registrarResultadoDaSala(m){
-  if(!m.r || !m.nome) return;
-  const d = new Date(), rank = lerRank();
-  rank.push({nome:m.nome, nota:m.r.nota, musica:m.musica||'', af:m.r.af, es:m.r.es, en:m.r.en, desafio:m.desafio||'', hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
-  salvarRank(rank);
-  if(tela==='rank') mostrarRank();
+// o ranking da sala viaja compacto (as mensagens têm limite de tamanho)
+function empacotarRank(r){
+  let l = r.slice(-80).map(x => [x.nome, x.nota, x.tipo==='palpite'?1:0, x.af||0, x.es||0, x.en||0, (x.musica||'').slice(0,28), x.desafio?1:0]);
+  while(JSON.stringify(l).length > 3200 && l.length > 1){
+    const i = l.findIndex(e => e[6]); if(i>=0) l.forEach(e => e[6]=''); else l.shift();
+  }
+  return l;
+}
+function desempacotarRank(l){
+  return (l||[]).map(e => ({nome:e[0], nota:e[1], tipo:e[2]?'palpite':undefined, af:e[3]||undefined, es:e[4]||undefined, en:e[5]||undefined, musica:e[6]||'', desafio:e[7]?'sim':''}));
 }
 function aplicarPalpitesDaSala(m){
   if(!m.ganhadores) return;
-  const rank = lerRank(), pts = lerPontos();
-  m.ganhadores.forEach(n => { rank.push({nome:n, nota:m.pts, tipo:'palpite', hora:''}); pts[n] = (pts[n]||0) + 1; });
-  salvarRank(rank); salvarPontos(pts);
-  if(tela==='rank') mostrarRank();
   if(m.rodada && m.rodada===salaRodada && tela==='res'){
     const ul=$('res-palp-lista'); ul.textContent='';
     if(!m.lista.length){ const li=document.createElement('li'); li.textContent='Ninguém mandou palpite dessa vez.'; ul.appendChild(li); }
@@ -1919,6 +1936,7 @@ const ehTV = location.pathname.replace(/\/+$/,'') === '/tv' || new URLSearchPara
 let tvPlayer = null, tvYtPronto = false, tvLista = null, tvNaSala = new Map(), tvRevelaId = 0;
 let tvRodada = '', tvPalpites = new Map();
 function tvAnunciar(){ salaEnviar({t:'tv', pessoas:[...tvNaSala.entries()].map(e=>({de:e[0], nome:e[1]}))}); }
+function tvMandarRank(){ salaEnviar({t:'rank', l: empacotarRank(tvLerRank())}); }
 function tvMostrarPalpites(){
   const n = tvPalpites.size;
   $('tv-palpites').hidden = !tvRodada;
@@ -1979,6 +1997,14 @@ function tvComPlayer(token, cb, tent=0){
 }
 function tvTocar(m){
   const token = tvRevelaId;
+  $('tv-sem-video').hidden = !m.semVideo; $('tv-player-box').hidden = !!m.semVideo;
+  if(m.semVideo){
+    try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){}
+    $('tv-cantor').textContent = m.nome || 'Alguém'; $('tv-sv-nome').textContent = m.nome || 'Alguém';
+    $('tv-desafio').hidden = !m.desafio; $('tv-desafio').querySelector('span').textContent = m.desafio || '';
+    tvTela('palco');
+    return;
+  }
   const v = videoId(m.link), list = playlistId(m.link);
   $('tv-cantor').textContent = m.nome || 'Alguém';
   $('tv-desafio').hidden = !m.desafio; $('tv-desafio').querySelector('span').textContent = m.desafio || '';
@@ -2034,7 +2060,7 @@ function tvResultado(m){
     return;
   }
   const r = m.r, fx = faixa(r.nota);
-  const rank = tvLerRank(); rank.push({nome:m.nome, nota:r.nota, musica:m.musica||''});
+  const rank = tvLerRank(); rank.push({nome:m.nome, nota:r.nota, musica:m.musica||'', af:r.af, es:r.es, en:r.en, desafio:m.desafio||''});
   // palpites: quem chegou mais perto ganha 10 pontos; acerto em cheio vale 20
   let palpTxt = '';
   if(m.rodada && m.rodada===tvRodada){
@@ -2052,6 +2078,7 @@ function tvResultado(m){
     tvRodada = '';
   }
   try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(rank)); }catch(e){}
+  tvRank(); setTimeout(tvMandarRank, 300);
   $('tvr-palp').hidden = true; $('tvr-palp').textContent = palpTxt;
   $('tvr-espera').hidden = false; el.style.visibility='hidden';
   $('tvr-espera-t').textContent = sorteia(['Os jurados estão decidindo…','Somando os aplausos…','Conferindo cada nota…','Consultando a vó…']);
@@ -2099,12 +2126,13 @@ function iniciarTV(){
   $('tv-cod').textContent = code; $('tv-cod2').textContent = code;
   tvQR(code); tvRank(); tvSala();
   salaOuvir(code, (m) => {
-    if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); tvAnunciar(); }
+    if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); tvAnunciar(); setTimeout(tvMandarRank, 400); }
+    if(m.t==='zerar'){ try{ localStorage.setItem('cantai-tv-rank','[]'); }catch(e){} tvRank(); tvMandarRank(); }
     if(m.t==='play'){ if(m.nome) tvNaSala.set(m.de, m.nome); tvSala(); tvRevelaId++; tvRodada = m.palpite ? m.rodada : ''; tvPalpites = new Map(); tvMostrarPalpites(); tvTocar(m); tvAnunciar(); }
     if(m.t==='palpite' && m.rodada && m.rodada===tvRodada){ tvPalpites.set(m.de, {nome:m.nome, v:m.v}); if(m.nome) tvNaSala.set(m.de, m.nome); tvMostrarPalpites(); }
     if(m.t==='stop'){ try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){} }
     if(m.t==='result'){ tvResultado(m); }
-  }, () => tvAnunciar());
+  }, () => { tvAnunciar(); setTimeout(tvMandarRank, 300); });
   $('tvrk-total').onclick = () => { tvRankModo='total'; tvRank(); };
   $('tvrk-melhor').onclick = () => { tvRankModo='melhor'; tvRank(); };
   // alterna sozinho entre as duas visões, pra quem está só olhando a TV

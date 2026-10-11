@@ -1,7 +1,7 @@
 /* Cantaí Gorete — service worker
    Necessário pro Chrome instalar o app. Estratégia "rede primeiro":
    sempre busca a versão nova; só usa a cópia guardada se estiver sem internet. */
-const CACHE = 'cantai-v1';
+const CACHE = 'cantai-v2';
 const BASE = ['/', '/index.html', '/qr.js', '/manifest.webmanifest', '/icone-192.png', '/icone-512.png'];
 
 self.addEventListener('install', e => {
