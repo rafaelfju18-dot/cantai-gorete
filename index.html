@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Cantaí Gorete</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#130809">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cantaí">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2730%27 fill=%27%23111%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2722%27 fill=%27none%27 stroke=%27%23333%27 stroke-width=%272%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2712%27 fill=%27%23e63946%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%272.5%27 fill=%27%23111%27/%3E%3C/svg%3E">
@@ -74,6 +81,8 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.instalar{display:block;width:100%;padding:14px;font-size:15px;border-color:var(--spot);color:var(--fg)}
+@media (min-width:900px){#s-boas>.instalar{grid-column:1;grid-row:3;justify-self:start;width:auto}#s-boas>.boas-rodape{grid-row:4}}
 .palp-pedido{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(19,8,9,.82);backdrop-filter:blur(4px)}
 .pp-card{width:min(420px,100%);background:var(--panel);border:1px solid var(--spot);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:carimbo .4s both}
 .pp-pre{margin:0;font:600 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
@@ -506,6 +515,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <button type="button" class="show-som" id="show-som" aria-pressed="false"><span aria-hidden="true">♪</span> Ligar a trilha</button>
       <div class="barra show-barra" aria-hidden="true"><i id="show-prog"></i></div>
     </div>
+    <button type="button" class="mini instalar" id="instalar" hidden>Instalar o Cantaí no celular</button>
     <p class="boas-rodape">Suas músicas, ranking e preferências ficam salvos neste navegador.</p>
   </section>
 
@@ -774,6 +784,19 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
           <li>Toque em “Cantar” e dê o play na TV durante a contagem 3, 2, 1.</li>
           <li>Cante com o celular perto da boca. Ele só escuta e dá a nota.</li>
         </ol>
+      </div>
+    </details>
+    <details class="ajuda" id="ajuda-instalar">
+      <summary>Instalar o app no celular</summary>
+      <div class="corpo">
+        <button type="button" class="mini" id="instalar2" hidden>Instalar agora</button>
+        <h3>Android (Chrome)</h3>
+        <ol><li>Abra <strong>cantai-gorete.netlify.app</strong> no Chrome.</li><li>Toque nos três pontinhos ⋮ e depois em <strong>“Instalar app”</strong> ou <strong>“Adicionar à tela inicial”</strong>.</li><li>Confirme em “Instalar”.</li></ol>
+        <h3>Xiaomi, Redmi e POCO</h3>
+        <p class="hint" style="margin:0">Se der erro ou o ícone não aparecer, o celular está bloqueando o Chrome de criar ícones:</p>
+        <ol><li>Abra <strong>Configurações › Apps › Gerenciar apps › Chrome</strong>.</li><li>Toque em <strong>Outras permissões</strong> (ou “Permissões”).</li><li>Ative <strong>“Atalhos na tela inicial”</strong> (ou “Criar atalhos na tela inicial”).</li><li>Volte ao Chrome e instale de novo.</li></ol>
+        <h3>iPhone (Safari)</h3>
+        <ol><li>Abra o site no <strong>Safari</strong>.</li><li>Toque em <strong>Compartilhar</strong> (quadrado com seta).</li><li>Escolha <strong>“Adicionar à Tela de Início”</strong>.</li></ol>
       </div>
     </details>
     <details class="ajuda">
@@ -2095,6 +2118,28 @@ function iniciarTV(){
   window.onYouTubeIframeAPIReady = () => { anterior && anterior(); tvYtPronto = true; };
   if(window.YT && window.YT.Player) tvYtPronto = true;
 }
+
+/* ======================= INSTALAR COMO APP ======================= */
+let pedidoInstalar = null;
+const jaInstalado = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); pedidoInstalar = e;
+  if(!jaInstalado()){ $('instalar').hidden = false; $('instalar2').hidden = false; }
+});
+window.addEventListener('appinstalled', () => { pedidoInstalar = null; $('instalar').hidden = true; $('instalar2').hidden = true; });
+function instalarApp(){
+  if(pedidoInstalar){
+    pedidoInstalar.prompt();
+    pedidoInstalar.userChoice.then(() => { pedidoInstalar = null; $('instalar').hidden = true; $('instalar2').hidden = true; }, () => {});
+  } else {
+    showParar(); salvarModo('celular'); entrarCelular(); telas('ajuda'); $('ajuda-instalar').open = true;
+    setTimeout(() => $('ajuda-instalar').scrollIntoView({behavior:'smooth'}), 100);
+  }
+}
+$('instalar').onclick = instalarApp; $('instalar2').onclick = instalarApp;
+// sem o pedido automático (iPhone, ou Chrome que ainda não liberou), o botão leva ao passo a passo
+setTimeout(() => { if(!pedidoInstalar && !jaInstalado() && !ehTV){ $('instalar').hidden = false; $('instalar').textContent = 'Como instalar o Cantaí no celular'; } }, 4000);
 
 /* ======================= BOAS-VINDAS E MODO DO APARELHO ======================= */
 /* ---------- show de abertura: passa sozinho, em loop, como parte da página ----------
