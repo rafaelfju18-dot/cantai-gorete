@@ -331,6 +331,7 @@ body.tv{background:radial-gradient(50% 40% at 50% 0%,rgba(255,220,180,.08),trans
 .tv-ativar-txt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:2vh}
 .tv-ativar-sub{margin:0;font-size:2vw;line-height:1.35;color:var(--muted)}
 .tv-ativar-sub b{color:var(--spot)}
+.tv-nova{font-size:1.4vw!important;padding:1.4vh 2.4vw!important;margin-top:0!important}
 #tv-ativar .btn{font-size:2.2vw;padding:2.2vh 4vw;width:auto;margin-top:2vh}
 .tv-show-slot{position:relative;height:96vh;width:76.8vh}
 .tv-show-slot .show{position:absolute;top:0;left:0;width:400px;height:500px;margin:0;aspect-ratio:auto;max-width:none;transform-origin:0 0;transform:scale(var(--k,1))}
@@ -833,7 +834,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
 <section id="tv" hidden>
   <div class="tv-topo">
     <div class="logo"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></div>
-    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b><button type="button" class="tv-trocar" id="tv-cheia">Tela cheia</button><button type="button" class="tv-trocar" id="tv-trocar">Usar como celular</button></div>
+    <div class="tv-codigo">Código da sala <b id="tv-cod">------</b><button type="button" class="tv-trocar" id="tv-nova-noite">Nova noite</button><button type="button" class="tv-trocar" id="tv-cheia">Tela cheia</button><button type="button" class="tv-trocar" id="tv-trocar">Usar como celular</button></div>
   </div>
   <div class="tv-corpo">
     <div class="tv-card">
@@ -886,6 +887,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="logo tv-logo-grande"><span class="m-cantai">Cantaí</span><span class="m-gorete">Gorete</span></div>
       <p class="tv-ativar-sub">Na TV, no notebook ou só no celular.<br><b>A família vira plateia.</b></p>
       <button class="btn" id="tv-ok" autofocus>Aperte OK ou clique pra começar</button>
+      <button type="button" class="tv-trocar tv-nova" id="tv-nova" hidden>Começar noite nova (zera o ranking)</button>
     </div>
     <div class="tv-show-slot" id="tv-show-slot" aria-hidden="true"></div>
   </div>
@@ -1387,7 +1389,9 @@ mostrarEstilo('Sertanejo');
 
 /* ---------- ranking local ---------- */
 function lerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-rank')||'[]'); }catch(e){ return []; } }
-function salvarRank(r){ try{ localStorage.setItem('cantai-rank', JSON.stringify(r)); }catch(e){} }
+function salvarRank(r){ try{ localStorage.setItem('cantai-rank', JSON.stringify(r)); localStorage.setItem('cantai-rank-quando', String(Date.now())); }catch(e){} }
+// uma "noite" acaba 4 horas depois da última música: na próxima abertura o ranking começa do zero
+(function(){ try{ const q = +localStorage.getItem('cantai-rank-quando') || 0; if(Date.now() - q > 4*3600e3){ localStorage.setItem('cantai-rank','[]'); localStorage.setItem('cantai-palpites','{}'); } }catch(e){} })();
 let rankModo = 'total';
 function mostrarRank(){
   const todas = rankAtual();
@@ -1947,6 +1951,12 @@ function tvTela(qual){
   $('tv-res').hidden = qual!=='res';
 }
 function tvLerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-tv-rank')||'[]'); }catch(e){ return []; } }
+function tvSalvarRank(r){ try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(r)); localStorage.setItem('cantai-tv-rank-quando', String(Date.now())); }catch(e){} }
+function tvRankQuando(){ try{ return +localStorage.getItem('cantai-tv-rank-quando') || 0; }catch(e){ return 0; } }
+function tvNovaNoite(avisar){
+  try{ localStorage.setItem('cantai-tv-rank','[]'); localStorage.removeItem('cantai-tv-rank-quando'); }catch(e){}
+  tvRank(); if(avisar) tvMandarRank();
+}
 let tvRankModo = 'total', tvRankAuto = null;
 function tvRank(){
   const r = tvLerRank(), ol=$('tv-rank'); ol.textContent='';
@@ -2077,7 +2087,7 @@ function tvResultado(m){
     salaEnviar({t:'palpites-res', rodada:m.rodada, nota:r.nota, lista, ganhadores, pts});
     tvRodada = '';
   }
-  try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(rank)); }catch(e){}
+  tvSalvarRank(rank);
   tvRank(); setTimeout(tvMandarRank, 300);
   $('tvr-palp').hidden = true; $('tvr-palp').textContent = palpTxt;
   $('tvr-espera').hidden = false; el.style.visibility='hidden';
@@ -2127,7 +2137,7 @@ function iniciarTV(){
   tvQR(code); tvRank(); tvSala();
   salaOuvir(code, (m) => {
     if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); tvAnunciar(); setTimeout(tvMandarRank, 400); }
-    if(m.t==='zerar'){ try{ localStorage.setItem('cantai-tv-rank','[]'); }catch(e){} tvRank(); tvMandarRank(); }
+    if(m.t==='zerar'){ tvNovaNoite(true); }
     if(m.t==='play'){ if(m.nome) tvNaSala.set(m.de, m.nome); tvSala(); tvRevelaId++; tvRodada = m.palpite ? m.rodada : ''; tvPalpites = new Map(); tvMostrarPalpites(); tvTocar(m); tvAnunciar(); }
     if(m.t==='palpite' && m.rodada && m.rodada===tvRodada){ tvPalpites.set(m.de, {nome:m.nome, v:m.v}); if(m.nome) tvNaSala.set(m.de, m.nome); tvMostrarPalpites(); }
     if(m.t==='stop'){ try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){} }
@@ -2143,8 +2153,29 @@ function iniciarTV(){
   const ajustar = () => { $('show').style.setProperty('--k', (slot.clientHeight/500).toFixed(3)); };
   ajustar(); window.addEventListener('resize', ajustar);
   document.body.classList.add('show-na-tv'); showIniciarAuto();
+  // noite anterior: some sozinha depois de 4 horas; se for recente, a pessoa escolhe
+  const antigos = tvLerRank().length, idade = Date.now() - tvRankQuando();
+  if(antigos && idade > 4*3600e3) tvNovaNoite(false);
+  else if(antigos){
+    const musicas = tvLerRank().filter(x=>x.tipo!=='palpite').length;
+    $('tv-ok').textContent = 'Continuar a noite (' + musicas + (musicas>1?' músicas':' música') + ' no ranking)';
+    $('tv-nova').hidden = false;
+  }
   $('tv-ok').onclick = ativar;
-  document.addEventListener('keydown', e => { if(!$('tv-ativar').hidden && (e.key==='Enter' || e.keyCode===13)) ativar(); });
+  $('tv-nova').onclick = () => { tvNovaNoite(true); ativar(); };
+  document.addEventListener('keydown', e => {
+    if($('tv-ativar').hidden || !(e.key==='Enter' || e.keyCode===13)) return;
+    if(document.activeElement && document.activeElement.tagName==='BUTTON') return;   // o próprio botão em foco já responde ao OK
+    ativar();
+  });
+  // "Nova noite" no topo: pede um segundo toque pra não zerar sem querer
+  let novaTimer = null;
+  $('tv-nova-noite').onclick = () => {
+    const b = $('tv-nova-noite');
+    if(!novaTimer){ b.textContent = 'Toque de novo pra zerar'; novaTimer = setTimeout(() => { b.textContent = 'Nova noite'; novaTimer = null; }, 4000); return; }
+    clearTimeout(novaTimer); novaTimer = null; b.textContent = 'Ranking zerado!'; tvNovaNoite(true);
+    setTimeout(() => { b.textContent = 'Nova noite'; }, 2500);
+  };
   const anterior = window.onYouTubeIframeAPIReady;
   window.onYouTubeIframeAPIReady = () => { anterior && anterior(); tvYtPronto = true; };
   if(window.YT && window.YT.Player) tvYtPronto = true;
