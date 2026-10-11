@@ -74,6 +74,17 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(-
 .rank li .who small.qtd{margin-left:6px}
 .err{color:var(--warn);font-size:14px;margin:0}
 [hidden]{display:none!important}
+.palp-pedido{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(19,8,9,.82);backdrop-filter:blur(4px)}
+.pp-card{width:min(420px,100%);background:var(--panel);border:1px solid var(--spot);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:carimbo .4s both}
+.pp-pre{margin:0;font:600 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.pp-card h3{margin:0;font:400 30px/1.05 var(--poster);text-transform:uppercase}
+.pp-card h3 span{color:var(--spot)}
+.pp-nota{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.pp-nota input{text-align:center;font:400 54px var(--poster);padding:6px;background:var(--bg);border:1px solid var(--line);border-radius:14px;color:var(--fg);width:100%}
+.pp-nota .mini{padding:14px 16px;font-size:16px}
+.sala-gente{display:flex;flex-wrap:wrap;gap:6px}
+.sala-gente span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px}
+.tvr-palp{margin:0;font:600 1.7vw var(--body);color:var(--gold)}
 #salvas-painel{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .busca-box{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
 input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--fg);font:16px var(--body);padding:12px 14px;-webkit-appearance:none}
@@ -135,6 +146,7 @@ input[type=search]{width:100%;background:var(--panel);border:1px solid var(--lin
 .s-palavras b.on{transform:none;opacity:1}
 .cortina{position:absolute;top:0;bottom:0;width:51%;z-index:5;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%),repeating-linear-gradient(90deg,#4a0b14 0,#7c1522 16px,#4a0b14 32px);transition:transform 1.3s cubic-bezier(.65,0,.25,1);box-shadow:0 0 30px rgba(0,0,0,.6)}
 .cortina.e{left:0}.cortina.d{right:0}
+.show.aberta .cortina{box-shadow:none;visibility:hidden;transition:transform 1.3s cubic-bezier(.65,0,.25,1),visibility 0s 1.3s}
 .show.aberta .cortina.e{transform:translateX(-100%)}
 .show.aberta .cortina.d{transform:translateX(100%)}
 .show-play{position:absolute;left:50%;top:50%;z-index:6;transform:translate(-50%,-50%);appearance:none;border:0;cursor:pointer;background:var(--fg);color:var(--bg);border-radius:20px;padding:18px 26px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 14px 40px rgba(0,0,0,.55);transition:opacity .4s}
@@ -147,6 +159,21 @@ input[type=search]{width:100%;background:var(--panel);border:1px solid var(--lin
 .barra i{display:block;height:100%;width:0;background:var(--spot)}
 /* ===== boas-vindas ===== */
 #s-boas{gap:18px;padding-block:6px 10px}
+@media (min-width:900px){
+  body.na-capa .wrap{max-width:1180px}
+  #s-boas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:56px;row-gap:22px;align-items:center;padding-block:10px 24px}
+  #s-boas>.capa{grid-column:1;grid-row:1;min-height:0;padding-top:30px}
+  #s-boas>.escolha{grid-column:1;grid-row:2;grid-template-columns:1fr 1fr;align-self:start}
+  #s-boas>.escolha .grande{padding:20px 18px}
+  #s-boas>.escolha .grande b{font-size:26px}
+  #s-boas>.boas-rodape{grid-column:1;grid-row:3;text-align:left;align-self:start}
+  #s-boas>.show{grid-column:2;grid-row:1/span 3;justify-self:center;align-self:center;margin:0;width:100%;max-width:min(560px,calc((100vh - 110px)*.8))}
+  .capa .vinil{right:-30px;top:-40px;width:280px;height:280px;opacity:.85}
+  #s-boas>.show{background:radial-gradient(closest-side,rgba(110,18,32,.45),transparent);-webkit-mask-image:none;mask-image:none}
+  .capa-logo .m-cantai{font-size:120px}
+  .capa-logo .m-gorete{font-size:84px;margin:-32px 0 0 96px}
+  .capa-sub{font-size:20px;max-width:26ch}
+}
 .boas-t{margin:0;font:800 24px/1.15 var(--display);text-wrap:balance}
 .boas-t span{color:var(--spot)}
 .boas-s{margin:0;color:var(--muted);font-size:16px}
@@ -251,6 +278,10 @@ body.tv{background:radial-gradient(50% 40% at 50% 0%,rgba(255,220,180,.08),trans
 .tv-grande{font:800 4.2vw/1.05 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance}
 .tv-sala{display:flex;flex-wrap:wrap;gap:.8vw}
 .tv-sala span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.6vh 1.2vw;font-weight:600}
+.tv-rank-topo{display:flex;justify-content:space-between;align-items:center;gap:1vw;flex-wrap:wrap}
+.tv-rank-abas{display:flex;gap:.5vw;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.4vh .4vw}
+.tv-rank-abas button{appearance:none;border:0;background:none;color:var(--muted);font:600 1.15vw var(--body);padding:.8vh 1.2vw;border-radius:999px;cursor:pointer}
+.tv-rank-abas button[aria-pressed=true]{background:var(--spot);color:var(--ink)}
 .tv-rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1vh}
 .tv-rank li{display:grid;grid-template-columns:3vw 1fr auto;gap:1vw;align-items:center;padding:1.2vh 1.2vw;border-radius:1vw;background:var(--bg);font-size:1.7vw;font-variant-numeric:tabular-nums}
 .tv-rank li b{color:var(--spot);font:800 2vw var(--display)}
@@ -586,6 +617,11 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <h2>Quer deixar mais divertido?</h2>
     <label class="extra" for="x-desafio"><input type="checkbox" id="x-desafio"><span><b>Sortear um desafio</b><small>Ex.: cante como robô, cante sem rir.</small></span></label>
     <label class="extra" for="x-palpite" id="l-palpite"><input type="checkbox" id="x-palpite"><span><b>Palpites da família</b><small>Cada um chuta a nota; quem chegar mais perto ganha ponto.</small></span></label>
+    <div class="box" id="palp-sala" hidden>
+      <strong>Palpites da sala</strong>
+      <p class="hint" style="margin:0">Quando você tocar em “Cantar!”, os outros celulares conectados à TV recebem um pedido de palpite. Quem chegar mais perto da nota ganha <b>10 pontos</b> no ranking, e quem acertar em cheio ganha <b>20</b>.</p>
+      <div class="sala-gente" id="sala-gente"></div>
+    </div>
     <div class="box" id="palpites" hidden>
       <strong>Palpites</strong>
       <div id="palp-lista" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -781,14 +817,16 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div><h2 style="font-size:1.8vw;margin-bottom:1vh">Na sala</h2><div class="tv-sala" id="tv-sala"><span>Ninguém ainda</span></div></div>
     </div>
     <div class="tv-card">
-      <h2>Ranking da noite</h2>
+      <div class="tv-rank-topo"><h2>Ranking da noite</h2>
+        <div class="tv-rank-abas"><button type="button" id="tvrk-total" aria-pressed="true">Pontos somados</button><button type="button" id="tvrk-melhor" aria-pressed="false">Melhores notas</button></div>
+      </div>
       <ol class="tv-rank" id="tv-rank"></ol>
       <p class="hint" id="tv-rank-vazio" style="font-size:1.5vw">Quem vai abrir a noite?</p>
     </div>
   </div>
   <div id="tv-palco" hidden>
     <div id="tv-player-box"><div id="tv-player"></div></div>
-    <div class="tv-faixa"><span><b id="tv-cantor"></b> está cantando</span><div class="desafio" id="tv-desafio" hidden><small>Desafio</small><span></span></div><span class="hint" style="font-size:1.4vw">Sala <span id="tv-cod2"></span></span></div>
+    <div class="tv-faixa"><span><b id="tv-cantor"></b> está cantando</span><span class="hint" id="tv-palpites" style="font-size:1.4vw" hidden></span><div class="desafio" id="tv-desafio" hidden><small>Desafio</small><span></span></div><span class="hint" style="font-size:1.4vw">Sala <span id="tv-cod2"></span></span></div>
   </div>
   <div id="tv-res" hidden>
     <div class="tv-res-in">
@@ -798,6 +836,7 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
       <div class="selo" id="tvr-selo" hidden></div>
       <p class="comment" id="tvr-coment"></p>
       <p class="dica" id="tvr-dica"></p>
+      <p class="tvr-palp" id="tvr-palp" hidden></p>
       <div class="placar" id="tvr-placar" hidden></div>
       <div class="bars" id="tvr-bars" hidden>
         <div class="bar-row"><span>Afinação</span><div class="track"><div class="fill" id="tb-af"></div></div><b id="tv-af">0</b></div>
@@ -818,6 +857,18 @@ details.ajuda ol{margin:0;padding-left:20px;display:flex;flex-direction:column;g
     <div class="tv-show-slot" id="tv-show-slot" aria-hidden="true"></div>
   </div>
 </section>
+<div class="palp-pedido" id="palp-pedido" hidden role="dialog" aria-labelledby="pp-tit">
+  <div class="pp-card">
+    <p class="pp-pre">Palpite da sala</p>
+    <h3 id="pp-tit">Qual nota <span id="pp-cantor"></span> vai tirar?</h3>
+    <div class="field"><label for="pp-nome">Seu nome</label><input id="pp-nome" type="text" maxlength="20" autocomplete="off" placeholder="Ex.: Tia Rosa"></div>
+    <div class="pp-nota"><button type="button" class="mini" id="pp-menos" aria-label="Diminuir">−5</button><input id="pp-valor" type="number" min="0" max="100" inputmode="numeric" value="70" aria-label="Seu palpite de nota"><button type="button" class="mini" id="pp-mais" aria-label="Aumentar">+5</button></div>
+    <p class="err" id="pp-erro" hidden></p>
+    <button type="button" class="btn" id="pp-enviar">Enviar palpite</button>
+    <p class="hint" id="pp-ok" hidden></p>
+    <button type="button" class="mini" id="pp-fechar">Agora não</button>
+  </div>
+</div>
 <canvas id="confete" hidden></canvas>
 
 <div class="go" id="go" hidden><div class="go-t" id="go-nome"></div><div class="go-n" id="go-n">3</div><div class="go-s" id="go-s">Prepare a voz!</div></div>
@@ -831,7 +882,7 @@ if(!Array.prototype.includes) Array.prototype.includes = function(x){ return thi
 const $ = id => document.getElementById(id);
 const NOTAS = ['Dó','Dó#','Ré','Ré#','Mi','Fá','Fá#','Sol','Sol#','Lá','Lá#','Si'];
 let modo = 'aqui', ytPlayer = null, ytReady = false, ytQueued = null;
-let tipo = 'solo', duelo = null, desafioAtual = '', palpitesAtuais = [];
+let tipo = 'solo', duelo = null, desafioAtual = '', palpitesAtuais = [], salaRodada = '';
 function cantorAtual(){ return duelo ? duelo.nomes[duelo.i] : ($('nome').value.trim() || 'Cantor sem nome'); }
 const DESAFIOS = ['Cante como um robô','Cante sussurrando','Cante sem rir','Cante como cantor de ópera','Cante dançando','Cante de olhos fechados','Cante olhando para alguém da família','Cante como se fosse o último show da sua vida','Cante fazendo careta','Cante como se estivesse tremendo de frio','Cante com a mão no coração o tempo todo','Cante em câmera lenta nos refrões'];
 
@@ -932,6 +983,7 @@ function prepararQuem(){
   $('quem-titulo').textContent = tipo==='duelo' ? 'Quem vai duelar?' : 'Quem vai cantar?';
 }
 function prepararExtras(){
+  setTimeout(atualizaPalpiteUI, 0);
   const vezB = duelo && duelo.i===1;
   $('vez').hidden = !duelo;
   if(duelo) $('vez').textContent = 'Duelo: vez de ' + duelo.nomes[duelo.i] + (vezB ? ' (mesma música)' : '');
@@ -969,7 +1021,18 @@ function linhaPalpite(){
   const x = document.createElement('button'); x.type='button'; x.className='mini'; x.textContent='×'; x.setAttribute('aria-label','Remover palpite'); x.onclick = () => row.remove();
   row.append(n,v,x); $('palp-lista').appendChild(row);
 }
-$('x-palpite').onchange = () => { $('palpites').hidden = !$('x-palpite').checked; if($('x-palpite').checked && !$('palp-lista').children.length){ linhaPalpite(); linhaPalpite(); } };
+function naSalaAoVivo(){ return modo==='sala' && !!sala.code; }
+function atualizaPalpiteUI(){
+  const on = $('x-palpite').checked, salaOn = naSalaAoVivo();
+  $('palp-sala').hidden = !(on && salaOn);
+  $('palpites').hidden = !(on && !salaOn);
+  if(on && !salaOn && !$('palp-lista').children.length){ linhaPalpite(); linhaPalpite(); }
+  const g = $('sala-gente'); g.textContent='';
+  const outros = (sala.pessoas||[]).filter(p => p.de!==meuId);
+  if(!outros.length){ const s=document.createElement('span'); s.textContent='Nenhum outro celular conectado ainda'; g.appendChild(s); }
+  outros.forEach(p => { const s=document.createElement('span'); s.textContent = p.nome || 'Celular sem nome'; g.appendChild(s); });
+}
+$('x-palpite').onchange = atualizaPalpiteUI;
 $('palp-add').onclick = linhaPalpite;
 function lerPalpites(){
   return [...$('palp-lista').children].map(r=>({nome:r.children[0].value.trim(), v:parseInt(r.children[1].value,10)})).filter(p=>p.nome && !isNaN(p.v));
@@ -1305,10 +1368,10 @@ function mostrarRank(){
   };
   if(rankModo==='total'){
     const soma = {};
-    todas.forEach(x=>{ const k=x.nome; soma[k]=soma[k]||{pts:0,n:0}; soma[k].pts+=x.nota; soma[k].n++; });
-    Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,15).forEach(([nome,v],i)=>linha(i, nome, v.n + (v.n>1?' músicas':' música'), v.pts));
+    todas.forEach(x=>{ const k=x.nome; const v=soma[k]=soma[k]||{pts:0,n:0,p:0}; v.pts+=x.nota; if(x.tipo==='palpite') v.p++; else v.n++; });
+    Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,15).forEach(([nome,v],i)=>linha(i, nome, descreverContagem(v.n, v.p), v.pts));
   } else {
-    todas.slice().sort((a,b)=>b.nota-a.nota).slice(0,10).forEach((x,i)=>linha(i, x.nome, x.hora, x.nota));
+    todas.filter(x=>x.tipo!=='palpite').sort((a,b)=>b.nota-a.nota).slice(0,10).forEach((x,i)=>linha(i, x.nome, x.musica || x.hora, x.nota));
   }
 }
 $('rk-total').onclick = () => { rankModo='total'; mostrarRank(); };
@@ -1377,7 +1440,9 @@ function seguirRodada(){
   frames = []; primeiraVoz = 0; ultimaVoz = 0; piso = 0.004; terminando = false;
   desafioAtual = $('x-desafio').checked ? sorteia(DESAFIOS) : '';
   $('live-desafio').hidden = !desafioAtual; $('live-desafio').querySelector('span').textContent = desafioAtual;
-  palpitesAtuais = (!duelo && $('x-palpite').checked) ? lerPalpites() : [];
+  palpitesAtuais = (!duelo && $('x-palpite').checked && !naSalaAoVivo()) ? lerPalpites() : [];
+  salaRodada = (naSalaAoVivo() && !duelo && $('x-palpite').checked) ? Math.random().toString(36).slice(2,9) : '';
+  try{ if(cantorAtual() && cantorAtual()!=='Cantor sem nome' && !duelo) localStorage.setItem('cantai-eu', cantorAtual()); }catch(e){}
   $('nota').textContent = '–'; $('status').textContent = 'Esperando a voz…'; $('tempo').textContent = '0:00'; $('contagem').hidden = true;
   try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').then(w => { wake = w; }, () => {}); }catch(e){}
   telas('live');
@@ -1390,7 +1455,7 @@ function seguirRodada(){
     setTimeout(conferirTocando, 2500);
   }
   if(modo==='sala'){
-    salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual});
+    salaEnviar({t:'play', link:$('link').value, avancar:salaAvancar, nome:cantorAtual(), desafio:desafioAtual, rodada:salaRodada, palpite:!!salaRodada});
     salaAvancar = false; salvarRecente($('link').value);
   }
   return contagem321().then(() => {
@@ -1578,7 +1643,7 @@ function resultado(r){
   const id = ++revelaId;
   telas('res');
   const nome = cantorAtual();
-  $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-duelo').hidden = true; $('prox-box').hidden = true; pararProxima();
+  $('res-desafio').hidden = true; $('res-palp').hidden = true; $('res-palp-lista').textContent=''; $('res-duelo').hidden = true; $('prox-box').hidden = true; pararProxima();
   $('denovo').textContent = duelo ? (duelo.i===0 ? 'Agora é a vez de ' + duelo.nomes[1] : 'Novo duelo') : 'Próximo cantor';
   $('res-nome').textContent = nome;
   ['af','es','en','tp'].forEach(k=>{ $('b-'+k).style.width='0%'; $('v-'+k).textContent='–'; });
@@ -1589,14 +1654,14 @@ function resultado(r){
     if(duelo) $('denovo').textContent = 'Tentar de novo';
     if(duelo) duelo.repetir = true;
     else setTimeout(() => { if(id===revelaId) agendarProxima(id); }, 800);
-    if(modo==='sala') salaEnviar({t:'result', nome, r:null});
+    if(modo==='sala') salaEnviar({t:'result', nome, r:null, rodada:salaRodada});
     return;
   }
-  const melhorAntes = Math.max(-1, ...lerRank().map(x=>x.nota));
+  const melhorAntes = Math.max(-1, ...lerRank().filter(x=>x.tipo!=='palpite').map(x=>x.nota));
   const d = new Date();
-  const rank = lerRank(); rank.push({nome, nota:r.nota, af:r.af, es:r.es, en:r.en, desafio:desafioAtual, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
+  const rank = lerRank(); rank.push({nome, nota:r.nota, musica:tituloAtual(), af:r.af, es:r.es, en:r.en, desafio:desafioAtual, hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
   if(duelo) duelo.notas[duelo.i] = r.nota;
-  if(modo==='sala') salaEnviar({t:'result', nome, r, desafio:desafioAtual, duelo: duelo ? {nomes:duelo.nomes, notas:duelo.notas, fim: duelo.i===1} : null});
+  if(modo==='sala') salaEnviar({t:'result', nome, r, rodada:salaRodada, musica:tituloAtual(), desafio:desafioAtual, duelo: duelo ? {nomes:duelo.nomes, notas:duelo.notas, fim: duelo.i===1} : null});
   let ganhadoresPalpite = [];
   if(palpitesAtuais.length){
     const melhorDif = Math.min(...palpitesAtuais.map(p=>Math.abs(p.v-r.nota)));
@@ -1629,6 +1694,7 @@ function resultado(r){
       $('res-dica').textContent = dica(r);
       ['af','es','en','tp'].forEach((k,i)=>setTimeout(()=>{ if(id!==revelaId) return; $('b-'+k).style.width=r[k]+'%'; $('v-'+k).textContent = k==='tp' ? r.seg+'s' : r[k]; }, rapido?0:250*i));
       if(desafioAtual){ $('res-desafio').hidden=false; $('res-desafio').querySelector('span').textContent=desafioAtual; }
+      if(salaRodada){ $('res-palp').hidden=false; if(!$('res-palp-lista').children.length){ const li=document.createElement('li'); li.textContent='Esperando os palpites da sala…'; $('res-palp-lista').appendChild(li); } }
       if(palpitesAtuais.length){
         const ul=$('res-palp-lista'); ul.textContent='';
         palpitesAtuais.slice().sort((a,b)=>Math.abs(a.v-r.nota)-Math.abs(b.v-r.nota)).forEach(p=>{
@@ -1677,8 +1743,9 @@ $('ver-trofeus').onclick = () => abrirTrofeus(true);
 function abrirTrofeus(festa){
   const r = lerRank(), ul = $('trofeus'); ul.textContent='';
   const pts = lerPontos();
-  const melhor = (k) => r.filter(x=>typeof x[k]==='number').sort((a,b)=>b[k]-a[k])[0];
-  const cont = {}; r.forEach(x=>cont[x.nome]=(cont[x.nome]||0)+1);
+  const musicas = r.filter(x=>x.tipo!=='palpite');
+  const melhor = (k) => musicas.filter(x=>typeof x[k]==='number').sort((a,b)=>b[k]-a[k])[0];
+  const cont = {}; musicas.forEach(x=>cont[x.nome]=(cont[x.nome]||0)+1);
   const corajoso = Object.entries(cont).sort((a,b)=>b[1]-a[1])[0];
   const desafiante = r.filter(x=>x.desafio).length ? Object.entries(r.filter(x=>x.desafio).reduce((o,x)=>(o[x.nome]=(o[x.nome]||0)+1,o),{})).sort((a,b)=>b[1]-a[1])[0] : null;
   const palpiteiro = Object.entries(pts).sort((a,b)=>b[1]-a[1])[0];
@@ -1749,9 +1816,12 @@ function celularConectar(code){
   code = (code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(code.length!==6) return false;
   salaOuvir(code, (m) => {
-    if(m.t==='tv'){ if(!sala.tvViva){ sala.tvViva = true; mostrarConexao(); } }
+    if(m.t==='tv'){ if(m.pessoas) sala.pessoas = m.pessoas; if(!sala.tvViva){ sala.tvViva = true; mostrarConexao(); } if(tela==='extras') atualizaPalpiteUI(); }
     if(m.t==='ended' && tela==='live' && !terminando && modo==='sala') encerrar();
-  }, () => salaEnviar({t:'oi', nome: ($('nome').value.trim() || '')}));
+    if(m.t==='play' && m.palpite && m.rodada) abrirPedidoPalpite(m);
+    if(m.t==='result'){ fecharPedidoPalpite(m.rodada); registrarResultadoDaSala(m); }
+    if(m.t==='palpites-res') aplicarPalpitesDaSala(m);
+  }, () => salaEnviar({t:'oi', nome: meuNome()}));
   try{ localStorage.setItem('cantai-sala', JSON.stringify({code, quando:Date.now()})); }catch(e){}
   mostrarConexao(); setModo('sala');
   setTimeout(() => { if(sala.code===code && !sala.tvViva){ salaEnviar({t:'oi'}); } }, 4000);
@@ -1761,25 +1831,104 @@ $('cx-entrar').onclick = () => { if(!celularConectar($('cx-codigo').value)){ $('
 $('cx-codigo').addEventListener('keydown', e => { if(e.key==='Enter') $('cx-entrar').click(); });
 $('cx-sair').onclick = () => { salaFechar(); try{ localStorage.removeItem('cantai-sala'); }catch(e){} if(modo==='sala') setModo('aqui'); mostrarConexao(); };
 
+/* ---------- palpites da sala (lado do celular) ---------- */
+function meuNome(){ try{ return localStorage.getItem('cantai-eu') || ''; }catch(e){ return ''; } }
+let pedidoRodada = '';
+function abrirPedidoPalpite(m){
+  pedidoRodada = m.rodada;
+  $('pp-cantor').textContent = m.nome || 'quem está cantando';
+  $('pp-nome').value = meuNome(); $('pp-valor').value = 70;
+  $('pp-erro').hidden = true; $('pp-ok').hidden = true; $('pp-enviar').hidden = false; $('pp-enviar').textContent = 'Enviar palpite';
+  $('palp-pedido').hidden = false;
+  try{ if(somLigado){ tom(784,0,.12); tom(988,.1,.18); } }catch(e){}
+}
+function fecharPedidoPalpite(rodada){ if(!rodada || rodada===pedidoRodada) $('palp-pedido').hidden = true; }
+$('pp-menos').onclick = () => { $('pp-valor').value = Math.max(0, (parseInt($('pp-valor').value,10)||0) - 5); };
+$('pp-mais').onclick = () => { $('pp-valor').value = Math.min(100, (parseInt($('pp-valor').value,10)||0) + 5); };
+$('pp-fechar').onclick = () => { $('palp-pedido').hidden = true; };
+$('pp-enviar').onclick = () => {
+  const nome = $('pp-nome').value.trim(), v = parseInt($('pp-valor').value,10);
+  if(!nome){ $('pp-erro').textContent='Escreva seu nome pra ganhar os pontos.'; $('pp-erro').hidden=false; return; }
+  if(isNaN(v) || v<0 || v>100){ $('pp-erro').textContent='O palpite vai de 0 a 100.'; $('pp-erro').hidden=false; return; }
+  try{ localStorage.setItem('cantai-eu', nome); }catch(e){}
+  salaEnviar({t:'palpite', rodada:pedidoRodada, nome, v});
+  $('pp-erro').hidden = true; $('pp-ok').hidden = false; $('pp-ok').textContent = 'Palpite enviado: ' + v + '. Dá pra mudar até a música acabar.';
+  $('pp-enviar').textContent = 'Mudar palpite';
+};
+// cada celular da sala guarda as apresentações dos outros, pra o ranking ficar igual em todos
+function registrarResultadoDaSala(m){
+  if(!m.r || !m.nome) return;
+  const d = new Date(), rank = lerRank();
+  rank.push({nome:m.nome, nota:m.r.nota, musica:m.musica||'', af:m.r.af, es:m.r.es, en:m.r.en, desafio:m.desafio||'', hora:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});
+  salvarRank(rank);
+  if(tela==='rank') mostrarRank();
+}
+function aplicarPalpitesDaSala(m){
+  if(!m.ganhadores) return;
+  const rank = lerRank(), pts = lerPontos();
+  m.ganhadores.forEach(n => { rank.push({nome:n, nota:m.pts, tipo:'palpite', hora:''}); pts[n] = (pts[n]||0) + 1; });
+  salvarRank(rank); salvarPontos(pts);
+  if(tela==='rank') mostrarRank();
+  if(m.rodada && m.rodada===salaRodada && tela==='res'){
+    const ul=$('res-palp-lista'); ul.textContent='';
+    if(!m.lista.length){ const li=document.createElement('li'); li.textContent='Ninguém mandou palpite dessa vez.'; ul.appendChild(li); }
+    m.lista.slice().sort((a,b)=>Math.abs(a.v-m.nota)-Math.abs(b.v-m.nota)).forEach(p=>{
+      const li=document.createElement('li'); const g=m.ganhadores.includes(p.nome);
+      if(g) li.className='ganhou';
+      const a=document.createElement('span'); a.textContent=p.nome + (g?' +' + m.pts + ' pontos!':'');
+      const b=document.createElement('span'); b.textContent='chutou ' + p.v;
+      li.append(a,b); ul.appendChild(li);
+    });
+    $('res-palp').hidden=false;
+  }
+}
+function tituloAtual(){
+  const l = $('link').value;
+  const m = lerMusicas().find(x=>x.link===l) || lerRecentes().find(x=>x.link===l);
+  return m ? (m.nome || m.titulo || '') : '';
+}
+
 /* ---------- lado da TV ---------- */
 const ehTV = location.pathname.replace(/\/+$/,'') === '/tv' || new URLSearchParams(location.search).has('tv');
 let tvPlayer = null, tvYtPronto = false, tvLista = null, tvNaSala = new Map(), tvRevelaId = 0;
+let tvRodada = '', tvPalpites = new Map();
+function tvAnunciar(){ salaEnviar({t:'tv', pessoas:[...tvNaSala.entries()].map(e=>({de:e[0], nome:e[1]}))}); }
+function tvMostrarPalpites(){
+  const n = tvPalpites.size;
+  $('tv-palpites').hidden = !tvRodada;
+  $('tv-palpites').textContent = n ? 'Palpites: ' + [...tvPalpites.values()].map(p=>p.nome).join(', ') : 'Esperando palpites nos celulares…';
+}
 function tvTela(qual){
   $('tv-palco').hidden = qual!=='palco';
   $('tv-res').hidden = qual!=='res';
 }
 function tvLerRank(){ try{ return JSON.parse(localStorage.getItem('cantai-tv-rank')||'[]'); }catch(e){ return []; } }
+let tvRankModo = 'total', tvRankAuto = null;
 function tvRank(){
-  const r = tvLerRank(), soma = {};
-  r.forEach(x=>{ soma[x.nome]=soma[x.nome]||{pts:0,n:0}; soma[x.nome].pts+=x.nota; soma[x.nome].n++; });
-  const ol=$('tv-rank'); ol.textContent='';
-  const lst = Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,6);
-  $('tv-rank-vazio').hidden = lst.length>0;
-  lst.forEach(([nome,v],i)=>{
+  const r = tvLerRank(), ol=$('tv-rank'); ol.textContent='';
+  $('tvrk-total').setAttribute('aria-pressed', tvRankModo==='total'); $('tvrk-melhor').setAttribute('aria-pressed', tvRankModo==='melhor');
+  const linha = (i, nome, extra, valor) => {
     const li=document.createElement('li'); const p=document.createElement('span'); p.textContent=(i+1)+'º';
-    const w=document.createElement('span'); w.textContent=nome; const sm=document.createElement('small'); sm.textContent=v.n+(v.n>1?' músicas':' música'); w.appendChild(sm);
-    const b=document.createElement('b'); b.textContent=v.pts; li.append(p,w,b); ol.appendChild(li);
-  });
+    const w=document.createElement('span'); w.textContent=nome; const sm=document.createElement('small'); sm.textContent=extra; w.appendChild(sm);
+    const b=document.createElement('b'); b.textContent=valor; li.append(p,w,b); ol.appendChild(li);
+  };
+  let n = 0;
+  if(tvRankModo==='total'){
+    const soma = {};
+    r.forEach(x=>{ const v=soma[x.nome]=soma[x.nome]||{pts:0,n:0,p:0}; v.pts+=x.nota; if(x.tipo==='palpite') v.p++; else v.n++; });
+    const lst = Object.entries(soma).sort((a,b)=>b[1].pts-a[1].pts).slice(0,6); n = lst.length;
+    lst.forEach(([nome,v],i)=>linha(i, nome, descreverContagem(v.n, v.p), v.pts));
+  } else {
+    const lst = r.filter(x=>x.tipo!=='palpite').sort((a,b)=>b.nota-a.nota).slice(0,6); n = lst.length;
+    lst.forEach((x,i)=>linha(i, x.nome, x.musica || '', x.nota));
+  }
+  $('tv-rank-vazio').hidden = n>0;
+}
+function descreverContagem(musicas, palpites){
+  const t = [];
+  if(musicas) t.push(musicas + (musicas>1?' músicas':' música'));
+  if(palpites) t.push(palpites + (palpites>1?' palpites':' palpite'));
+  return t.join(' · ');
 }
 function tvSala(){
   const box=$('tv-sala'); box.textContent='';
@@ -1854,11 +2003,30 @@ function tvResultado(m){
   if(!m.r){
     $('tvr-espera').hidden = true; el.style.visibility='visible'; el.innerHTML='–';
     $('tvr-coment').textContent = 'Não deu pra ouvir a voz. Celular mais perto da boca!';
+    $('tvr-palp').hidden = true; tvRodada = '';
     setTimeout(() => { if(id===tvRevelaId) tvTela('lobby'); }, 9000);
     return;
   }
   const r = m.r, fx = faixa(r.nota);
-  const rank = tvLerRank(); rank.push({nome:m.nome, nota:r.nota}); try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(rank)); }catch(e){}
+  const rank = tvLerRank(); rank.push({nome:m.nome, nota:r.nota, musica:m.musica||''});
+  // palpites: quem chegou mais perto ganha 10 pontos; acerto em cheio vale 20
+  let palpTxt = '';
+  if(m.rodada && m.rodada===tvRodada){
+    const lista = [...tvPalpites.values()];
+    let ganhadores = [], pts = 0;
+    if(lista.length){
+      const dif = Math.min(...lista.map(p=>Math.abs(p.v-r.nota)));
+      ganhadores = [...new Set(lista.filter(p=>Math.abs(p.v-r.nota)===dif).map(p=>p.nome))];
+      pts = dif===0 ? 20 : 10;
+      ganhadores.forEach(n => rank.push({nome:n, nota:pts, tipo:'palpite'}));
+      const um = lista.find(p=>p.nome===ganhadores[0]);
+      palpTxt = (dif===0 ? 'Na mosca! ' : 'Palpite mais perto: ') + ganhadores.join(' e ') + ' (chutou ' + um.v + ') +' + pts + ' pontos';
+    }
+    salaEnviar({t:'palpites-res', rodada:m.rodada, nota:r.nota, lista, ganhadores, pts});
+    tvRodada = '';
+  }
+  try{ localStorage.setItem('cantai-tv-rank', JSON.stringify(rank)); }catch(e){}
+  $('tvr-palp').hidden = true; $('tvr-palp').textContent = palpTxt;
   $('tvr-espera').hidden = false; el.style.visibility='hidden';
   $('tvr-espera-t').textContent = sorteia(['Os jurados estão decidindo…','Somando os aplausos…','Conferindo cada nota…','Consultando a vó…']);
   rufar(1.8);
@@ -1879,6 +2047,7 @@ function tvResultado(m){
       $('tvr-coment').textContent = sem(FRASES[r.seg<20 ? 'curto' : fx]);
       $('tvr-dica').textContent = m.desafio ? 'Desafio: ' + m.desafio : dica(r);
       $('tvr-bars').hidden = false;
+      $('tvr-palp').hidden = !$('tvr-palp').textContent;
       ['af','es','en','tp'].forEach((k,i)=>setTimeout(()=>{ if(id!==tvRevelaId) return; $('tb-'+k).style.width=r[k]+'%'; $('tv-'+k).textContent = k==='tp' ? r.seg+'s' : r[k]; }, 300*i));
       let festa = fx==='lenda' || fx==='estrela';
       if(m.duelo && m.duelo.fim){
@@ -1904,11 +2073,16 @@ function iniciarTV(){
   $('tv-cod').textContent = code; $('tv-cod2').textContent = code;
   tvQR(code); tvRank(); tvSala();
   salaOuvir(code, (m) => {
-    if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); salaEnviar({t:'tv'}); }
-    if(m.t==='play'){ if(m.nome) tvNaSala.set(m.de, m.nome); tvSala(); tvRevelaId++; tvTocar(m); salaEnviar({t:'tv'}); }
+    if(m.t==='oi'){ tvNaSala.set(m.de, m.nome || tvNaSala.get(m.de) || ''); tvSala(); tvAnunciar(); }
+    if(m.t==='play'){ if(m.nome) tvNaSala.set(m.de, m.nome); tvSala(); tvRevelaId++; tvRodada = m.palpite ? m.rodada : ''; tvPalpites = new Map(); tvMostrarPalpites(); tvTocar(m); tvAnunciar(); }
+    if(m.t==='palpite' && m.rodada && m.rodada===tvRodada){ tvPalpites.set(m.de, {nome:m.nome, v:m.v}); if(m.nome) tvNaSala.set(m.de, m.nome); tvMostrarPalpites(); }
     if(m.t==='stop'){ try{ tvPlayer && tvPlayer.pauseVideo(); }catch(e){} }
     if(m.t==='result'){ tvResultado(m); }
-  }, () => salaEnviar({t:'tv'}));
+  }, () => tvAnunciar());
+  $('tvrk-total').onclick = () => { tvRankModo='total'; tvRank(); };
+  $('tvrk-melhor').onclick = () => { tvRankModo='melhor'; tvRank(); };
+  // alterna sozinho entre as duas visões, pra quem está só olhando a TV
+  clearInterval(tvRankAuto); tvRankAuto = setInterval(() => { if(!$('tv-palco').hidden || !$('tv-res').hidden) return; tvRankModo = tvRankModo==='total' ? 'melhor' : 'total'; tvRank(); }, 12000);
   const ativar = () => { $('tv-ativar').hidden = true; document.body.classList.remove('show-na-tv'); showParar(); try{ ac().resume(); tom(660,0,.12,'sine',.05); }catch(e){} };
   // o show de abertura passa ao lado do logo enquanto ninguém aperta OK
   const slot = $('tv-show-slot'); slot.appendChild($('show'));
